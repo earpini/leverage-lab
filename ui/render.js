@@ -29,8 +29,8 @@ export function render(root, g, handlers, ui = {}) {
     ${ui.summary && !g.ended ? summarySheet(g, ui.summary) : ''}
     ${offerSheet(g)}
     ${debriefSheet(g, snap)}
-    ${ui.showPicker ? pickerSheet(g) : ''}
-    ${ui.showIntro ? introSheet() : ''}
+    ${ui.showPicker && !ui.showIntro ? pickerSheet(g) : ''}
+    ${ui.showIntro ? introSheet(ui) : ''}
   `;
   wire(root, handlers);
 }
@@ -341,7 +341,8 @@ function pickerSheet(g) {
     </div>`;
 }
 
-function introSheet() {
+function introSheet(ui) {
+  const label = ui.introMode === 'help' ? 'Back to the game' : INTRO.start;
   return `
     <div class="overlay">
       <div class="sheet">
@@ -352,7 +353,7 @@ function introSheet() {
             <h4>${esc(s.h)}</h4>
             <p class="read small">${esc(s.p)}</p>
           </div>`).join('')}
-        <button class="btn-primary" data-start>${esc(INTRO.start)}</button>
+        <button class="btn-primary" data-start>${esc(label)}</button>
       </div>
     </div>`;
 }

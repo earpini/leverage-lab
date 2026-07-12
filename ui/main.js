@@ -14,7 +14,9 @@ const seedInput = document.getElementById('seed-input');
 const newRunBtn = document.getElementById('new-run');
 
 let game = null;
-const ui = { showIntro: true, showPicker: false, summary: null, tipsDismissed: false };
+// introMode 'first': the opening intro, which always leads to the country picker.
+// introMode 'help': reopened mid-game via "How to play" — closing returns to the game.
+const ui = { showIntro: true, introMode: 'first', showPicker: false, summary: null, tipsDismissed: false };
 
 function readUrl() {
   const q = new URLSearchParams(location.search);
@@ -86,12 +88,13 @@ const handlers = {
   },
   onHelp() {
     ui.showIntro = true;
+    ui.introMode = 'help';
     draw();
   },
   onCloseIntro() {
     ui.showIntro = false;
-    ui.showPicker = !urlHadCountry;
-    urlHadCountry = true; // only skip the picker once
+    if (ui.introMode === 'first') ui.showPicker = true;
+    ui.introMode = 'help';
     draw();
   },
   onDismissTips() {
@@ -122,5 +125,4 @@ scenarioSelect.addEventListener('change', () => {
 });
 
 const { seed, scenarioId, countryCode } = readUrl();
-let urlHadCountry = countryCode != null;
 startRun(seed, scenarioId, countryCode ?? undefined);
