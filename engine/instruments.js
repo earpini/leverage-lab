@@ -58,10 +58,14 @@ export function initialDefRisk(state, country) {
   return risk;
 }
 
-/** M1 Condition: attach terms to inbound capital; converts a share of the remaining stock. */
+/** M1 Condition: attach terms to inbound capital; converts a share of the remaining stock.
+    A mature AI-governance ecosystem (the report's High/Medium/Developing/Nascent rating)
+    writes enforceable terms faster: gov 3 converts at 105%, gov 1 at 95%, gov 0 at 90%. */
 function applyM1(state) {
   const m1 = state.params.instruments.m1;
-  const share = m1.convertShare + state.turnMods.m1Boost;
+  const gov = countryByCode(state, state.player.code).gov ?? 2;
+  const govFactor = m1.govFactorBase + m1.govFactorPerLevel * gov;
+  const share = (m1.convertShare + state.turnMods.m1Boost) * govFactor;
   for (const axis of state.player.convertAxes) {
     const remaining = 1 - state.player.converted[axis];
     state.player.converted[axis] = Math.min(1, state.player.converted[axis] + remaining * share);

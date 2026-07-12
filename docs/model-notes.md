@@ -115,6 +115,7 @@ test 5 (`test/invariants.test.js`) checks it.
 | param | value | rationale |
 |---|---|---|
 | `m1.convertShare` | 0.25 | Conditioning converts a quarter of the remaining unconverted stock — early moves pay most; the window closes. |
+| `m1.govFactorBase` / `govFactorPerLevel` | 0.9 / 0.05 | The report's governance map ([The map of leverage](the-map-of-leverage.pdf)): mature ecosystems write enforceable terms faster. gov 3 converts at 105%, gov 1 at 95%; Medium (gov 2, Brazil) anchors at 100% so historic balance is unchanged. |
 | `m1.c4` / `m1.c3` | 6 / 3 | Terms attached to capital buy autonomy and draw modest retaliation. |
 | `m2.apSurcharge` rules | +1 for tier C/D, regime distance ≥ 2, or positional | Distance is expensive: values friction and pole alignment both raise the price of a signature. |
 | `m2.defRisk*` | 22 + 7·affinity − 4·anchor + 6·positional | Arrivals are loyal in proportion to how little the poles pull on them. |

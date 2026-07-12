@@ -98,7 +98,7 @@
     "floor": 12
   },
   "instruments": {
-    "m1": { "ap": 1, "convertShare": 0.25, "c4": 6, "c3": 3 },
+    "m1": { "ap": 1, "convertShare": 0.25, "c4": 6, "c3": 3, "govFactorBase": 0.9, "govFactorPerLevel": 0.05 },
     "m2": {
       "apBase": 1,
       "apSurcharge": 1,

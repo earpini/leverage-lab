@@ -82,6 +82,22 @@ test('move cards speak each country’s own language', async () => {
   assert.ok(brCopy.m5.blurb.includes('Beijing'), 'China-leaning countries hear from Beijing');
 });
 
+test('a mature governance ecosystem converts faster (the report’s governance map)', () => {
+  const converted = (code) => {
+    const g = newGame({ ...data, seed: 'gov', scenarioId: 'bipolar', playerCode: code });
+    if (g.pendingEvent) applyAction(g, { type: 'event', choice: 'b' });
+    g.turnMods.m1Boost = 0; // isolate the governance factor from event boosts
+    applyAction(g, { type: 'm1' });
+    return g.player.converted[g.player.convertAxes[0]];
+  };
+  const de = converted('DE'); // gov 3 (High)
+  const id = converted('ID'); // gov 1 (Developing)
+  assert.ok(de > id, `Germany's terms should bind faster than Indonesia's (${de.toFixed(3)} vs ${id.toFixed(3)})`);
+  const br = converted('BR'); // gov 2 (Medium) — anchored at exactly the base share
+  assert.ok(Math.abs(br - data.params.instruments.m1.convertShare) < 1e-9,
+    'Brazil (Medium) sits at the anchor: balance unchanged');
+});
+
 test('the player country cannot be invited into its own alliance, poles never playable', () => {
   const g = newGame({ ...data, seed: 'self', scenarioId: 'spring', playerCode: 'IN' });
   const m2 = legalActions(g).find((a) => a.type === 'm2');

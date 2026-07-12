@@ -258,6 +258,8 @@ export function countryGloss(country) {
   return entries.map(([k]) => AXIS_NAMES[k]).join(', ');
 }
 
+export const GOV_NAMES = ['nascent governance', 'developing governance', 'solid governance', 'strong governance'];
+
 export const REGIME_NAMES = {
   Full: 'full democracy',
   Flawed: 'flawed democracy',

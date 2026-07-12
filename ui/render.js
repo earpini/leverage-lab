@@ -8,7 +8,7 @@ import {
   INSTRUMENTS, CRITERIA, DIALS, POLE_NAMES, OFFER_COPY, ENDINGS,
   AXIS_NAMES, countryGloss, leanGloss, riskLabel, COACH_TIPS, INTRO,
   COUNTRY_HOOKS, playerNote, PICKER, OUTCOME_TILES, outcomeWord, FRONTIER_LABEL, REGIME_NAMES, GRIP, LATECOMER,
-  instrumentCopy, M6_TIERS
+  instrumentCopy, M6_TIERS, GOV_NAMES
 } from './copy.js';
 import { isOutside } from '../engine/game.js';
 
@@ -445,7 +445,7 @@ function pickerSheet(g, ui) {
                 ${positional ? `<span class="badge cool">${esc(PICKER.positionalBadge)}</span>` : ''}
               </span>
               <span class="pick-hook">${esc(COUNTRY_HOOKS[c.code] ?? '')}</span>
-              <span class="pick-meta">${esc(REGIME_NAMES[c.democracy] ?? c.democracy)} · ${esc(leanGloss(c.affinity))} · ${esc(PICKER.potential)} ${potential} pts</span>
+              <span class="pick-meta">${esc(REGIME_NAMES[c.democracy] ?? c.democracy)} · ${esc(GOV_NAMES[c.gov] ?? '')} · ${esc(leanGloss(c.affinity))} · ${esc(PICKER.potential)} ${potential} pts</span>
             </button>`).join('')}
         </div>
       </div>

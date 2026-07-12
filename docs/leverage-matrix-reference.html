@@ -74,4 +74,79 @@ circle.pt{cursor:pointer;stroke:#fff;stroke-width:1.4}
 <script>
 const DATA=[{"name": "Taiwan", "code": "TW", "region": "East Asia", "democracy": "Full", "gov": 2, "axes": {"minerals": 0, "equip": 1, "fab": 3, "compute": 1, "capital": 1, "models": 2, "market": 1, "gov_conv": 1}, "leverage": 10, "tier": "C", "key": "TSMC >90% of leading-edge fabrication + CoWoS advanced packaging - the most indispensable manufacturing node.", "caveat": "Diplomatically locked out of GPAI/UN/AISI network; geopolitical flashpoint.", "top10": 1}, {"name": "Netherlands", "code": "NL", "region": "Europe", "democracy": "Full", "gov": 3, "axes": {"minerals": 0, "equip": 3, "fab": 1, "compute": 1, "capital": 1, "models": 1, "market": 1, "gov_conv": 3}, "leverage": 11, "tier": "B", "key": "ASML - sole supplier of EUV lithography; the single hardest chokepoint in AI hardware.", "caveat": "Frontier leverage rests on one firm; #1 on responsible-AI (GIRAI).", "top10": 2}, {"name": "South Korea", "code": "KR", "region": "East Asia", "democracy": "Full", "gov": 3, "axes": {"minerals": 0, "equip": 1, "fab": 3, "compute": 1, "capital": 2, "models": 2, "market": 1, "gov_conv": 2}, "leverage": 12, "tier": "B", "key": "SK Hynix + Samsung ~80-88% of HBM (the AI-memory bottleneck) + Samsung fabs; AI Basic Act in force Jan 2026.", "caveat": "", "top10": 3}, {"name": "Japan", "code": "JP", "region": "East Asia", "democracy": "Full", "gov": 3, "axes": {"minerals": 3, "equip": 2, "fab": 1, "compute": 1, "capital": 2, "models": 2, "market": 2, "gov_conv": 3}, "leverage": 16, "tier": "B", "key": "Silicon wafers (~53%) + EUV photoresist (~100% sub-7nm) + Tokyo Electron tools; led the G7 Hiroshima Process.", "caveat": "", "top10": 4}, {"name": "United Arab Emirates", "code": "AE", "region": "Gulf", "democracy": "Authoritarian", "gov": 2, "axes": {"minerals": 0, "equip": 0, "fab": 0, "compute": 3, "capital": 3, "models": 2, "market": 1, "gov_conv": 2}, "leverage": 11, "tier": "D", "key": "MGX/ADIA/Mubadala capital + Stargate UAE (5GW planned) + Falcon/MBZUAI; cheap energy.", "caveat": "Autocracy; compute is US-chip-dependent - leverage-as-dependency.", "top10": 5}, {"name": "India", "code": "IN", "region": "South Asia", "democracy": "Flawed", "gov": 2, "axes": {"minerals": 1, "equip": 1, "fab": 0, "compute": 2, "capital": 1, "models": 3, "market": 3, "gov_conv": 2}, "leverage": 13, "tier": "A", "key": "AI talent scale (#1 skill penetration) + 1.4B market & Aadhaar/UPI rails + IndiaAI compute (38k GPUs); co-hosted the 2026 AI Impact Summit.", "caveat": "No AI-localization mandate exists (a common overstatement); leverage is market + talent.", "top10": 6}, {"name": "Germany", "code": "DE", "region": "Europe", "democracy": "Full", "gov": 3, "axes": {"minerals": 1, "equip": 2, "fab": 2, "compute": 1, "capital": 2, "models": 2, "market": 2, "gov_conv": 3}, "leverage": 15, "tier": "B", "key": "Zeiss optics & Trumpf lasers (essential to ASML's EUV) + ESMC Dresden fab + largest EU market; EU AI Act enforcement.", "caveat": "", "top10": 7}, {"name": "France", "code": "FR", "region": "Europe", "democracy": "Flawed", "gov": 3, "axes": {"minerals": 0, "equip": 1, "fab": 1, "compute": 2, "capital": 2, "models": 3, "market": 1, "gov_conv": 3}, "leverage": 13, "tier": "B", "key": "Mistral - the only democratic frontier-adjacent lab - + nuclear-powered compute (EUR109B) + GPAI/OECD seat & Paris Summit host.", "caveat": "EIU downgraded France to 'flawed democracy' (2024).", "top10": 8}, {"name": "Saudi Arabia", "code": "SA", "region": "Gulf", "democracy": "Authoritarian", "gov": 2, "axes": {"minerals": 1, "equip": 0, "fab": 0, "compute": 3, "capital": 3, "models": 1, "market": 1, "gov_conv": 1}, "leverage": 10, "tier": "D", "key": "PIF sovereign capital + HUMAIN compute + cheap energy; first Arab GPAI member (2026).", "caveat": "Autocracy; US-chip-dependent.", "top10": 9}, {"name": "United Kingdom", "code": "GB", "region": "Europe", "democracy": "Full", "gov": 3, "axes": {"minerals": 0, "equip": 2, "fab": 0, "compute": 1, "capital": 1, "models": 3, "market": 1, "gov_conv": 3}, "leverage": 11, "tier": "C", "key": "Arm - the CPU architecture behind >99% of mobile & much AI-edge compute - + elite talent + first AI (Security) Institute & Bletchley.", "caveat": "DeepMind is Alphabet (US)-owned; UK did not sign the Paris 2025 declaration.", "top10": 10}, {"name": "Brazil", "code": "BR", "region": "Americas", "democracy": "Flawed", "gov": 2, "axes": {"minerals": 2, "equip": 0, "fab": 0, "compute": 2, "capital": 1, "models": 1, "market": 3, "gov_conv": 2}, "leverage": 11, "tier": "A", "key": "Clean-energy data-centre host of the Americas (TikTok $37.7B in Ceara) + niobium & latent heavy-REE + Pix DPI (213M).", "caveat": "Natural global-south anchor (clean energy + minerals + market).", "top10": null}, {"name": "Canada", "code": "CA", "region": "Americas", "democracy": "Full", "gov": 3, "axes": {"minerals": 2, "equip": 0, "fab": 0, "compute": 2, "capital": 1, "models": 3, "market": 1, "gov_conv": 3}, "leverage": 12, "tier": "B", "key": "Mila/Vector talent (#2 worldwide) & Cohere + hydro compute & a C$2B sovereign-compute fund; CAISI + GPAI co-founder.", "caveat": "", "top10": null}, {"name": "Singapore", "code": "SG", "region": "SE Asia", "democracy": "Hybrid", "gov": 3, "axes": {"minerals": 0, "equip": 1, "fab": 1, "compute": 1, "capital": 3, "models": 2, "market": 1, "gov_conv": 3}, "leverage": 12, "tier": "C", "key": "Temasek/GIC (~$1.3T) capital + governance leadership (Singapore Consensus) + orchestration of regional data centres.", "caveat": "Electoral-authoritarian / hybrid regime - a values caveat for a democratic coalition.", "top10": null}, {"name": "Australia", "code": "AU", "region": "Oceania", "democracy": "Full", "gov": 2, "axes": {"minerals": 3, "equip": 0, "fab": 0, "compute": 1, "capital": 1, "models": 1, "market": 1, "gov_conv": 2}, "leverage": 9, "tier": "C", "key": "Lynas - the only producer of separated HEAVY rare earths outside China - + lithium #1; new AISI (2025).", "caveat": "", "top10": null}, {"name": "Indonesia", "code": "ID", "region": "SE Asia", "democracy": "Flawed", "gov": 1, "axes": {"minerals": 3, "equip": 0, "fab": 0, "compute": 2, "capital": 1, "models": 1, "market": 2, "gov_conv": 1}, "leverage": 10, "tier": "A", "key": "Nickel (~55-62% of mine supply) + 285M market / ASEAN's largest digital economy + Batam data centres.", "caveat": "Refining is Chinese-controlled; grid coal-heavy; no AI law yet.", "top10": null}, {"name": "South Africa", "code": "ZA", "region": "Africa", "democracy": "Flawed", "gov": 1, "axes": {"minerals": 3, "equip": 0, "fab": 0, "compute": 1, "capital": 1, "models": 1, "market": 2, "gov_conv": 2}, "leverage": 10, "tier": "A", "key": "Platinum-group metals incl. ruthenium/iridium (entering advanced chips) + African responsible-AI leadership (hosts GIRAI).", "caveat": "Draft National AI Policy withdrawn Apr 2026 over AI-hallucinated citations; grid-constrained.", "top10": null}, {"name": "Norway", "code": "NO", "region": "Europe", "democracy": "Full", "gov": 2, "axes": {"minerals": 1, "equip": 0, "fab": 0, "compute": 2, "capital": 3, "models": 1, "market": 1, "gov_conv": 2}, "leverage": 10, "tier": "C", "key": "GPFG ($2.2T - largest transparent shareholder of the AI stack) + hydro-powered compute (Stargate Norway).", "caveat": "Its capital is index-passive, not a deal vehicle.", "top10": null}, {"name": "Israel", "code": "IL", "region": "MENA", "democracy": "Flawed", "gov": 1, "axes": {"minerals": 0, "equip": 2, "fab": 1, "compute": 0, "capital": 1, "models": 3, "market": 0, "gov_conv": 1}, "leverage": 8, "tier": "C", "key": "Chip-design centres (Intel/Nvidia/Tower) + #1 per-capita AI talent density (AI21 Labs).", "caveat": "Thin governance institutions; no AISI; not in the international network.", "top10": null}, {"name": "United States", "code": "US", "region": "Americas", "democracy": "Flawed", "gov": 3, "axes": {"minerals": 1, "equip": 3, "fab": 2, "compute": 3, "capital": 3, "models": 3, "market": 2, "gov_conv": 3}, "leverage": 20, "tier": "X", "key": "The frontier pole: EDA + equipment + Nvidia GPUs + hyperscale compute + capital + export-control leverage.", "caveat": "Reference benchmark - one of the two concentrated poles.", "top10": null}, {"name": "China", "code": "CN", "region": "East Asia", "democracy": "Authoritarian", "gov": 2, "axes": {"minerals": 3, "equip": 1, "fab": 2, "compute": 3, "capital": 3, "models": 3, "market": 3, "gov_conv": 2}, "leverage": 20, "tier": "X", "key": "The other pole: ~70-90% of critical-mineral processing + scale compute, capital, models and market.", "caveat": "Reference benchmark - the other concentrated pole.", "top10": null}];
 const AX=["minerals","equip","fab","compute","capital","models","market","gov_conv"];
+const AXH={minerals:"Min",equip:"Eq",fab:"Fab",compute:"Cmp",capital:"Cap",models:"Mdl",market:"Mkt",gov_conv:"Gov"};
+const AXFULL={minerals:"Minerals & materials",equip:"Equipment, design & IP",fab:"Fabrication, packaging & memory",compute:"Compute, data centres & energy",capital:"Capital",models:"Models & talent",market:"Market & data / DPI",gov_conv:"Governance & convening"};
+const GOVL=["Nascent","Developing","Medium","High"];
+const demColor={Full:"#2E74B5",Flawed:"#2E8B8B",Hybrid:"#C8860D",Authoritarian:"#B23A48"};
+const tierColor={A:"#1E5C3A",B:"#16365C",C:"#C8860D",D:"#B23A48",X:"#8A94A6"};
+const tierName={A:"Anchor",B:"Bridge",C:"Engage",D:"Counterpart",X:"Pole"};
+let state={sort:"leverage",dir:-1,tier:"All",dem:"All",region:"All",q:"",poles:false};
+
+const regions=[...new Set(DATA.filter(d=>d.tier!=="X").map(d=>d.region))].sort();
+const rsel=document.getElementById("fRegion");
+["All",...regions].forEach(r=>{let o=document.createElement("option");o.value=r;o.textContent=r;rsel.appendChild(o);});
+function chips(id,vals,key){const c=document.getElementById(id);vals.forEach(v=>{const b=document.createElement("button");b.className="chip"+(state[key]===v?" on":"");b.textContent=v;b.onclick=()=>{state[key]=v;render();};c.appendChild(b);});}
+function rebuildChips(){document.getElementById("fTier").innerHTML="";document.getElementById("fDem").innerHTML="";
+ chips("fTier",["All","A","B","C","D"],"tier");chips("fDem",["All","Full","Flawed","Hybrid","Authoritarian"],"dem");}
+
+function heat(v){const m={0:["#ffffff","#1A1A1A"],1:["#EAF1F9","#1A1A1A"],2:["#A9C6E8","#1A1A1A"],3:["#2E74B5","#ffffff"]};return m[v];}
+function filtered(){return DATA.filter(d=>{
+ if(d.tier==="X") return state.poles;
+ if(state.tier!=="All"&&d.tier!==state.tier) return false;
+ if(state.dem!=="All"&&d.democracy!==state.dem) return false;
+ if(state.region!=="All"&&d.region!==state.region) return false;
+ if(state.q&&!d.name.toLowerCase().includes(state.q.toLowerCase())) return false;
+ return true;});}
+function sorted(rows){const k=state.sort;return rows.slice().sort((a,b)=>{
+ let av,bv;
+ if(k==="name"||k==="region"||k==="democracy"){av=a[k];bv=b[k];return state.dir*av.localeCompare(bv);}
+ if(k==="gov"){av=a.gov;bv=b.gov;}
+ else if(k==="top10"){av=a.top10||99;bv=b.top10||99;}
+ else if(AX.includes(k)){av=a.axes[k];bv=b.axes[k];}
+ else{av=a[k];bv=b[k];}
+ return state.dir*(av-bv);});}
+
+function buildHead(){const tr=document.getElementById("head");tr.innerHTML="";
+ const cols=[["name","Country","l"],["top10","Top10",""],["leverage","Σ",""],["gov","Gov.",""],["democracy","Regime","l"]];
+ AX.forEach(a=>cols.splice(2,0,[a,AXH[a],""]));
+ // order: name, 8 axes, Σ, gov, regime, tier
+ const order=[["name","Country","l"],...AX.map(a=>[a,AXH[a],""]),["leverage","Σ",""],["gov","Gov.",""],["democracy","Regime","l"],["top10","Rank",""]];
+ order.forEach(([k,lab,cl])=>{const th=document.createElement("th");th.className=cl||"";th.textContent=lab+(state.sort===k?(state.dir<0?" ▾":" ▴"):"");th.title=AXFULL[k]||lab;th.onclick=()=>{if(state.sort===k)state.dir*=-1;else{state.sort=k;state.dir=(k==="name"||k==="region"||k==="democracy")?1:-1;}render();};tr.appendChild(th);});}
+
+function buildBody(rows){const tb=document.getElementById("body");tb.innerHTML="";
+ rows.forEach(d=>{const tr=document.createElement("tr");
+  let tds=`<td class="name"><span class="rank" style="background:${tierColor[d.tier]}">${d.tier}</span>${d.name}</td>`;
+  AX.forEach(a=>{const[bg,fg]=heat(d.axes[a]);tds+=`<td style="background:${bg};color:${fg};font-weight:${d.axes[a]===3?700:400}">${d.axes[a]}</td>`;});
+  tds+=`<td style="font-weight:700;color:#16365C">${d.leverage}</td>`;
+  tds+=`<td>${GOVL[d.gov]}</td>`;
+  tds+=`<td class="l"><span class="dem" style="background:${demColor[d.democracy]}">${d.democracy}</span></td>`;
+  tds+=`<td>${d.top10?("#"+d.top10):"—"}</td>`;
+  tr.innerHTML=tds;
+  const det=document.createElement("tr");det.className="hide";
+  det.innerHTML=`<td colspan="13" class="note"><b>Leverage:</b> ${d.key}${d.caveat?` &nbsp; <span class="cav"><b>Caveat:</b> ${d.caveat}</span>`:""}</td>`;
+  tr.onclick=()=>det.classList.toggle("hide");
+  tb.appendChild(tr);tb.appendChild(det);});}
+
+function buildScatter(rows){const svg=document.getElementById("sc");const W=940,H=540,m={l:64,r:24,t:24,b:54};
+ const x=v=>m.l+(v-4)/(22-4)*(W-m.l-m.r);const y=v=>H-m.b-(v+0.0)/3*(H-m.t-m.b);
+ let s=`<rect x="0" y="0" width="${W}" height="${H}" fill="#fff"/>`;
+ [0,1,2,3].forEach(g=>{s+=`<line class="gl" x1="${m.l}" y1="${y(g)}" x2="${W-m.r}" y2="${y(g)}" stroke="#EEF1F5"/>`;s+=`<text class="axt" x="${m.l-10}" y="${y(g)+4}" text-anchor="end">${GOVL[g]}</text>`;});
+ for(let v=4;v<=22;v+=2){s+=`<text class="axt" x="${x(v)}" y="${H-m.b+20}" text-anchor="middle">${v}</text>`;}
+ s+=`<text class="axt" x="${(W)/2}" y="${H-12}" text-anchor="middle">AI value-chain leverage (0–24)</text>`;
+ s+=`<text class="axt" transform="translate(16,${H/2}) rotate(-90)" text-anchor="middle">Governance maturity</text>`;
+ const seen={};
+ rows.forEach(d=>{let jy=0;const key=d.leverage+"-"+d.gov;seen[key]=(seen[key]||0)+1;jy=(seen[key]-1)*9*((seen[key]%2)?1:-1);
+  const cx=x(d.leverage),cy=y(d.gov)+jy*0.6;const col=d.tier==="X"?"#8A94A6":demColor[d.democracy];
+  const lab=d.name.replace("United Arab Emirates","UAE").replace("United Kingdom","UK").replace("United States","US").replace("South Korea","S.Korea").replace("South Africa","S.Africa").replace("Netherlands","Neth.");
+  s+=`<circle class="pt" cx="${cx}" cy="${cy}" r="${d.tier==="X"?9:8}" fill="${col}" opacity="${d.tier==="X"?0.55:0.9}"><title>${d.name} — leverage ${d.leverage}/24, ${GOVL[d.gov]} governance, ${d.democracy}\n${d.key}</title></circle>`;
+  s+=`<text x="${cx+11}" y="${cy+4}" font-size="11" fill="#1A1A1A">${lab}</text>`;});
+ svg.innerHTML=s;}
+
+function render(){rebuildChips();buildHead();const rows=sorted(filtered());buildBody(rows);buildScatter(rows);}
+document.getElementById("q").addEventListener("input",e=>{state.q=e.target.value;render();});
+document.getElementById("fRegion").addEventListener("change",e=>{state.region=e.target.value;render();});
+document.getElementById("poles").addEventListener("change",e=>{state.poles=e.target.checked;render();});
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));t.classList.add("on");
+ const v=t.dataset.view;document.getElementById("view-table").classList.toggle("hide",v!=="table");document.getElementById("view-scatter").classList.toggle("hide",v!=="scatter");});
+render();
 </script></body></html>
