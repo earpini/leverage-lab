@@ -26,7 +26,7 @@ export function memberContribution(state, member) {
   const positional = p.positionalCountries.includes(member.code);
   const factor = positional
     ? p.positionalFactor
-    : p.memberFactor + Math.min(p.m6FactorBonusCap, state.m6Uses * p.m6FactorBonus);
+    : p.memberFactor + state.m6FactorBonus;
   return axesSum(country) * factor;
 }
 

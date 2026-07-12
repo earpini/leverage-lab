@@ -8,7 +8,7 @@ import {
   INSTRUMENTS, CRITERIA, DIALS, POLE_NAMES, OFFER_COPY, ENDINGS,
   AXIS_NAMES, countryGloss, leanGloss, riskLabel, COACH_TIPS, INTRO,
   COUNTRY_HOOKS, playerNote, PICKER, OUTCOME_TILES, outcomeWord, FRONTIER_LABEL, REGIME_NAMES, GRIP, LATECOMER,
-  instrumentCopy
+  instrumentCopy, M6_TIERS
 } from './copy.js';
 import { isOutside } from '../engine/game.js';
 
@@ -178,6 +178,16 @@ function thisYearPanel(g) {
           <p class="kicker">In the news</p>
           <h3>${esc(event.name)}</h3>
           <p>${esc(event.copy)}</p>
+          ${g.pendingEvent ? `
+            <p class="event-question">${esc(event.question ?? 'Your call.')}</p>
+            <div class="event-choices">
+              <button class="btn-quiet" data-choice="a">${esc(event.choices.a.label)}</button>
+              <button class="btn-quiet" data-choice="b">${esc(event.choices.b.label)}</button>
+            </div>
+            <p class="keyline muted">Deciding costs no moves — but not deciding is a decision: the year ends on the second option.</p>`
+          : g.lastChoice && g.lastChoice.eventId === event.id
+            ? `<p class="event-question">You chose: ${esc(g.lastChoice.label.toLowerCase())}.</p>`
+            : ''}
         </div>` : ''}
       ${dispatches.map((l) => {
         const who = l.text.startsWith('Washington') ? 'Washington' : l.text.startsWith('Beijing') ? 'Beijing' : 'The superpowers';
@@ -308,8 +318,14 @@ function movesPanel(g, acts) {
         ${order.map((id) => {
           const a = acts[id];
           if (!a) return '';
-          const meta = copy[id];
-          const badge = id === 'm1' && boosted ? '<span class="badge">extra strong this year</span>' : '';
+          let meta = copy[id];
+          if (id === 'm6') {
+            const tier = M6_TIERS[Math.min(g.m6Uses, M6_TIERS.length - 1)];
+            meta = { ...meta, name: tier.name, blurb: tier.blurb };
+          }
+          let badge = id === 'm1' && boosted ? '<span class="badge">extra strong this year</span>' : '';
+          if (id === 'm4' && a.enabled && g.legalOpening > 0) badge = `<span class="badge">live case: ${g.legalOpening} year${g.legalOpening > 1 ? 's' : ''}</span>`;
+          if (id === 'm6' && g.m6Uses > 0) badge = `<span class="badge cool">tier ${Math.min(g.m6Uses + 1, M6_TIERS.length)}</span>`;
           return `
           <button class="btn action-card" data-action="${id}" ${a.enabled ? '' : 'disabled'} ${a.reason ? `title="${esc(a.reason)}"` : ''}>
             <span class="action-head">${esc(meta.name)} ${badge}<span class="cost">${a.ap} move${a.ap > 1 ? 's' : ''}</span></span>
@@ -475,6 +491,9 @@ function wire(root, handlers) {
   }
   for (const btn of root.querySelectorAll('[data-variant]')) {
     btn.addEventListener('click', () => handlers.onVariant(btn.dataset.variant));
+  }
+  for (const btn of root.querySelectorAll('[data-choice]')) {
+    btn.addEventListener('click', () => handlers.onAction({ type: 'event', choice: btn.dataset.choice }));
   }
   root.querySelector('[data-end-turn]')?.addEventListener('click', handlers.onEndTurn);
   root.querySelector('[data-replay]')?.addEventListener('click', handlers.onReplay);

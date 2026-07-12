@@ -73,6 +73,10 @@ export function createState({ params, countries, scenarios, events, seed, scenar
     eventDeck: events.events.map((e) => e.id),
     drawnEvents: [],
     currentEvent: null,
+    pendingEvent: null,
+    lastChoice: null,
+    legalOpening: 0,
+    m6FactorBonus: 0,
     log: [],
     history: [],
     ended: null

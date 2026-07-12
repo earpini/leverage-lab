@@ -40,6 +40,13 @@ export const INSTRUMENTS = {
   }
 };
 
+/** M6 deepens each time you use it. */
+export const M6_TIERS = [
+  { name: 'Pool computing power', blurb: 'Start where it hurts least: shared capacity, shared data. Everyone levels up a little.' },
+  { name: 'Open a joint lab', blurb: 'Shared training runs, shared people. The alliance starts building what none of its members could alone.' },
+  { name: 'Share frontier models', blurb: 'The deepest tier: the alliance runs its own models. Staying stops being loyalty and becomes self-interest.' }
+];
+
 export const CRITERIA = [
   { key: 'c1', label: 'Bargaining power', bad: false, hint: 'What Brazil’s assets are worth in a negotiation. Grow it by setting conditions on Big Tech.' },
   { key: 'c2', label: 'Alliance strength', bad: false, hint: 'Trust plus members. Falls when allies leave or you cut solo deals.' },

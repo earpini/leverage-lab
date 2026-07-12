@@ -90,6 +90,7 @@ test('pole offers: declining costs exposure, accepting ends the run on terms', (
 test('snapshot stays in bounds for a full aggressive run', () => {
   const g = start('bounds', 'acceleration');
   const policy = (gg, spend) => {
+    gg.crit.c5 = 85; // strong institutions keep the courtroom door open (m4 gate)
     spend({ type: 'm4' });
     spend({ type: 'm4' });
   };

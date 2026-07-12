@@ -155,6 +155,23 @@ Dial starts and drifts encode the paper's three trajectories: bipolar lock-in (r
 spring (rivalry eases, trust decays at 0.7×, the cheapest chokepoint). Spring is easier to
 organise in; nothing about it converts your assets for you.
 
+## events as decisions
+
+Every event is a two-option question. Option 'a' asserts (set terms, coordinate, consult,
+open the books), option 'b' accommodates — and an undecided event resolves to 'b' at year end,
+because drift is a choice too. Deciding costs no moves, but some assertive options spend one
+(`ap: -1`): hosting the summit, consulting properly, rushing a response. The licensing case
+grants `legalOpening` either way (2 years if you let it run, 1 if you settle) — which is what
+the court move needs.
+
+## evolving moves
+
+M4 (take them to court) requires an opening: `legalOpening > 0` or C5 ≥ 70 — no live case, no
+strike. M6 (share technology) deepens in tiers — pool computing → joint lab → share frontier
+models — with escalating structural relief and pool-factor bonuses (capped at +0.20). M3's
+sustaining cost is 1 + ⌊members/5⌋: a bigger coalition is a bigger bill. M5 stays always
+available, always seductive — that pillar does not move.
+
 ## events DSL
 
 Effect keys: `c3 c4 c5 c6 c7` (criteria stock deltas), `c1Flat` (permanent flat C1),

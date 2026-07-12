@@ -1,8 +1,12 @@
-// World-phase events: weighted draw without replacement, effects DSL applied to state.
+// World-phase events: weighted draw without replacement — and each event is a
+// decision. Drawing stores a pending question; the player answers it during
+// their phase (or the year answers it for them with the passive option 'b').
 // The DSL keys are documented in docs/model-notes.md.
 
 import { clamp, log } from './state.js';
 import { pickWeighted } from './rng.js';
+
+export const DEFAULT_CHOICE = 'b';
 
 export function drawEvent(state) {
   const remaining = state.data.events.events.filter((e) => state.eventDeck.includes(e.id));
@@ -11,32 +15,38 @@ export function drawEvent(state) {
   state.eventDeck = state.eventDeck.filter((id) => id !== event.id);
   state.drawnEvents.push(event.id);
   state.currentEvent = event.id;
-  applyEvent(state, event);
+  state.pendingEvent = event.id;
+  state.lastChoice = null;
   log(state, 'world', `Event — ${event.name}: ${event.copy}`);
   return event;
 }
 
-function applyEvent(state, event) {
-  let effects = { ...event.effects };
+/** Resolve the pending event with choice 'a' or 'b'. */
+export function resolveEvent(state, choiceKey, auto = false) {
+  if (!state.pendingEvent) throw new Error('No event to decide');
+  const event = state.data.events.events.find((e) => e.id === state.pendingEvent);
+  const choice = event.choices[choiceKey];
+  if (!choice) throw new Error(`Unknown choice: ${choiceKey}`);
 
-  // Conditional overlays (each replaces the base keys it names).
-  if (event.ifFacilityFunded && state.facility.streak > 0) {
-    effects = { ...effects, ...event.ifFacilityFunded };
+  let effects = { ...choice.effects };
+  if (choice.ifFacilityFunded && state.facility.streak > 0) {
+    effects = { ...effects, ...choice.ifFacilityFunded };
   }
-  if (event.effects.ifTierD || event.ifTierD) {
-    const block = event.ifTierD ?? event.effects.ifTierD;
-    const hasTierD = state.coalition.some((m) => state.data.byCode[m.code].tier === 'D');
-    if (hasTierD) effects = { ...effects, ...block };
-    delete effects.ifTierD;
+  if (choice.ifTierD && state.coalition.some((m) => state.data.byCode[m.code].tier === 'D')) {
+    effects = { ...effects, ...choice.ifTierD };
   }
-  if (effects.ifConvertedMinerals) {
-    if ((state.player.converted.minerals ?? 0) >= 0.5) {
-      effects = { ...effects, ...effects.ifConvertedMinerals };
-    }
-    delete effects.ifConvertedMinerals;
+  if (choice.ifConvertedMinerals && (state.player.converted.minerals ?? 0) >= 0.5) {
+    effects = { ...effects, ...choice.ifConvertedMinerals };
   }
-
   applyEffects(state, effects);
+
+  state.pendingEvent = null;
+  state.lastChoice = { eventId: event.id, key: choiceKey, label: choice.label };
+  log(state, auto ? 'resolution' : 'player',
+    auto
+      ? `${event.name}: you never decided, so the year decided for you — ${choice.label.toLowerCase()}.`
+      : `${event.name}: ${choice.label.toLowerCase()}.`);
+  return state;
 }
 
 export function applyEffects(state, effects) {
@@ -53,6 +63,12 @@ export function applyEffects(state, effects) {
         break;
       case 'nature':
         state.nature = clamp(state.nature + value);
+        break;
+      case 'ap':
+        state.ap = Math.max(0, Math.min(state.params.game.apPerTurn, state.ap + value));
+        break;
+      case 'legalOpening':
+        state.legalOpening = Math.max(state.legalOpening, value);
         break;
       case 'rivalry': case 'pace': case 'demand':
         state.dials[key] = Math.min(1, Math.max(0, state.dials[key] + value));

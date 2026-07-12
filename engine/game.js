@@ -2,7 +2,7 @@
 // player phase (actions via applyAction) → resolution (endTurn).
 
 import { createState, clamp, log } from './state.js';
-import { drawEvent } from './events.js';
+import { drawEvent, resolveEvent, DEFAULT_CHOICE } from './events.js';
 import { polePhase } from './poles.js';
 import { snapshot, pooledLeverage, chokepointThreshold } from './criteria.js';
 import { checkCrisis, evaluateEnding } from './endings.js';
@@ -60,6 +60,11 @@ export function endTurn(state) {
   if (state.flags.acceptedPole) {
     state.history.push(snapshot(state));
     return evaluateEnding(state);
+  }
+
+  // 0a. An undecided event resolves to the passive option — drift is a choice too.
+  if (state.pendingEvent) {
+    resolveEvent(state, DEFAULT_CHOICE, true);
   }
 
   // 0. An unanswered offer lapses as a polite decline.
@@ -186,6 +191,7 @@ export function endTurn(state) {
   // 6. Housekeeping + history.
   state.facility.fundedThisTurn = false;
   state.turnMods = { m1Boost: 0, recruitDiscount: 0 };
+  state.legalOpening = Math.max(0, state.legalOpening - 1);
   state.history.push(snapshot(state));
 
   // 7. Crises end the run immediately.

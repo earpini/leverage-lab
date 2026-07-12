@@ -389,6 +389,13 @@ html, body { margin: 0; padding: 0; }
   margin: 0 0 var(--ea-space-1);
 }
 .event-card h3 { font-size: var(--ea-size-h4); margin: 0 0 var(--ea-space-2); }
+.event-question {
+  font-weight: var(--ea-weight-semibold);
+  font-size: var(--ea-size-ui);
+  margin: var(--ea-space-4) 0 var(--ea-space-2);
+}
+.event-choices { display: grid; gap: var(--ea-space-2); }
+.event-choices .btn-quiet { text-align: left; background: var(--ea-paper); }
 .event-card p, .dispatch p {
   font-family: var(--ea-font-serif);
   font-size: var(--ea-size-ui);

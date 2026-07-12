@@ -4,6 +4,7 @@
 import { clamp, log, countryByCode } from './state.js';
 import { c1, c2, pooledLeverage } from './criteria.js';
 import { computeTerms } from './endings.js';
+import { resolveEvent } from './events.js';
 
 export const INSTRUMENT_IDS = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6'];
 
@@ -112,16 +113,28 @@ function applyM5(state) {
   log(state, 'player', 'You cut a solo deal. A quick win for your country this year. Your allies took note — and the superpowers got a little more indispensable.');
 }
 
-/** M6 Pool the commons: raises C7, lowers defection risk structurally. */
+/** M6 Pool the commons — in tiers: pool computing → joint lab → shared models. */
+const M6_LOGS = [
+  'You pooled computing power across the alliance. Allies get more capable, and leaving gets less tempting.',
+  'The alliance opens a joint lab — shared data, shared training runs. Its members now build things none of them could alone.',
+  'The alliance now shares its own frontier-adjacent models. Staying is not loyalty any more; it is self-interest.'
+];
+
 function applyM6(state) {
   const m6 = state.params.instruments.m6;
-  const gain = m6.c7Gain * Math.pow(m6.diminish, state.m6Uses);
-  state.crit.c7 = clamp(state.crit.c7 + gain);
-  state.crit.c4 = clamp(state.crit.c4 + m6.c4Gain);
-  state.crit.c6 = clamp(state.crit.c6 + m6.c6Gain);
+  const tier = m6.tiers[Math.min(state.m6Uses, m6.tiers.length - 1)];
+  state.crit.c7 = clamp(state.crit.c7 + tier.c7);
+  state.crit.c4 = clamp(state.crit.c4 + tier.c4);
+  state.crit.c6 = clamp(state.crit.c6 + tier.c6);
+  state.m6FactorBonus = Math.min(m6.factorBonusCap, state.m6FactorBonus + tier.factorBonus);
   state.m6Uses += 1;
-  for (const m of state.coalition) m.defRisk -= m6.structuralRelief;
-  log(state, 'player', 'You shared technology across the alliance. Your allies get more capable, and leaving gets less tempting.');
+  for (const m of state.coalition) m.defRisk -= tier.structuralRelief;
+  log(state, 'player', M6_LOGS[Math.min(state.m6Uses - 1, M6_LOGS.length - 1)]);
+}
+
+/** M4 needs an opening: a live case in your courts, or institutions strong enough to make one. */
+export function m4Open(state) {
+  return state.legalOpening > 0 || state.crit.c5 >= state.params.instruments.m4.gateC5;
 }
 
 function apCost(state, action) {
@@ -129,7 +142,11 @@ function apCost(state, action) {
   switch (action.type) {
     case 'm1': return ins.m1.ap;
     case 'm2': return recruitCost(state, action.code);
-    case 'm3': return state.facility.everFunded ? ins.m3.ap : ins.m3.apFirst;
+    case 'm3':
+      // A bigger coalition is a bigger bill: sustaining scales with membership.
+      return state.facility.everFunded
+        ? ins.m3.ap + Math.floor(state.coalition.length / ins.m3.memberCostDivisor)
+        : ins.m3.apFirst;
     case 'm4': return ins.m4.ap;
     case 'm5': return ins.m5.ap;
     case 'm6': return ins.m6.ap;
@@ -165,7 +182,13 @@ export function legalActions(state) {
       enabled: !outside && state.ap >= apCost(state, { type: 'm3' }),
       reason: outside ? outsideReason : null
     },
-    { type: 'm4', ap: apCost(state, { type: 'm4' }), enabled: state.ap >= apCost(state, { type: 'm4' }) },
+    {
+      type: 'm4',
+      ap: apCost(state, { type: 'm4' }),
+      enabled: state.ap >= apCost(state, { type: 'm4' }) && m4Open(state),
+      reason: !m4Open(state) ? `No opening: courts need a live case, or consistency ${state.params.instruments.m4.gateC5}+` : null,
+      opening: state.legalOpening
+    },
     { type: 'm5', ap: apCost(state, { type: 'm5' }), enabled: state.ap >= apCost(state, { type: 'm5' }) },
     {
       type: 'm6',
@@ -190,6 +213,10 @@ export function legalActions(state) {
     list.push({ type: 'accept', ap: 0, enabled: true });
     list.push({ type: 'decline', ap: 0, enabled: true });
   }
+  if (state.pendingEvent) {
+    const event = state.data.events.events.find((e) => e.id === state.pendingEvent);
+    list.push({ type: 'event', ap: 0, enabled: true, event: event.id, question: event.question, choices: event.choices });
+  }
   return list;
 }
 
@@ -205,6 +232,9 @@ export function applyAction(state, action) {
   }
   if (action.type === 'join') {
     return joinClub(state);
+  }
+  if (action.type === 'event') {
+    return resolveEvent(state, action.choice);
   }
   const cost = apCost(state, action);
   if (state.ap < cost) throw new Error(`Not enough AP for ${action.type} (needs ${cost}, has ${state.ap})`);
@@ -224,7 +254,10 @@ export function applyAction(state, action) {
       if (state.facility.fundedThisTurn) throw new Error('Facility already funded this turn');
       applyM3(state);
       break;
-    case 'm4': applyM4(state); break;
+    case 'm4':
+      if (!m4Open(state)) throw new Error('No legal opening for m4');
+      applyM4(state);
+      break;
     case 'm5': applyM5(state); break;
     case 'm6':
       if (isOutside(state)) throw new Error('Not in the alliance yet');

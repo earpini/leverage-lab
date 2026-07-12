@@ -1,93 +1,144 @@
 {
   "_meta": {
-    "note": "12 event cards. One fires per world phase, weighted by scenario, drawn without replacement. Copy is plain language for players with zero context. Real instruments (REDATA, ILO-169) get a one-line gloss; the events themselves are fictional. Effects DSL documented in docs/model-notes.md."
+    "note": "12 event cards. One fires per world phase, weighted by scenario, drawn without replacement — and each one is a DECISION: two options with forked effects. Option 'a' asserts, option 'b' accommodates; an unanswered event resolves to 'b' at year end (drift is a choice too). DSL documented in docs/model-notes.md; new keys: ap (move delta this year), legalOpening (turns the courts have a live case).",
+    "provenance": "Real instruments (REDATA, ILO-169) get a one-line gloss; the events themselves are fictional."
   },
   "events": [
     {
       "id": "tariff-wave",
       "name": "Tariff threat",
       "copy": "Washington threatens tariffs on countries that put conditions on tech investment. That includes you.",
+      "question": "Hold the line?",
       "weights": { "bipolar": 3, "acceleration": 2, "spring": 1 },
-      "effects": { "c3": 3, "rivalry": 0.05 }
+      "choices": {
+        "a": { "label": "Stand firm — the conditions stay", "effects": { "c3": 4, "c4": 3 } },
+        "b": { "label": "Soften your terms this year", "effects": { "c4": -4, "m1Boost": -0.1 } }
+      }
     },
     {
       "id": "export-control-wave",
       "name": "Chip export crackdown",
       "copy": "The US tightens the rules on who can buy advanced chips. Every ally that depends on American computing power gets nervous.",
+      "question": "How do you respond?",
       "weights": { "bipolar": 3, "acceleration": 3, "spring": 1 },
-      "effects": { "rivalry": 0.06, "defRiskAll": 4 }
+      "choices": {
+        "a": { "label": "Coordinate a joint response with allies", "effects": { "trust": 3, "c3": 3 } },
+        "b": { "label": "Quietly comply", "effects": { "defRiskAll": 5, "c3": -2 } }
+      }
     },
     {
       "id": "datacentre-offer",
       "name": "The data centre offer",
-      "copy": "A tech giant wants to build a huge data centre on your grid. Perfect timing to demand terms — this year, Set conditions works extra hard. (Brazil pioneered a law for exactly this moment, called REDATA.)",
+      "copy": "A tech giant wants to build a huge data centre on your grid, and it wants an answer this year. (Brazil pioneered a law for exactly this moment: REDATA.)",
+      "question": "On whose terms?",
       "weights": { "bipolar": 2, "acceleration": 2, "spring": 2 },
-      "effects": { "m1Boost": 0.5, "nature": -2 }
+      "choices": {
+        "a": { "label": "Demand terms — jobs, energy, local benefit", "effects": { "m1Boost": 0.5, "nature": -2 } },
+        "b": { "label": "Wave it through, take the investment", "effects": { "c1Flat": 2, "nature": -4, "c4": -3 } }
+      }
     },
     {
       "id": "licensing-conflict",
       "name": "Big Tech vs your courts",
-      "copy": "Your courts take on a major AI company for training its models on local content without paying. For one season, the giants need something from you.",
+      "copy": "Your courts take up a case against a major AI company for training its models on local content without paying.",
+      "question": "Let it run?",
       "weights": { "bipolar": 2, "acceleration": 2, "spring": 2 },
-      "effects": { "c3": 2, "tempSpike": 0.8 }
+      "choices": {
+        "a": { "label": "Let the case run", "effects": { "tempSpike": 0.8, "c3": 2, "legalOpening": 2 } },
+        "b": { "label": "Settle quietly", "effects": { "c1Flat": 1, "c5": -2, "legalOpening": 1 } }
+      }
     },
     {
       "id": "summit",
       "name": "A summit that works",
-      "copy": "A global AI summit actually goes well for once. Ministers return your calls. Inviting countries into your alliance is cheaper this year.",
+      "copy": "A global AI summit actually goes well for once, and the follow-up is yours to host — if you spend the year on it.",
+      "question": "Host it?",
       "weights": { "bipolar": 1, "acceleration": 1, "spring": 3 },
-      "effects": { "trust": 4, "c5": 3, "c6": 1, "nature": 1, "recruitDiscount": 1 }
+      "choices": {
+        "a": { "label": "Host the follow-up (costs 1 move)", "effects": { "ap": -1, "trust": 4, "c5": 3, "c6": 1, "recruitDiscount": 1 } },
+        "b": { "label": "Send a deputy", "effects": { "trust": 1 } }
+      }
     },
     {
       "id": "brics-tech-bank",
       "name": "China's tech bank",
-      "copy": "China proposes a BRICS technology bank: cheap computing power, friendly financing, familiar faces. Some of your allies are listening. So are you — there is an offer on your table.",
+      "copy": "China proposes a BRICS technology bank: cheap computing power, friendly financing, familiar faces. Some of your allies are listening.",
+      "question": "Do you take the meeting?",
       "weights": { "bipolar": 2, "acceleration": 1, "spring": 2 },
-      "effects": { "offerPlayer": "cn", "memberPressure": { "pole": "cn", "amount": 6 } }
+      "choices": {
+        "a": { "label": "Explore Beijing's offer", "effects": { "offerPlayer": "cn", "memberPressure": { "pole": "cn", "amount": 6 } } },
+        "b": { "label": "Keep your distance", "effects": { "c3": 1 } }
+      }
     },
     {
       "id": "continental-compute-pact",
       "name": "America's compute pact",
-      "copy": "The US floats an all-Americas computing pact: cheap access for countries that play by its rules. Your US-leaning allies are tempted — and there is an offer on your table.",
+      "copy": "The US floats an all-Americas computing pact: cheap access for countries that play by its rules. Your US-leaning allies are tempted.",
+      "question": "Do you take the meeting?",
       "weights": { "bipolar": 2, "acceleration": 2, "spring": 1 },
-      "effects": { "offerPlayer": "us", "memberPressure": { "pole": "us", "amount": 8 } }
+      "choices": {
+        "a": { "label": "Hear Washington out", "effects": { "offerPlayer": "us", "memberPressure": { "pole": "us", "amount": 8 } } },
+        "b": { "label": "Keep your distance", "effects": { "c3": 1 } }
+      }
     },
     {
       "id": "minerals-squeeze",
       "name": "Minerals boom",
-      "copy": "Mineral prices jump worldwide as AI hardware demand bites. If you set conditions on your minerals, that is bargaining power now. If not, it is just weather.",
+      "copy": "Mineral prices jump worldwide as AI hardware demand bites. Everyone suddenly remembers what is under your ground.",
+      "question": "Squeeze back?",
       "weights": { "bipolar": 2, "acceleration": 2, "spring": 1 },
-      "effects": { "demand": 0.08, "nature": -3, "ifConvertedMinerals": { "c1Flat": 3 } }
+      "choices": {
+        "a": {
+          "label": "Tighten export permits",
+          "effects": { "c3": 3, "c1Flat": 1 },
+          "ifConvertedMinerals": { "c1Flat": 4 }
+        },
+        "b": { "label": "Let the market run", "effects": { "demand": 0.08, "nature": -3 } }
+      }
     },
     {
       "id": "ilo-169-halt",
       "name": "The consultation halt",
-      "copy": "A court pauses a big data centre because Indigenous and local communities were never consulted — in much of the world (Brazil included, via ILO-169) that is a real legal duty. Handled badly, this costs public trust.",
+      "copy": "A court pauses a big data centre because Indigenous and local communities were never consulted — in much of the world (Brazil included, via ILO-169) that is a real legal duty.",
+      "question": "Consult, or push?",
       "weights": { "bipolar": 2, "acceleration": 2, "spring": 2 },
-      "effects": { "c6": -3, "c5": -1, "nature": -2 },
-      "ifFacilityFunded": { "c6": -1, "c5": 0 }
+      "choices": {
+        "a": { "label": "Pause and consult properly (costs 1 move)", "effects": { "ap": -1, "c6": 2, "nature": 1, "trust": 1 } },
+        "b": { "label": "Push it through", "effects": { "c6": -5, "c5": -1, "nature": -2 } }
+      }
     },
     {
       "id": "water-conflict",
       "name": "The water crisis",
-      "copy": "A data centre's cooling system drains a town's reservoir in the middle of a drought. It is on the news every night, and people are asking who this AI boom is actually for.",
+      "copy": "A data centre's cooling system drains a town's reservoir in the middle of a drought. It is on the news every night.",
+      "question": "Own it, or defend it?",
       "weights": { "bipolar": 1, "acceleration": 2, "spring": 1 },
-      "effects": { "c6": -3, "demand": 0.03, "nature": -6 }
+      "choices": {
+        "a": { "label": "Publish the water data, renegotiate the deal", "effects": { "nature": 2, "c3": 1, "c6": -1 } },
+        "b": { "label": "Defend the project", "effects": { "c6": -4, "nature": -6, "c1Flat": 1 } }
+      }
     },
     {
       "id": "benefit-audit",
       "name": "The audit",
-      "copy": "An independent audit asks a simple question: where did the promised local benefits go? If your alliance includes autocracies, the answers look bad this week.",
+      "copy": "An independent audit asks a simple question: where did the promised local benefits go?",
+      "question": "Open the books?",
       "weights": { "bipolar": 2, "acceleration": 2, "spring": 2 },
-      "effects": { "c6": -1 },
-      "ifTierD": { "c6": -4 }
+      "choices": {
+        "a": { "label": "Open the books", "effects": { "c6": 2 }, "ifTierD": { "c6": -2 } },
+        "b": { "label": "Bury it", "effects": { "c6": -1 }, "ifTierD": { "c6": -5 } }
+      }
     },
     {
       "id": "frontier-leap",
       "name": "AI takes a leap",
-      "copy": "AI capability jumps overnight, and nobody outside the superpowers saw it coming. They need everyone else a little less than they did yesterday.",
+      "copy": "AI capability jumps overnight, and nobody outside the superpowers saw it coming.",
+      "question": "Scramble, or absorb?",
       "weights": { "bipolar": 1, "acceleration": 3, "spring": 1 },
-      "effects": { "pace": 0.08, "c7": -2, "nature": -1 }
+      "choices": {
+        "a": { "label": "Rush a response package (costs 1 move)", "effects": { "ap": -1, "c7": 3, "pace": 0.08 } },
+        "b": { "label": "Absorb it", "effects": { "pace": 0.08, "c7": -2, "nature": -1 } }
+      }
     }
   ]
 }

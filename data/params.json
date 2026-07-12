@@ -88,8 +88,6 @@
   "pool": {
     "memberFactor": 0.45,
     "positionalFactor": 1.0,
-    "m6FactorBonus": 0.04,
-    "m6FactorBonusCap": 0.2,
     "positionalCountries": ["TW", "NL", "KR"],
     "polePowerBase": 0.8,
     "polePowerConcWeight": 0.6
@@ -115,20 +113,22 @@
     "m3": {
       "apFirst": 2,
       "ap": 1,
+      "memberCostDivisor": 5,
       "reliefBase": 6,
       "reliefPerStreak": 1.2,
       "c5Gain": 2,
       "unfundedDefRiskDrift": 3
     },
-    "m4": { "ap": 1, "spikePoints": 2.5, "spikeDecay": 0.5, "c3": 12 },
+    "m4": { "ap": 1, "spikePoints": 2.5, "spikeDecay": 0.5, "c3": 12, "gateC5": 70 },
     "m5": { "ap": 1, "c1Flat": 3, "diminish": 0.8, "c3Relief": 2, "trustCost": 3, "c5Cost": 2 },
     "m6": {
       "ap": 1,
-      "c7Gain": 7,
-      "diminish": 0.85,
-      "structuralRelief": 3,
-      "c4Gain": 2,
-      "c6Gain": 1
+      "factorBonusCap": 0.2,
+      "tiers": [
+        { "c7": 7, "structuralRelief": 3, "factorBonus": 0.04, "c4": 2, "c6": 1 },
+        { "c7": 6, "structuralRelief": 3, "factorBonus": 0.08, "c4": 2, "c6": 1 },
+        { "c7": 5, "structuralRelief": 5, "factorBonus": 0.04, "c4": 1, "c6": 1 }
+      ]
     }
   },
   "poles": {
