@@ -62,6 +62,26 @@ test('starting outcomes reflect the real world, then the game moves them', () =>
     'nature starts at the country baseline');
 });
 
+test('move cards speak each country’s own language', async () => {
+  const { instrumentCopy, M1_HOOKS } = await import('../ui/copy.js');
+  const { playerConvertAxes } = await import('../engine/state.js');
+  for (const c of playable) {
+    assert.ok(M1_HOOKS[c.code], `${c.code}: needs a Set-conditions hook`);
+    const copy = instrumentCopy(c, playerConvertAxes(data.params, c), data.params.pool.positionalCountries.includes(c.code));
+    assert.ok(copy.m1.blurb.includes('your '), `${c.code}: m1 names their assets`);
+    assert.ok(!copy.m1.blurb.includes('undefined'), `${c.code}: no broken axis names`);
+    assert.ok(copy.m4.blurb.length > 20 && copy.m5.blurb.length > 20, `${c.code}: m4/m5 have real copy`);
+  }
+  const nl = playable.find((c) => c.code === 'NL');
+  const nlCopy = instrumentCopy(nl, playerConvertAxes(data.params, nl), true);
+  assert.ok(nlCopy.m1.blurb.includes('ASML'), 'the Netherlands talks about ASML, not clean energy');
+  assert.ok(nlCopy.m5.blurb.includes('Washington'), 'US-leaning countries hear from Washington');
+  const br = playable.find((c) => c.code === 'BR');
+  const brCopy = instrumentCopy(br, playerConvertAxes(data.params, br), false);
+  assert.ok(brCopy.m1.blurb.includes('REDATA'), 'Brazil keeps its REDATA hook');
+  assert.ok(brCopy.m5.blurb.includes('Beijing'), 'China-leaning countries hear from Beijing');
+});
+
 test('the player country cannot be invited into its own alliance, poles never playable', () => {
   const g = newGame({ ...data, seed: 'self', scenarioId: 'spring', playerCode: 'IN' });
   const m2 = legalActions(g).find((a) => a.type === 'm2');

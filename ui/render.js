@@ -7,7 +7,8 @@ import { playerConvertAxes } from '../engine/state.js';
 import {
   INSTRUMENTS, CRITERIA, DIALS, POLE_NAMES, OFFER_COPY, ENDINGS,
   AXIS_NAMES, countryGloss, leanGloss, riskLabel, COACH_TIPS, INTRO,
-  COUNTRY_HOOKS, playerNote, PICKER, OUTCOME_TILES, outcomeWord, FRONTIER_LABEL, REGIME_NAMES, GRIP, LATECOMER
+  COUNTRY_HOOKS, playerNote, PICKER, OUTCOME_TILES, outcomeWord, FRONTIER_LABEL, REGIME_NAMES, GRIP, LATECOMER,
+  instrumentCopy
 } from './copy.js';
 import { isOutside } from '../engine/game.js';
 
@@ -299,6 +300,7 @@ function movesPanel(g, acts) {
   if (g.ended) return '';
   const order = ['m1', 'm3', 'm6', 'm4', 'm5'];
   const boosted = g.turnMods.m1Boost > 0;
+  const copy = instrumentCopy(g.data.byCode[g.player.code], g.player.convertAxes, g.player.positional);
   return `
     <div class="panel">
       <h2>Your moves — ${g.ap} left</h2>
@@ -306,7 +308,7 @@ function movesPanel(g, acts) {
         ${order.map((id) => {
           const a = acts[id];
           if (!a) return '';
-          const meta = INSTRUMENTS[id];
+          const meta = copy[id];
           const badge = id === 'm1' && boosted ? '<span class="badge">extra strong this year</span>' : '';
           return `
           <button class="btn action-card" data-action="${id}" ${a.enabled ? '' : 'disabled'} ${a.reason ? `title="${esc(a.reason)}"` : ''}>

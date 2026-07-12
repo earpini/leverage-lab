@@ -94,6 +94,74 @@ export const COUNTRY_HOOKS = {
   SA: 'Oil money buying a place in the AI age.'
 };
 
+/** Per-country hook for "Set conditions": the real lever, in one line. */
+export const M1_HOOKS = {
+  BR: 'Brazil wrote REDATA for exactly this: terms attached to every megawatt.',
+  NL: 'Every ASML export licence is a term sheet waiting to be written.',
+  TW: 'Fab allocation is policy. You decide whose chips get made first.',
+  KR: 'HBM supply contracts are leverage — price them like it.',
+  JP: 'Wafers, photoresist and tools leave Japan on your paperwork.',
+  DE: 'No Zeiss optics, no chip machines. Put terms on the crown jewels.',
+  FR: 'Nuclear-powered computing is scarce. Auction it with strings.',
+  GB: 'Arm licences and elite labs — charge admission in commitments.',
+  CA: 'Hydro-powered computing and world-class talent: access is conditional.',
+  AU: 'Heavy rare earths leave the ground on your terms, or not at all.',
+  NO: 'Your fund owns a slice of every AI giant. Vote the shares.',
+  SG: 'Sovereign money and the region’s data-centre hub: terms attached.',
+  IL: 'The chip-design centres stay because you let them. Price it.',
+  IN: 'A billion-person market and its payment rails: entry has conditions.',
+  ID: 'Nickel export permits are a policy instrument. Use them.',
+  ZA: 'Platinum exports and a continent’s AI voice: set the terms.',
+  AE: 'They want your energy and your capital. Both come with strings now.',
+  SA: 'PIF money talks. Make it negotiate too.'
+};
+
+/** Per-country legal lever for "Take them to court". */
+export const M4_INSTRUMENTS = {
+  BR: 'PL 2780 gives your courts the docket.',
+  NL: 'The EU AI Act and DMA give your regulators teeth.',
+  DE: 'The EU AI Act and DMA give your regulators teeth.',
+  FR: 'The EU AI Act and DMA give your regulators teeth.',
+  GB: 'The CMA and your courts have jurisdiction the giants respect.',
+  KR: 'The AI Basic Act is in force — use it.',
+  JP: 'Your regulators move quietly and land hard.',
+  IN: 'Your courts and competition authority have humbled Big Tech before.',
+  AU: 'You made Big Tech pay for news once. Bigger stakes this time.',
+  CA: 'Privacy and competition law, wielded together.'
+};
+const M4_DEFAULT = 'Your courts and regulators go after a tech giant.';
+
+/** What "going it alone" concretely means, given who keeps calling. */
+function soloLine(affinity) {
+  if (affinity.us > affinity.cn) return 'Washington’s offer is always on the table.';
+  if (affinity.cn > affinity.us) return 'Beijing’s financing is always on offer.';
+  return 'Both superpowers keep bidding for you.';
+}
+
+/** Move cards in the player country's own language. */
+export function instrumentCopy(country, convertAxes, positional) {
+  const assets = convertAxes.map((a) => AXIS_BARE[a] ?? a);
+  const list = assets.length > 1
+    ? assets.slice(0, -1).join(', ') + ' and ' + assets[assets.length - 1]
+    : assets[0];
+  return {
+    ...INSTRUMENTS,
+    m1: {
+      ...INSTRUMENTS.m1,
+      blurb: `Tech giants want your ${list}. Say yes — with strings attached. ${M1_HOOKS[country.code] ?? ''}`.trim()
+        + (positional ? ' Your strongest card already counts; conditions deepen the rest.' : '')
+    },
+    m4: {
+      ...INSTRUMENTS.m4,
+      blurb: `${M4_INSTRUMENTS[country.code] ?? M4_DEFAULT} A big, loud win that fades fast.`
+    },
+    m5: {
+      ...INSTRUMENTS.m5,
+      blurb: `${soloLine(country.affinity)} Take the quick win, alone. Feels great this year.`
+    }
+  };
+}
+
 export function playerNote(country, positional) {
   const holds = countryGloss(country);
   return positional
@@ -155,6 +223,18 @@ export const AXIS_NAMES = {
   capital: 'investment money',
   models: 'AI labs & talent',
   market: 'a big market',
+  gov_conv: 'diplomatic weight'
+};
+
+/** Article-free axis names, for building sentences ("your X, Y and Z"). */
+export const AXIS_BARE = {
+  minerals: 'critical minerals',
+  equip: 'chip-making tools',
+  fab: 'chip factories',
+  compute: 'data centres & energy',
+  capital: 'investment capital',
+  models: 'AI labs & talent',
+  market: 'market access',
   gov_conv: 'diplomatic weight'
 };
 
