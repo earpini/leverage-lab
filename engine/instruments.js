@@ -62,7 +62,7 @@ function applyM1(state) {
   }
   state.crit.c4 = clamp(state.crit.c4 + m1.c4);
   state.crit.c3 = clamp(state.crit.c3 + m1.c3);
-  log(state, 'player', 'Condition (M1): terms attached to inbound capital — conversion deepens, autonomy up, retaliation exposure up a notch.');
+  log(state, 'player', 'You set conditions on incoming tech money. Brazil’s assets are now worth more at the table (and the superpowers noticed).');
 }
 
 /** M2 Recruit: bring a country into the coalition. */
@@ -70,7 +70,7 @@ function applyM2(state, code) {
   const country = countryByCode(state, code);
   state.coalition.push({ code, joinedTurn: state.turn, defRisk: initialDefRisk(state, country) });
   state.trust = clamp(state.trust + state.params.trust.recruitGain);
-  log(state, 'player', `Recruit (M2): ${country.name} joins the coalition.`);
+  log(state, 'player', `${country.name} joins your alliance.`);
 }
 
 /** M3 Fund the facility: the anti-defection instrument. */
@@ -80,7 +80,7 @@ function applyM3(state) {
   state.facility.totalFunded += 1;
   state.trust = clamp(state.trust + state.params.trust.fundedGain);
   state.crit.c5 = clamp(state.crit.c5 + state.params.instruments.m3.c5Gain);
-  log(state, 'player', 'Fund the facility (M3): the pooled facility is funded this year — defection risk eases across the coalition.');
+  log(state, 'player', 'You put money into the alliance fund this year. Allies have a real reason to stay.');
 }
 
 /** M4 Wield rules: regulatory/judicial strike — big one-turn leverage, big retaliation draw. */
@@ -88,7 +88,7 @@ function applyM4(state) {
   const m4 = state.params.instruments.m4;
   state.tempSpike += m4.spikePoints;
   state.crit.c3 = clamp(state.crit.c3 + m4.c3);
-  log(state, 'player', 'Wield rules (M4): a regulatory strike lands on a hyperscaler — leverage spikes for a season, retaliation exposure jumps.');
+  log(state, 'player', 'Your courts and regulators hit a tech giant. A big, loud win this year. Expect payback.');
 }
 
 /** M5 Go it alone: always available, visibly seductive, mathematically dominated. */
@@ -100,7 +100,7 @@ function applyM5(state) {
   state.crit.c3 = clamp(state.crit.c3 - m5.c3Relief);
   state.crit.c5 = clamp(state.crit.c5 - m5.c5Cost);
   state.trust = clamp(state.trust - m5.trustCost);
-  log(state, 'player', 'Go it alone (M5): a bilateral deal, signed solo. It feels good today; nothing was converted and your partners noticed.');
+  log(state, 'player', 'You cut a solo deal. A quick win for Brazil this year. Your allies took note.');
 }
 
 /** M6 Pool the commons: raises C7, lowers defection risk structurally. */
@@ -112,7 +112,7 @@ function applyM6(state) {
   state.crit.c6 = clamp(state.crit.c6 + m6.c6Gain);
   state.m6Uses += 1;
   for (const m of state.coalition) m.defRisk -= m6.structuralRelief;
-  log(state, 'player', 'Pool the commons (M6): members pool compute, data and models — peer capacity rises, and staying starts to pay.');
+  log(state, 'player', 'You shared technology across the alliance. Your allies get more capable, and leaving gets less tempting.');
 }
 
 function apCost(state, action) {
@@ -210,11 +210,11 @@ function respondToOffer(state, kind) {
     state.flags.acceptedPole = { pole: offer.pole, turn: state.turn, terms };
     state.offers.player = null;
     const poleName = offer.pole === 'us' ? 'Washington' : 'Beijing';
-    log(state, 'player', `You accept ${poleName}'s offer. The terms reflect what you converted before signing: ${terms}/${state.params.endings.junior.termsCap}.`);
+    log(state, 'player', `You sign with ${poleName}. Final terms: ${terms}/${state.params.endings.junior.termsCap} — set by what you built before signing.`);
   } else {
     state.offers.player = null;
     state.crit.c3 = clamp(state.crit.c3 + state.params.poles.declineC3Cost);
-    log(state, 'player', 'You decline the offer. Saying no to a pole is never free — retaliation exposure ticks up.');
+    log(state, 'player', 'You say no to a superpower. That is never free: heat goes up a little.');
   }
   return state;
 }

@@ -8,13 +8,13 @@ import { pooledLeverage } from './criteria.js';
 const POLE_NAMES = { us: 'Washington', cn: 'Beijing' };
 
 const MEMBER_OFFER_COPY = {
-  us: (name) => `${POLE_NAMES.us} offers ${name} preferential compute access and tariff relief — bilateral, generous, and conditional on distance from your coalition.`,
-  cn: (name) => `${POLE_NAMES.cn} offers ${name} concessional finance and technology transfer — bilateral, patient, and conditional on distance from your coalition.`
+  us: (name) => `${POLE_NAMES.us} dangles a deal in front of ${name}: better chips and fewer tariffs, if they keep their distance from your alliance.`,
+  cn: (name) => `${POLE_NAMES.cn} courts ${name}: cheap financing and technology, if they keep your alliance at arm's length.`
 };
 
 const PLAYER_OFFER_COPY = {
-  us: 'Washington addresses you directly: compute access, tariff relief, investment. The terms are real. What you signed away is priced at what you converted.',
-  cn: 'Beijing addresses you directly: concessional compute, BRICS finance, market access. The terms are real. What you signed away is priced at what you converted.'
+  us: 'Washington has a deal for you, personally. It is on your table now.',
+  cn: 'Beijing has a deal for you, personally. It is on your table now.'
 };
 
 /**

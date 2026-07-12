@@ -1,5 +1,5 @@
-// Boot: load data (JSON modules, no build step), read seed + scenario from the
-// URL, run the game loop. No localStorage — the URL is the whole save state.
+// Boot: load data (JSON modules, no build step), read the game code + scenario
+// from the URL, run the game loop. No localStorage — the URL is the save state.
 
 import params from '../data/params.json' with { type: 'json' };
 import countries from '../data/countries.json' with { type: 'json' };
@@ -14,6 +14,7 @@ const seedInput = document.getElementById('seed-input');
 const newRunBtn = document.getElementById('new-run');
 
 let game = null;
+const ui = { showIntro: true, summary: null, tipsDismissed: false };
 
 function readUrl() {
   const q = new URLSearchParams(location.search);
@@ -33,40 +34,62 @@ function writeUrl(seed, scenarioId) {
 }
 
 function randomSeed() {
-  const words = ['davos', 'redata', 'tfff', 'itaipu', 'ceara', 'pix', 'niobium', 'belem', 'manaus', 'quito'];
+  const words = ['davos', 'redata', 'itaipu', 'ceara', 'pix', 'niobium', 'belem', 'manaus', 'recife', 'quito'];
   return words[Math.floor(Math.random() * words.length)] + '-' + Math.floor(Math.random() * 9999);
 }
 
 function startRun(seed, scenarioId) {
   game = newGame({ params, countries, scenarios, events, seed, scenarioId });
+  ui.summary = null;
   writeUrl(seed, scenarioId);
   scenarioSelect.value = scenarioId;
   seedInput.value = seed;
   draw();
 }
 
-function draw() {
-  render(root, game, {
-    onAction(action) {
-      try {
-        applyAction(game, action);
-        if (game.flags.acceptedPole) endTurn(game); // signing ends the run
-      } catch (err) {
-        console.warn(err.message);
-      }
-      draw();
-    },
-    onEndTurn() {
-      endTurn(game);
-      draw();
-    },
-    onReplay() {
-      startRun(game.seed, game.scenarioId);
-    },
-    onNewSeed() {
-      startRun(randomSeed(), game.scenarioId);
+const handlers = {
+  onAction(action) {
+    try {
+      applyAction(game, action);
+      if (game.flags.acceptedPole) endTurn(game); // signing ends the game
+    } catch (err) {
+      console.warn(err.message);
     }
-  });
+    draw();
+  },
+  onEndTurn() {
+    const before = game.log.length;
+    endTurn(game);
+    // Everything logged while the year turned becomes the recap sheet.
+    ui.summary = game.log.slice(before).filter((l) => l.phase === 'resolution');
+    draw();
+  },
+  onContinue() {
+    ui.summary = null;
+    draw();
+  },
+  onReplay() {
+    startRun(game.seed, game.scenarioId);
+  },
+  onNewSeed() {
+    startRun(randomSeed(), game.scenarioId);
+  },
+  onHelp() {
+    ui.showIntro = true;
+    draw();
+  },
+  onCloseIntro() {
+    ui.showIntro = false;
+    draw();
+  },
+  onDismissTips() {
+    ui.tipsDismissed = true;
+    draw();
+  }
+};
+
+function draw() {
+  render(root, game, handlers, ui);
 }
 
 // Populate the scenario control.

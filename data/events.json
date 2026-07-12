@@ -1,91 +1,91 @@
 {
   "_meta": {
-    "note": "12 event cards. One fires per world phase, weighted by scenario, drawn without replacement. Real instruments (REDATA, TFFF, PL 2780, ILO-169) are cited where true; the events themselves are fictional. Effects DSL documented in docs/model-notes.md."
+    "note": "12 event cards. One fires per world phase, weighted by scenario, drawn without replacement. Copy is plain language for players with zero context. Real instruments (REDATA, ILO-169) get a one-line gloss; the events themselves are fictional. Effects DSL documented in docs/model-notes.md."
   },
   "events": [
     {
       "id": "tariff-wave",
-      "name": "Tariff wave",
-      "copy": "Washington signals a new tariff schedule aimed at countries that condition inbound tech capital. Your conditioning agenda just acquired a price tag.",
+      "name": "Tariff threat",
+      "copy": "Washington threatens tariffs on countries that put conditions on tech investment. That includes you.",
       "weights": { "bipolar": 3, "acceleration": 2, "spring": 1 },
       "effects": { "c3": 3, "rivalry": 0.05 }
     },
     {
       "id": "export-control-wave",
-      "name": "Export-control wave",
-      "copy": "A fresh round of controls lands on advanced accelerators. Every coalition partner that depends on US compute rereads its contracts tonight.",
+      "name": "Chip export crackdown",
+      "copy": "The US tightens the rules on who can buy advanced chips. Every ally that depends on American computing power gets nervous.",
       "weights": { "bipolar": 3, "acceleration": 3, "spring": 1 },
       "effects": { "rivalry": 0.06, "defRiskAll": 4 }
     },
     {
       "id": "datacentre-offer",
-      "name": "Hyperscaler datacentre offer",
-      "copy": "A hyperscaler proposes a multi-gigawatt campus on your grid. Brazil's REDATA regime exists for exactly this moment: terms attached now convert far better than terms begged for later.",
+      "name": "The data centre offer",
+      "copy": "A tech giant wants to build a huge data centre in Brazil, drawn by cheap clean energy. Perfect timing to demand terms — this year, Set conditions works extra hard. (Brazil really has a law for this: REDATA.)",
       "weights": { "bipolar": 2, "acceleration": 2, "spring": 2 },
       "effects": { "m1Boost": 0.5 }
     },
     {
       "id": "licensing-conflict",
-      "name": "Licensing conflict",
-      "copy": "Your courts take up a training-data licensing case against a frontier lab, with PL 2780's copyright provisions in the background. The docket itself is leverage — for one news cycle.",
+      "name": "Big Tech vs your courts",
+      "copy": "Brazilian courts take on a major AI company for training its models on local content without paying. For one season, the giants need something from you.",
       "weights": { "bipolar": 2, "acceleration": 2, "spring": 2 },
       "effects": { "c3": 2, "tempSpike": 0.8 }
     },
     {
       "id": "summit",
-      "name": "Multilateral summit",
-      "copy": "A working summit on AI and development actually works: communiqué with numbers in it, corridors full of ministers who return your calls. Recruiting is cheaper this turn.",
+      "name": "A summit that works",
+      "copy": "A global AI summit actually goes well for once. Ministers return your calls. Inviting countries into your alliance is cheaper this year.",
       "weights": { "bipolar": 1, "acceleration": 1, "spring": 3 },
       "effects": { "trust": 4, "c5": 3, "c6": 1, "recruitDiscount": 1 }
     },
     {
       "id": "brics-tech-bank",
-      "name": "BRICS technology bank",
-      "copy": "Beijing circulates a draft charter for a BRICS technology bank — concessional compute, favourable terms, familiar institutions. The pull is real, and it is addressed to you.",
+      "name": "China's tech bank",
+      "copy": "China proposes a BRICS technology bank: cheap computing power, friendly financing, familiar faces. Some of your allies are listening. So are you — there is an offer on your table.",
       "weights": { "bipolar": 2, "acceleration": 1, "spring": 2 },
       "effects": { "offerPlayer": "cn", "memberPressure": { "pole": "cn", "amount": 6 } }
     },
     {
       "id": "continental-compute-pact",
-      "name": "Continental compute pact",
-      "copy": "Washington floats a hemisphere-wide compute pact: preferential access for partners who align their data-centre rules. Your US-leaning partners find it hard to look away.",
+      "name": "America's compute pact",
+      "copy": "The US floats an all-Americas computing pact: cheap access for countries that play by its rules. Your US-leaning allies are tempted — and there is an offer on your table.",
       "weights": { "bipolar": 2, "acceleration": 2, "spring": 1 },
       "effects": { "offerPlayer": "us", "memberPressure": { "pole": "us", "amount": 8 } }
     },
     {
       "id": "minerals-squeeze",
-      "name": "Minerals squeeze",
-      "copy": "Processing bottlenecks bite and spot prices for niobium and heavy rare earths jump. Countries that converted their minerals position feel it as leverage; the rest feel it as weather.",
+      "name": "Minerals boom",
+      "copy": "Mineral prices jump worldwide as AI hardware demand bites. If you set conditions on Brazil's minerals, that is bargaining power now. If not, it is just weather.",
       "weights": { "bipolar": 2, "acceleration": 2, "spring": 1 },
       "effects": { "demand": 0.08, "ifConvertedMinerals": { "c1Flat": 3 } }
     },
     {
       "id": "ilo-169-halt",
-      "name": "Consultation halt",
-      "copy": "A federal court pauses a datacentre over ILO-169 consultation requirements. The obligation is real; how it lands depends on whether your coalition built process before it built concrete.",
+      "name": "The consultation halt",
+      "copy": "A court pauses a big data centre because Indigenous communities were never consulted — a real legal duty in Brazil (ILO-169). Handled badly, this costs public trust.",
       "weights": { "bipolar": 2, "acceleration": 2, "spring": 2 },
       "effects": { "c6": -3, "c5": -1 },
       "ifFacilityFunded": { "c6": -1, "c5": 0 }
     },
     {
       "id": "water-conflict",
-      "name": "Water conflict",
-      "copy": "A cooling-water dispute puts a host municipality on the evening news, dry reservoirs behind the reporter. Public benefit stops being an abstraction.",
+      "name": "The water crisis",
+      "copy": "A data centre's cooling system drains a town's reservoir in the middle of a drought. It is on the news every night, and people are asking who this AI boom is actually for.",
       "weights": { "bipolar": 1, "acceleration": 2, "spring": 1 },
       "effects": { "c6": -3, "demand": 0.03 }
     },
     {
       "id": "benefit-audit",
-      "name": "Benefit audit",
-      "copy": "An independent audit — TFFF-style, receipts and all — asks where the promised local benefit actually went. Coalitions that pooled with autocracies have the worst week.",
+      "name": "The audit",
+      "copy": "An independent audit asks a simple question: where did the promised local benefits go? If your alliance includes autocracies, the answers look bad this week.",
       "weights": { "bipolar": 2, "acceleration": 2, "spring": 2 },
       "effects": { "c6": -1 },
       "ifTierD": { "c6": -4 }
     },
     {
       "id": "frontier-leap",
-      "name": "Frontier leap",
-      "copy": "A capability jump nobody scheduled. The poles' bypass options widen, and the gap between frontier and everyone else opens another notch.",
+      "name": "AI takes a leap",
+      "copy": "AI capability jumps overnight, and nobody outside the superpowers saw it coming. They need everyone else a little less than they did yesterday.",
       "weights": { "bipolar": 1, "acceleration": 3, "spring": 1 },
       "effects": { "pace": 0.08, "c7": -2 }
     }

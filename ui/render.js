@@ -1,172 +1,247 @@
-// Rendering: state → DOM. No game logic here; reads the engine's snapshot and
-// legal actions, dispatches player intents back through the callbacks it is given.
+// Rendering: state → DOM. No game logic here. Reads the engine's snapshot and
+// legal actions; dispatches player intents back through the handlers it is given.
 
 import { snapshot, legalActions, computeTerms, offersOpen, yearOf } from '../engine/game.js';
 import { memberContribution } from '../engine/criteria.js';
-import { INSTRUMENTS, CRITERIA, DIALS, POLE_NAMES, OFFER_COPY, ENDING_KICKERS, PLAYER_NOTE } from './copy.js';
+import {
+  INSTRUMENTS, CRITERIA, DIALS, POLE_NAMES, OFFER_COPY, ENDINGS, PLAYER_NOTE,
+  CONVERT_AXIS_LABELS, countryGloss, leanGloss, riskLabel, COACH_TIPS, INTRO
+} from './copy.js';
 
 const esc = (s) =>
   String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
-export function render(root, g, handlers) {
+export function render(root, g, handlers, ui = {}) {
   const snap = snapshot(g);
   const acts = Object.fromEntries(legalActions(g).map((a) => [a.type, a]));
   root.innerHTML = `
-    ${turnline(g, snap)}
-    <div class="board">
-      <section>${worldPanel(g)}${logPanel(g)}</section>
-      <section>${playerPanel(g, snap)}${coalitionPanel(g)}${recruitPanel(g, acts)}</section>
-      <section>${dashboard(g, snap)}${actionsPanel(g, acts)}</section>
+    ${hero(g, snap, ui)}
+    <div class="container">
+      ${coachTip(g, ui)}
+      <div class="board">
+        <section>${thisYearPanel(g)}${standingPanel(g, snap)}</section>
+        <section>${brazilPanel(g, snap)}${alliesPanel(g)}${invitePanel(g, acts)}</section>
+        <section>${movesPanel(g, acts)}${storyPanel(g)}</section>
+      </div>
     </div>
+    ${ui.summary && !g.ended ? summarySheet(g, ui.summary) : ''}
     ${offerSheet(g)}
     ${debriefSheet(g, snap)}
+    ${ui.showIntro ? introSheet() : ''}
   `;
-  wire(root, g, handlers);
+  wire(root, handlers);
 }
 
-function turnline(g, snap) {
+/* ---------- hero: the goal, always visible ---------- */
+
+function hero(g, snap, ui) {
   const total = g.params.game.turns;
-  const dots = Array.from({ length: g.params.game.apPerTurn }, (_, i) =>
+  const startYear = g.params.game.startYear;
+  const ratio = Math.min(1, snap.pooled / snap.threshold);
+  const years = Array.from({ length: total }, (_, i) => {
+    const cls = i + 1 === g.turn ? 'now' : i + 1 < g.turn ? 'past' : '';
+    return `<span class="year-chip ${cls}">${startYear + i}</span>`;
+  }).join('');
+  const pips = Array.from({ length: g.params.game.apPerTurn }, (_, i) =>
     `<span class="ap-dot${i < g.ap ? '' : ' spent'}"></span>`).join('');
   return `
-    <div class="turnline container">
-      <span class="turn">Turn ${g.turn} of ${total} — ${yearOf(g)}</span>
-      <span class="ap">Action points ${dots}</span>
-      <span class="ap">${esc(g.scenario.name)} · seed ${esc(g.seed)}</span>
+    <div class="hero">
+      <div class="container">
+        <div class="hero-top">
+          <div class="years">${years}</div>
+          <div class="hero-meta">
+            <span>Moves left this year ${pips}</span>
+            <button class="btn-ghost" data-help>${esc(INTRO.reopen)}</button>
+          </div>
+        </div>
+        <p class="hero-kicker">Your goal — push the gold bar past the line</p>
+        <div class="nums">
+          <span class="pooled">${snap.pooled}</span>
+          <span class="of">your alliance's bargaining power · <strong>${snap.threshold} needed</strong> for a seat at the table</span>
+        </div>
+        <div class="bar"><i style="width:${ratio * 100}%"></i></div>
+        <p class="hero-note">${ratio >= 1
+          ? 'You are past the line. Now hold it until 2033: keep your allies in and public trust up.'
+          : 'Below the line, the superpowers can ignore your alliance. Grow the bar: set conditions at home, add allies, share technology.'}</p>
+      </div>
     </div>`;
 }
 
-function worldPanel(g) {
+function coachTip(g, ui) {
+  if (g.ended || ui.tipsDismissed || !COACH_TIPS[g.turn]) return '';
+  return `
+    <div class="tip">
+      <span>${esc(COACH_TIPS[g.turn])}</span>
+      <button class="btn-ghost dark" data-dismiss-tips>Hide tips</button>
+    </div>`;
+}
+
+/* ---------- column 1: what happened ---------- */
+
+function thisYearPanel(g) {
   const event = g.data.events.events.find((e) => e.id === g.currentEvent);
+  const dispatches = g.log.filter((l) => l.turn === g.turn && l.phase === 'poles');
   return `
     <div class="panel">
-      <h2>The world</h2>
+      <h2><span class="step">1</span>This year — ${yearOf(g)}</h2>
       ${DIALS.map((d) => `
-        <div class="dial">
+        <div class="dial" title="${esc(d.hint)}">
           <span class="name"><span>${esc(d.label)}</span><span>${Math.round(g.dials[d.key] * 100)}</span></span>
           <div class="meter${d.warm ? ' warm' : ''}"><i style="width:${g.dials[d.key] * 100}%"></i></div>
         </div>`).join('')}
       ${event ? `
-        <div class="event-card" style="margin-top: var(--ea-space-5)">
-          <p class="kicker">This year's event</p>
+        <div class="event-card">
+          <p class="kicker">In the news</p>
           <h3>${esc(event.name)}</h3>
           <p>${esc(event.copy)}</p>
         </div>` : ''}
+      ${dispatches.map((l) => {
+        const who = l.text.startsWith('Washington') ? 'Washington' : l.text.startsWith('Beijing') ? 'Beijing' : 'The superpowers';
+        return `
+        <div class="dispatch">
+          <p class="kicker">${who} moves</p>
+          <p>${esc(l.text)}</p>
+        </div>`;
+      }).join('')}
     </div>`;
 }
 
-function logPanel(g) {
-  const recent = g.log.slice(-14).reverse();
+function standingPanel(g, snap) {
   return `
     <div class="panel">
-      <h2>The record</h2>
-      <ul class="log">
-        ${recent.map((l) => `<li><span class="phase">T${l.turn} ${esc(l.phase)}</span>${esc(l.text)}</li>`).join('')}
-      </ul>
+      <h2>How you're doing</h2>
+      <p class="hintline">Hover any bar for what it means.</p>
+      ${CRITERIA.map((c) => `
+        <div class="crit${c.bad ? ' bad' : ''}" title="${esc(c.hint)}">
+          <span>${esc(c.label)}${c.bad ? ' <small>(keep low)</small>' : ''}</span>
+          <div class="meter"><i style="width:${snap[c.key]}%"></i></div>
+          <span class="val">${snap[c.key]}</span>
+        </div>`).join('')}
     </div>`;
 }
 
-function playerPanel(g, snap) {
+/* ---------- column 2: your alliance ---------- */
+
+function brazilPanel(g, snap) {
   const player = g.data.byCode[g.player.code];
-  const axes = g.params.conversion.axes;
   return `
     <div class="panel">
-      <h2>Your hand — ${esc(player.name)}</h2>
-      <p class="country keyline">${esc(PLAYER_NOTE)}</p>
-      ${axes.map((a) => {
+      <h2>Brazil — what you hold</h2>
+      <p class="keyline">${esc(PLAYER_NOTE)}</p>
+      ${g.params.conversion.axes.map((a) => {
         const pct = Math.round(g.player.converted[a] * 100);
         return `
-        <div class="conv">
-          <span>${esc(a)} (${player.axes[a]})</span>
+        <div class="conv" title="Set conditions (your move #1) to raise this. Assets only count once terms are set on them.">
+          <span>${esc(CONVERT_AXIS_LABELS[a] ?? a)} (${player.axes[a]})</span>
           <div class="meter warm"><i style="width:${pct}%"></i></div>
           <span class="pct">${pct}%</span>
         </div>`;
       }).join('')}
-      <p class="country keyline">Converted ${snap.convertedPts} of ${snap.convertiblePts} axis points. Unconverted assets are somebody else's opportunity.</p>
+      <p class="keyline muted">Terms set on ${snap.convertedPts} of ${snap.convertiblePts} possible points so far.</p>
     </div>`;
 }
 
-function coalitionPanel(g) {
+function alliesPanel(g) {
   const members = g.coalition.map((m) => {
     const c = g.data.byCode[m.code];
     const risk = Math.round(Math.min(95, Math.max(5, m.defRisk)));
     const contrib = Math.round(memberContribution(g, m) * 10) / 10;
+    const tierD = c.tier === 'D' ? '<p class="keyline warn">Authoritarian ally: adds power fast, costs public trust every year.</p>' : '';
     return `
       <div class="country">
-        <div class="head"><strong>${esc(c.name)}</strong><span class="tag">tier ${esc(c.tier)} · +${contrib} pts</span></div>
-        <p class="keyline">${esc(c.key)}</p>
-        <div class="risk"><span>defection risk</span><div class="meter"><i style="width:${risk}%"></i></div><span>${risk}</span></div>
+        <div class="head"><strong>${esc(c.name)}</strong><span class="tag">${esc(leanGloss(c.affinity))} · adds ${contrib} to your bar</span></div>
+        <p class="keyline">Brings ${esc(countryGloss(c))}.</p>
+        ${tierD}
+        <div class="risk" title="Superpower offers push this up every year. The alliance fund and shared technology pull it down.">
+          <span>risk of leaving</span><div class="meter"><i style="width:${risk}%"></i></div><span class="risk-word">${esc(riskLabel(m.defRisk))}</span>
+        </div>
       </div>`;
   }).join('');
-  const lost = g.lostMembers.map((l) => esc(l.name)).join(', ');
+  const lost = g.lostMembers.map((l) => `${esc(l.name)} (to ${l.pole === 'us' ? 'the US' : 'China'})`).join(', ');
   return `
     <div class="panel">
-      <h2>The coalition (${g.coalition.length})</h2>
-      ${members || '<p class="country keyline">No members yet. Leverage that stays national stays small.</p>'}
-      ${lost ? `<p class="country keyline">Lost to the poles: ${lost}.</p>` : ''}
+      <h2>Your allies (${g.coalition.length})</h2>
+      ${members || '<p class="keyline">Nobody yet. Brazil alone can\'t cross the line — invite countries below.</p>'}
+      ${lost ? `<p class="keyline muted">Left the alliance: ${lost}.</p>` : ''}
     </div>`;
 }
 
-function recruitPanel(g, acts) {
+function invitePanel(g, acts) {
   if (g.ended) return '';
   const candidates = (acts.m2?.candidates ?? []).slice().sort((a, b) => a.cost - b.cost || a.name.localeCompare(b.name));
+  const discount = g.turnMods.recruitDiscount > 0 ? '<p class="keyline">The summit made this cheaper this year.</p>' : '';
   return `
     <div class="panel">
-      <h2>Recruit (M2)</h2>
+      <h2>Invite an ally</h2>
+      <p class="hintline">${esc(INSTRUMENTS.m2.blurb)}</p>
+      ${discount}
       <div class="recruits">
         ${candidates.map((c) => {
           const country = g.data.byCode[c.code];
           const affordable = c.cost <= g.ap;
+          const dWarn = country.tier === 'D' ? ' · costs public trust yearly' : '';
           return `
           <div class="recruit-row">
-            <span><strong>${esc(c.name)}</strong> <span class="meta">tier ${esc(c.tier)} · ${esc(country.democracy.toLowerCase())} · us ${country.affinity.us} / cn ${country.affinity.cn}</span></span>
-            <button class="btn-quiet" data-recruit="${esc(c.code)}" ${affordable ? '' : 'disabled'}>${c.cost} ap</button>
+            <span><strong>${esc(c.name)}</strong><span class="meta"> — ${esc(countryGloss(country))} · ${esc(leanGloss(country.affinity))}${dWarn}</span></span>
+            <button class="btn-quiet" data-recruit="${esc(c.code)}" ${affordable ? '' : 'disabled'}>invite · ${c.cost} move${c.cost > 1 ? 's' : ''}</button>
           </div>`;
         }).join('')}
       </div>
     </div>`;
 }
 
-function dashboard(g, snap) {
-  const ratio = Math.min(1, snap.pooled / snap.threshold);
-  return `
-    <div class="panel">
-      <h2>The dashboard</h2>
-      ${CRITERIA.map((c) => `
-        <div class="crit${c.bad ? ' bad' : ''}">
-          <span>${esc(c.label)}${c.bad ? ' ↓' : ''}</span>
-          <div class="meter"><i style="width:${snap[c.key]}%"></i></div>
-          <span class="val">${snap[c.key]}</span>
-        </div>`).join('')}
-      <div class="gauge">
-        <p class="kicker">Pooled leverage vs the chokepoint</p>
-        <div class="nums"><span class="pooled">${snap.pooled}</span><span class="of">of ${snap.threshold} points — where bypassing you costs more than negotiating with you</span></div>
-        <div class="bar"><i style="width:${ratio * 100}%"></i></div>
-        <p class="note">${ratio >= 1 ? 'Past the threshold. Hold it: coalition, cohesion, integrity.' : 'Below the threshold, the poles can route around you.'}</p>
-      </div>
-    </div>`;
-}
+/* ---------- column 3: your moves ---------- */
 
-function actionsPanel(g, acts) {
+function movesPanel(g, acts) {
   if (g.ended) return '';
-  const order = ['m1', 'm3', 'm4', 'm5', 'm6'];
+  const order = ['m1', 'm3', 'm6', 'm4', 'm5'];
+  const boosted = g.turnMods.m1Boost > 0;
   return `
     <div class="panel">
-      <h2>Instruments</h2>
+      <h2><span class="step">2</span>Your moves</h2>
       <div class="actions">
         ${order.map((id) => {
           const a = acts[id];
           if (!a) return '';
           const meta = INSTRUMENTS[id];
-          const title = a.reason ? ` title="${esc(a.reason)}"` : '';
+          const badge = id === 'm1' && boosted ? '<span class="badge">extra strong this year</span>' : '';
           return `
-          <button class="btn" data-action="${id}" ${a.enabled ? '' : 'disabled'}${title}>
-            ${esc(meta.name)} <span class="tag">${meta.tag}</span><span class="cost">${a.ap} ap</span>
+          <button class="btn action-card" data-action="${id}" ${a.enabled ? '' : 'disabled'} ${a.reason ? `title="${esc(a.reason)}"` : ''}>
+            <span class="action-head">${esc(meta.name)} ${badge}<span class="cost">${a.ap} move${a.ap > 1 ? 's' : ''}</span></span>
             <span class="blurb">${esc(meta.blurb)}</span>
+            <span class="effect">${esc(meta.effect)}</span>
           </button>`;
         }).join('')}
       </div>
-      <button class="btn-primary" data-end-turn>End turn ${g.ap > 0 ? `— ${g.ap} ap unspent` : ''}</button>
+      <button class="btn-primary" data-end-turn><span class="step inv">3</span>End the year${g.ap > 0 ? ` (${g.ap} move${g.ap > 1 ? 's' : ''} unused)` : ''}</button>
+    </div>`;
+}
+
+function storyPanel(g) {
+  const recent = g.log.slice(-30).reverse();
+  return `
+    <details class="panel story">
+      <summary>The story so far</summary>
+      <ul class="log">
+        ${recent.map((l) => `<li><span class="phase">${g.params.game.startYear + l.turn - 1}</span>${esc(l.text)}</li>`).join('')}
+      </ul>
+    </details>`;
+}
+
+/* ---------- sheets ---------- */
+
+function summarySheet(g, summary) {
+  if (summary.length === 0) return '';
+  return `
+    <div class="overlay">
+      <div class="sheet">
+        <p class="kicker">While the year turned</p>
+        <h3>What just happened</h3>
+        <ul class="debrief-lines">
+          ${summary.map((l) => `<li>${esc(l.text)}</li>`).join('')}
+        </ul>
+        <button class="btn-primary" data-continue>On to ${yearOf(g)}</button>
+      </div>
     </div>`;
 }
 
@@ -175,16 +250,17 @@ function offerSheet(g) {
   const offer = g.offers.player;
   const terms = computeTerms(g);
   const cap = g.params.endings.junior.termsCap;
+  const score = g.params.endings.junior.base + terms;
   return `
     <div class="overlay">
       <div class="sheet">
-        <p class="kicker">${esc(POLE_NAMES[offer.pole])} addresses you directly</p>
-        <h3>An offer you must answer</h3>
+        <p class="kicker">A message from ${esc(POLE_NAMES[offer.pole])}</p>
+        <h3>They want a deal — with you</h3>
         <p class="read">${esc(OFFER_COPY[offer.pole])}</p>
-        <div class="terms">Sign now and the run ends as junior partner on terms <strong>${terms}/${cap}</strong>. Terms scale with what you converted before signing — not with how warmly you said yes.</div>
+        <div class="terms">Sign now and your final score is <strong>${score}/100</strong> (terms ${terms}/${cap}). The terms grow with what you build <em>before</em> signing — nothing you promise after counts.</div>
         <div class="row">
-          <button class="btn-quiet" data-action="decline">Decline — exposure ticks up</button>
-          <button class="btn-primary" data-action="accept">Accept the terms</button>
+          <button class="btn-quiet" data-action="decline">Say no (a little more heat)</button>
+          <button class="btn-primary" data-action="accept">Sign the deal</button>
         </div>
       </div>
     </div>`;
@@ -193,22 +269,40 @@ function offerSheet(g) {
 function debriefSheet(g, snap) {
   if (!g.ended) return '';
   const e = g.ended;
+  const meta = ENDINGS[e.id] ?? { kicker: 'The end', sub: '' };
   const url = shareUrl(g);
   return `
     <div class="overlay">
       <div class="sheet">
-        <p class="kicker">${esc(ENDING_KICKERS[e.id] ?? 'Ending')}</p>
+        <p class="kicker">${esc(meta.kicker)}</p>
         <h3>${esc(e.title)}</h3>
         <p class="score">${e.score}/100</p>
+        <p class="read">${esc(meta.sub)}</p>
         <ul class="debrief-lines">
           ${e.lines.map((l) => `<li>${esc(l)}</li>`).join('')}
-          <li>Final position: pooled ${snap.pooled} of ${snap.threshold} points, ${snap.members} member${snap.members === 1 ? '' : 's'}, C6 at ${snap.c6}.</li>
+          <li>Where you ended: bar at ${snap.pooled} of ${snap.threshold} needed · ${snap.members} all${snap.members === 1 ? 'y' : 'ies'} · public trust ${snap.c6}.</li>
         </ul>
-        <p class="seedlink">Beat this 2033: <a href="${esc(url)}">${esc(url)}</a></p>
+        <p class="seedlink">Challenge a friend — same game, same events: <a href="${esc(url)}">${esc(url)}</a></p>
         <div class="row" style="margin-top: var(--ea-space-4)">
-          <button class="btn-quiet" data-new-seed>New seed</button>
-          <button class="btn-primary" data-replay>Replay this seed</button>
+          <button class="btn-quiet" data-new-seed>New game</button>
+          <button class="btn-primary" data-replay>Replay this one</button>
         </div>
+      </div>
+    </div>`;
+}
+
+function introSheet() {
+  return `
+    <div class="overlay">
+      <div class="sheet">
+        <p class="kicker">${esc(INTRO.kicker)}</p>
+        <h3>${esc(INTRO.title)}</h3>
+        ${INTRO.sections.map((s) => `
+          <div class="intro-block">
+            <h4>${esc(s.h)}</h4>
+            <p class="read small">${esc(s.p)}</p>
+          </div>`).join('')}
+        <button class="btn-primary" data-start>${esc(INTRO.start)}</button>
       </div>
     </div>`;
 }
@@ -220,7 +314,9 @@ function shareUrl(g) {
   return `${base}?seed=${encodeURIComponent(g.seed)}&scenario=${encodeURIComponent(g.scenarioId)}`;
 }
 
-function wire(root, g, handlers) {
+/* ---------- wiring ---------- */
+
+function wire(root, handlers) {
   for (const btn of root.querySelectorAll('[data-action]')) {
     btn.addEventListener('click', () => handlers.onAction({ type: btn.dataset.action }));
   }
@@ -230,4 +326,8 @@ function wire(root, g, handlers) {
   root.querySelector('[data-end-turn]')?.addEventListener('click', handlers.onEndTurn);
   root.querySelector('[data-replay]')?.addEventListener('click', handlers.onReplay);
   root.querySelector('[data-new-seed]')?.addEventListener('click', handlers.onNewSeed);
+  root.querySelector('[data-help]')?.addEventListener('click', handlers.onHelp);
+  root.querySelector('[data-start]')?.addEventListener('click', handlers.onCloseIntro);
+  root.querySelector('[data-continue]')?.addEventListener('click', handlers.onContinue);
+  root.querySelector('[data-dismiss-tips]')?.addEventListener('click', handlers.onDismissTips);
 }

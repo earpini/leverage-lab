@@ -12,22 +12,22 @@
   <header class="masthead">
     <div class="container masthead-row">
       <div>
-        <p class="eyebrow">A middle-power AI war-game</p>
+        <p class="eyebrow">A strategy game about AI power politics</p>
         <h1 class="wordmark">On the menu</h1>
-        <p class="sub">If you're not at the table, you're on the menu. Eight turns, 2026–2033: convert what Brazil holds, pool it, and hold the coalition together while the poles try to buy your partners out from under you.</p>
+        <p class="sub">You run Brazil's AI strategy, 2026–2033. Two superpowers are carving up the future of AI. Get your country a seat at the table — before you end up on the menu.</p>
       </div>
       <div class="run-controls">
         <div>
-          <label for="scenario-select">Scenario</label>
+          <label for="scenario-select">World mood</label>
           <select id="scenario-select"></select>
         </div>
         <div>
-          <label for="seed-input">Seed</label>
+          <label for="seed-input" title="Two players with the same code get the same game — share it to compete.">Game code</label>
           <input id="seed-input" type="text" spellcheck="false" autocomplete="off">
         </div>
         <div>
           <label>&nbsp;</label>
-          <button id="new-run" class="btn-quiet">New run</button>
+          <button id="new-run" class="btn-quiet">New game</button>
         </div>
       </div>
     </div>
@@ -36,20 +36,20 @@
   <main id="app" class="container" aria-live="polite"></main>
 
   <details class="model container">
-    <summary>The model — how this game argues</summary>
+    <summary>Curious how the game works under the hood?</summary>
     <div class="grid">
-      <div class="cell"><strong>Positional vs convertible</strong>Taiwan, the Netherlands and Korea count at full value the moment they join — that is positional leverage. Brazil's axes count only once converted (M1): that is the game making you do the work the paper describes.</div>
-      <div class="cell"><strong>The accommodation trap</strong>The poles target the member with the highest defection risk × affinity, and their pressure grows with your pooled leverage. The better your coalition, the better the offers against it.</div>
-      <div class="cell"><strong>The chokepoint threshold</strong>You get a seat when bypassing your pool costs the poles more than negotiating with it. Frontier pace raises the bar; minerals demand lowers it.</div>
-      <div class="cell"><strong>Honest numbers</strong>Every coefficient lives in <a href="data/params.json">data/params.json</a>, with a one-line rationale in <a href="docs/model-notes.md">docs/model-notes.md</a>. Country scores and provenance: <a href="docs/leverage-matrix-reference.html">the leverage matrix</a>.</div>
-      <div class="cell"><strong>Deterministic seeds</strong>All randomness flows through one seeded generator; the seed is in the URL. Share a run, replay a run, critique a run.</div>
-      <div class="cell"><strong>C6 is a hard bound</strong>Integrity and public benefit are not a resource to spend. Leverage bought by breaking C6 never scores above being on the menu.</div>
+      <div class="cell"><strong>It's based on real research</strong>This game is the working paper <a href="https://earpini.github.io/brazil-ai-analysis">Leverage outside the chain</a> turned playable. The countries, their strengths, and the traps are all from the analysis.</div>
+      <div class="cell"><strong>Why some allies count more</strong>Countries like Taiwan or the Netherlands sit on bottlenecks the whole AI industry depends on (chip factories, chip-making machines) — they add full value the day they join. Countries like Brazil or Indonesia hold raw potential that only counts once terms are set on it.</div>
+      <div class="cell"><strong>Why your allies keep getting offers</strong>The stronger your alliance, the harder the superpowers work to break it. The research calls this the accommodation trap, and in this game it is your real opponent.</div>
+      <div class="cell"><strong>What the line means</strong>You get a seat when going around your alliance costs the superpowers more than negotiating with it. Faster AI raises that bar; a minerals boom lowers it.</div>
+      <div class="cell"><strong>Honest numbers</strong>Every number in the game lives in <a href="data/params.json">one open file</a>, each with a written justification in <a href="docs/model-notes.md">the model notes</a>. Disagree with a number? Change it and see.</div>
+      <div class="cell"><strong>Fair replays</strong>The game code in the URL fixes every random event. Same code, same game — share it and compete on equal terms.</div>
     </div>
   </details>
 
   <footer class="site container">
-    <span>Ettore Arpini · companion to <a href="https://earpini.github.io/brazil-ai-analysis">Leverage outside the chain</a></span>
-    <span>Data vintage 2024–26 · fictional events, real instruments</span>
+    <span>A game by Ettore Arpini · based on the working paper <a href="https://earpini.github.io/brazil-ai-analysis">Leverage outside the chain</a></span>
+    <span>Country data 2024–26 · the events are fictional, the laws they mention are real</span>
   </footer>
 
   <noscript>

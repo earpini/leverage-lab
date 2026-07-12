@@ -85,54 +85,54 @@ function finish(state, ending) {
   return state.ended;
 }
 
-/** Name what happened in the paper's vocabulary. */
+/** Explain what happened, in plain language a first-time player can follow. */
 export function debriefLines(state, ending) {
   const lines = [];
   const lost = state.lostMembers;
   const neverFunded = state.facility.totalFunded === 0;
 
   if (lost.length >= 2 && neverFunded) {
-    const last = lost[lost.length - 1];
+    const names = lost.map((l) => l.name).join(', ');
     lines.push(
-      `You fell to the accommodation trap on turn ${last.turn}: the coalition grew attractive, the offers got better, and nothing was holding your partners in. The facility was never funded.`
+      `Here is what beat you: as your alliance grew, the superpowers' offers to your allies got sweeter. You never put money in the alliance fund, so nothing held them. ${names} walked. (The research behind this game calls that the accommodation trap.)`
     );
   } else if (lost.length >= 1) {
     const names = lost.map((l) => l.name).join(', ');
-    lines.push(`Defections: ${names}. Each one made the next cheaper for the poles.`);
+    lines.push(`You lost ${names} to superpower deals. Every ally that leaves makes the next one cheaper to buy.`);
   }
 
   switch (ending.id) {
     case 'seat':
-      lines.push('The poles’ cost of bypassing your pool exceeded the cost of negotiating with it. That is what a seat at the table is made of.');
-      if (state.facility.totalFunded >= 4) lines.push(`The facility was funded ${state.facility.totalFunded} of ${state.params.game.turns} years — the quiet instrument that held the coalition together.`);
+      lines.push('Your alliance became too expensive to ignore: going around it now costs the superpowers more than negotiating with it. That is what a seat at the table is made of.');
+      if (state.facility.totalFunded >= 4) lines.push(`You financed the alliance fund ${state.facility.totalFunded} of ${state.params.game.turns} years. Boring, unglamorous, and the single biggest reason your allies stayed.`);
       break;
     case 'broker': {
-      lines.push('Partial pool, hedged position: real gains, fragile ones. One good offer to the wrong member and the arithmetic changes.');
+      lines.push('You built something real, but not decisive. Brazil ends 2033 with options and with risks: one good superpower offer to the wrong ally and the whole position wobbles.');
       break;
     }
     case 'junior-partner': {
       const cap = state.params.endings.junior.termsCap;
       if (convertedPoints(state) < 2) {
-        lines.push(`Alignment with unconverted assets is just delivery. You signed with terms ${ending.terms}/${cap}.`);
+        lines.push(`You signed having built almost nothing first, so you had almost nothing to bargain with. Terms: ${ending.terms}/${cap}. Next run, try building bargaining power before you sign — the deal gets much better.`);
       } else {
-        lines.push(`You converted before you signed, and the terms show it: ${ending.terms}/${cap}. Junior partnership is a position, not a failure — the terms are the score.`);
+        lines.push(`You built first and signed second, and the terms show it: ${ending.terms}/${cap}. Taking a superpower's deal is not losing. Taking it empty-handed is.`);
       }
       break;
     }
     case 'menu':
-      if (convertedPoints(state) < 1.5) lines.push('Nothing was converted, so nothing was priced. The poles set your terms.');
-      else lines.push('You converted, but never pooled past the threshold. Leverage that stays national stays small.');
+      if (convertedPoints(state) < 1.5) lines.push('Brazil had real assets — energy, minerals, a huge market — but you never set terms on any of them. Assets you never bargain with might as well belong to someone else.');
+      else lines.push('You built real bargaining power at home, but never pooled enough of it with allies. Alone, no middle power crosses the line.');
       break;
     case 'integrity-spiral':
-      lines.push('Leverage bought by breaking integrity never scores above being on the menu. C6 is a hard bound, not a dial.');
+      lines.push('Public trust collapsed: broken promises to communities, courts, and voters caught up with you. In this game, power built by breaking trust never counts. It is the one rule with no exceptions.');
       break;
     case 'retaliation-spiral':
-      lines.push('Rules wielded as a posture, not an instrument. The retaliation you drew outran the leverage you built.');
+      lines.push('You made yourself a target faster than you made yourself necessary. Courtroom wins feel strong, but the heat they draw compounds harder than the power they build.');
       break;
   }
 
   if (state.m5Uses >= 3) {
-    lines.push(`You went it alone ${state.m5Uses} times. Solo deals felt good every turn; none of them compounded.`);
+    lines.push(`You cut ${state.m5Uses} solo deals. Each one felt good that year. None of them added up to anything.`);
   }
   return lines;
 }

@@ -26,7 +26,7 @@ export function newGame({ params, countries, scenarios, events, seed = 'davos', 
     scenarioId,
     playerCode: playerCode ?? params.game.playerCode
   });
-  log(state, 'world', `Run started — scenario: ${state.scenario.name}, seed: ${state.seed}. Eight turns, ${yearOf(state)}–${params.game.startYear + params.game.turns - 1}.`);
+  log(state, 'world', `New game — scenario: ${state.scenario.name}, game code: ${state.seed}. Eight years, ${yearOf(state)}–${params.game.startYear + params.game.turns - 1}.`);
   drawEvent(state);
   polePhase(state);
   return state;
@@ -50,7 +50,7 @@ export function endTurn(state) {
   if (state.offers.player) {
     state.offers.player = null;
     state.crit.c3 = clamp(state.crit.c3 + p.poles.autoDeclineC3Cost);
-    log(state, 'resolution', 'The offer lapses unanswered. Poles read silence as refusal; exposure ticks up.');
+    log(state, 'resolution', 'You let the superpower’s offer expire. They read silence as a no: heat goes up a little.');
   }
 
   // 1. Facility: relief when funded, decay when not (the trap's fuel).
@@ -103,7 +103,7 @@ export function endTurn(state) {
       const poleName = pole === 'us' ? 'Washington' : 'Beijing';
       state.lostMembers.push({ code: m.code, name: country.name, turn: state.turn, pole });
       state.trust = clamp(state.trust - p.trust.defectionCost);
-      log(state, 'resolution', `${country.name} takes ${poleName}'s deal and leaves the coalition. The offer was addressed to them, but it was aimed at you.`);
+      log(state, 'resolution', `${country.name} takes ${poleName}'s deal and leaves your alliance.`);
     } else {
       survivors.push(m);
     }
