@@ -4,7 +4,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { loadData, declineOffer } from './helpers.js';
-import { newGame, endTurn, applyAction, legalActions, convertedPoints } from '../engine/game.js';
+import { newGame, endTurn, applyAction, legalActions, convertedPoints, snapshot } from '../engine/game.js';
 
 const data = loadData();
 const playable = data.countries.countries.filter((c) => c.tier !== 'X');
@@ -48,6 +48,18 @@ test('positional players start on their bottleneck; convertible players start fr
   assert.equal(convertedPoints(br), 0, 'Brazil: nothing counts until terms are set');
   assert.deepEqual([...br.player.convertAxes].sort(), ['compute', 'market', 'minerals'],
     'Brazil converts its historic three axes — balance unchanged');
+});
+
+test('starting outcomes reflect the real world, then the game moves them', () => {
+  const nl = newGame({ ...data, seed: 'base', scenarioId: 'bipolar', playerCode: 'NL' });
+  const inGame = newGame({ ...data, seed: 'base', scenarioId: 'bipolar', playerCode: 'IN' });
+  const nlStart = snapshot(nl);
+  const inStart = snapshot(inGame);
+  assert.ok(nlStart.economy >= 80, `the Netherlands starts prosperous (got ${nlStart.economy})`);
+  assert.ok(nlStart.people >= 80, `the Netherlands starts with high quality of life (got ${nlStart.people})`);
+  assert.ok(nlStart.economy > inStart.economy + 25, 'the Netherlands starts far richer than India');
+  assert.equal(Math.round(nl.nature), data.countries.countries.find((c) => c.code === 'NL').baseline.nature,
+    'nature starts at the country baseline');
 });
 
 test('the player country cannot be invited into its own alliance, poles never playable', () => {

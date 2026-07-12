@@ -64,12 +64,16 @@ leverage, instruments M1–M6, criteria C1–C7, the accommodation trap.
 
 ## outcomes (people, economy, nature — the point of the whole exercise)
 
-People and economy are derived, not stocks: people = 0.55·C6 + 0.25·C5 + 0.20·C4 (quality of
-life is trust, steadiness, independence); economy = 0.40·C1 + 0.30·(pool/threshold) + 0.30·C7
-(thriving is bargaining power, frontier access, allies' capability). Nature is the one new
-stock: starts at 65, drifts down by 0.5 + 1.5·demand each year (the build-out presses on water,
-land and grids), recovers +2 per M1 (conditions include environmental and local-benefit terms),
-and moves with events. Below 25 it costs 2 C6 a year — degraded nature erodes public trust.
+Each country starts from a real-world baseline (`baseline` in `countries.json`: quality of
+life, prosperity, environmental health — author judgment informed by HDI, GDP per capita and
+EPI). The game moves outcomes from there, anchored so turn 1 ≈ today: people = baseline +
+0.45·ΔC6 + 0.20·ΔC5 + 0.20·ΔC4; economy = baseline + 0.30·ΔC1 + 20·(pool/threshold) + 0.25·ΔC7
+— all minus grip and cutoff penalties. Nature is a stock initialised from the baseline: it
+drifts down by 0.5 + 1.5·demand (+ grip pressure) each year, recovers +2 per M1 (conditions
+include environmental and local-benefit terms), and moves with events. Below 25 it costs 2 C6
+a year — degraded nature erodes public trust.
+The hero's balance-of-power bars use pole power = axes-sum × (0.8 + 0.6·concentration/100):
+the poles' raw strengths, amplified as their grip tightens, in the same units as the pool.
 Frontier access is a label, not a number: secured (pool ≥ threshold), partial (≥ 0.6), precarious,
 or "on their terms" after signing with a pole. PESTLE areas map onto the inputs (political C5,
 economic C1/C4, social C6, technological C7, legal M4, environmental nature); the three tiles are

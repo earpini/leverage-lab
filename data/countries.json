@@ -25,7 +25,8 @@
       "X": "Pole (US/China reference)"
     },
     "caveats": "Data 2024-26; announced GW and fund sizes are targets, not built. Refresh before external use. Niobium overweighted in Brazil's 'key' line relative to the working paper's correction (see leverage-outside-the-chain, section 2).",
-    "affinity": "Draft pole-affinity 0-3 per pole (alliances, institutions, trade, security umbrella). Author judgment Jul 2026 - tune during build. Affinity is pull, not preference: India shows institutional pull toward China (BRICS) alongside strategic rivalry (see affinity_note)."
+    "affinity": "Draft pole-affinity 0-3 per pole (alliances, institutions, trade, security umbrella). Author judgment Jul 2026 - tune during build. Affinity is pull, not preference: India shows institutional pull toward China (BRICS) alongside strategic rivalry (see affinity_note).",
+    "baselines": "Starting outcome levels (people = quality of life, economy = prosperity, nature = environmental health), 0-100. Author judgment informed by HDI, GDP per capita and EPI, Jul 2026. The game moves them; tune freely."
   },
   "countries": [
     {
@@ -52,6 +53,11 @@
       "affinity": {
         "us": 3,
         "cn": 0
+      },
+      "baseline": {
+        "people": 79,
+        "economy": 82,
+        "nature": 58
       }
     },
     {
@@ -78,6 +84,11 @@
       "affinity": {
         "us": 3,
         "cn": 1
+      },
+      "baseline": {
+        "people": 86,
+        "economy": 86,
+        "nature": 72
       }
     },
     {
@@ -104,6 +115,11 @@
       "affinity": {
         "us": 3,
         "cn": 1
+      },
+      "baseline": {
+        "people": 80,
+        "economy": 78,
+        "nature": 60
       }
     },
     {
@@ -130,6 +146,11 @@
       "affinity": {
         "us": 3,
         "cn": 1
+      },
+      "baseline": {
+        "people": 83,
+        "economy": 78,
+        "nature": 68
       }
     },
     {
@@ -157,7 +178,12 @@
         "us": 2,
         "cn": 2
       },
-      "affinity_note": "Deliberately plays both poles"
+      "affinity_note": "Deliberately plays both poles",
+      "baseline": {
+        "people": 70,
+        "economy": 84,
+        "nature": 48
+      }
     },
     {
       "name": "India",
@@ -184,7 +210,12 @@
         "us": 2,
         "cn": 1
       },
-      "affinity_note": "BRICS/SCO member but active China rivalry (border, Quad) - institutional pull and strategic distrust coexist"
+      "affinity_note": "BRICS/SCO member but active China rivalry (border, Quad) - institutional pull and strategic distrust coexist",
+      "baseline": {
+        "people": 50,
+        "economy": 44,
+        "nature": 38
+      }
     },
     {
       "name": "Germany",
@@ -210,6 +241,11 @@
       "affinity": {
         "us": 2,
         "cn": 1
+      },
+      "baseline": {
+        "people": 85,
+        "economy": 82,
+        "nature": 70
       }
     },
     {
@@ -236,6 +272,11 @@
       "affinity": {
         "us": 2,
         "cn": 1
+      },
+      "baseline": {
+        "people": 83,
+        "economy": 78,
+        "nature": 72
       }
     },
     {
@@ -263,7 +304,12 @@
         "us": 2,
         "cn": 2
       },
-      "affinity_note": "Deliberately plays both poles"
+      "affinity_note": "Deliberately plays both poles",
+      "baseline": {
+        "people": 62,
+        "economy": 74,
+        "nature": 40
+      }
     },
     {
       "name": "United Kingdom",
@@ -289,6 +335,11 @@
       "affinity": {
         "us": 3,
         "cn": 0
+      },
+      "baseline": {
+        "people": 82,
+        "economy": 78,
+        "nature": 74
       }
     },
     {
@@ -316,7 +367,12 @@
         "us": 1,
         "cn": 2
       },
-      "affinity_note": "BRICS founder; 2025 US tariff shock pushed further toward hedging with Beijing"
+      "affinity_note": "BRICS founder; 2025 US tariff shock pushed further toward hedging with Beijing",
+      "baseline": {
+        "people": 60,
+        "economy": 54,
+        "nature": 62
+      }
     },
     {
       "name": "Canada",
@@ -343,7 +399,12 @@
         "us": 3,
         "cn": 0
       },
-      "affinity_note": "Five Eyes; deeply integrated with US economy"
+      "affinity_note": "Five Eyes; deeply integrated with US economy",
+      "baseline": {
+        "people": 85,
+        "economy": 82,
+        "nature": 74
+      }
     },
     {
       "name": "Singapore",
@@ -370,7 +431,12 @@
         "us": 2,
         "cn": 2
       },
-      "affinity_note": "Hedges by doctrine"
+      "affinity_note": "Hedges by doctrine",
+      "baseline": {
+        "people": 83,
+        "economy": 90,
+        "nature": 64
+      }
     },
     {
       "name": "Australia",
@@ -397,7 +463,12 @@
         "us": 3,
         "cn": 1
       },
-      "affinity_note": "AUKUS/Five Eyes; China is largest trade partner - security and trade pull apart"
+      "affinity_note": "AUKUS/Five Eyes; China is largest trade partner - security and trade pull apart",
+      "baseline": {
+        "people": 85,
+        "economy": 82,
+        "nature": 70
+      }
     },
     {
       "name": "Indonesia",
@@ -424,7 +495,12 @@
         "us": 1,
         "cn": 2
       },
-      "affinity_note": "Non-aligned tradition; Chinese refining control in nickel"
+      "affinity_note": "Non-aligned tradition; Chinese refining control in nickel",
+      "baseline": {
+        "people": 55,
+        "economy": 50,
+        "nature": 46
+      }
     },
     {
       "name": "South Africa",
@@ -451,7 +527,12 @@
         "us": 1,
         "cn": 2
       },
-      "affinity_note": "BRICS member"
+      "affinity_note": "BRICS member",
+      "baseline": {
+        "people": 50,
+        "economy": 44,
+        "nature": 50
+      }
     },
     {
       "name": "Norway",
@@ -477,6 +558,11 @@
       "affinity": {
         "us": 3,
         "cn": 0
+      },
+      "baseline": {
+        "people": 91,
+        "economy": 90,
+        "nature": 80
       }
     },
     {
@@ -503,6 +589,11 @@
       "affinity": {
         "us": 3,
         "cn": 0
+      },
+      "baseline": {
+        "people": 75,
+        "economy": 74,
+        "nature": 56
       }
     },
     {
@@ -529,6 +620,11 @@
       "affinity": {
         "us": 3,
         "cn": 0
+      },
+      "baseline": {
+        "people": 78,
+        "economy": 88,
+        "nature": 56
       }
     },
     {
@@ -555,6 +651,11 @@
       "affinity": {
         "us": 0,
         "cn": 3
+      },
+      "baseline": {
+        "people": 65,
+        "economy": 68,
+        "nature": 38
       }
     }
   ]

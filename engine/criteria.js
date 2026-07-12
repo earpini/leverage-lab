@@ -73,23 +73,36 @@ function gripBite(state) {
   return Math.max(0, state.concentration - k.gripFreeBand) / 100;
 }
 
+/** A country's real-world starting levels — the game moves them from here. */
+function baseline(state) {
+  return countryByCode(state, state.player.code).baseline ?? state.params.outcomes.fallbackBaseline;
+}
+
+/** Outcomes are baseline + what your play changed, anchored so turn 1 ≈ today. */
 export function peopleScore(state) {
   const w = state.params.outcomes.people;
   const k = state.params.concentration;
-  const base = state.crit.c6 * w.c6 + state.crit.c5 * w.c5 + state.crit.c4 * w.c4;
+  const a = state.params.criteriaStart;
+  const delta =
+    (state.crit.c6 - a.c6) * w.c6 +
+    (state.crit.c5 - a.c5) * w.c5 +
+    (state.crit.c4 - a.c4) * w.c4;
   const grip = gripBite(state) * k.gripPeoplePenalty;
   const cutoff = state.cutoff ? state.cutoff.severity * k.cutoffPeopleHit : 0;
-  return clamp(Math.round(base - grip - cutoff));
+  return clamp(Math.round(baseline(state).people + delta - grip - cutoff));
 }
 
 export function economyScore(state) {
   const w = state.params.outcomes.economy;
   const k = state.params.concentration;
   const ratio = Math.min(1, pooledLeverage(state) / chokepointThreshold(state));
-  const base = c1(state) * w.c1 + ratio * 100 * w.ratio + state.crit.c7 * w.c7;
+  const delta =
+    (c1(state) - state.params.criteria.c1Base) * w.c1 +
+    ratio * w.ratio +
+    (state.crit.c7 - state.params.criteriaStart.c7) * w.c7;
   const grip = gripBite(state) * k.gripEconomyPenalty;
   const cutoff = state.cutoff ? state.cutoff.severity * k.cutoffEconomyHit : 0;
-  return clamp(Math.round(base - grip - cutoff));
+  return clamp(Math.round(baseline(state).economy + delta - grip - cutoff));
 }
 
 export function natureScore(state) {
@@ -113,6 +126,14 @@ export function frontierAccess(state) {
   return { level: 'precarious', label: 'precarious — whatever they offer' };
 }
 
+/** The balance of power, in the same axis-point units as the goal bar:
+    each pole's raw strengths, amplified as their grip tightens. */
+export function polePower(state, code) {
+  const p = state.params.pool;
+  return round1(axesSum(countryByCode(state, code)) *
+    (p.polePowerBase + (state.concentration / 100) * p.polePowerConcWeight));
+}
+
 /** Full dashboard snapshot for the UI and the debrief history. */
 export function snapshot(state) {
   return {
@@ -134,6 +155,12 @@ export function snapshot(state) {
     nature: natureScore(state),
     frontier: frontierAccess(state),
     concentration: Math.round(state.concentration),
-    cutoff: state.cutoff
+    cutoff: state.cutoff,
+    powers: {
+      us: polePower(state, 'US'),
+      cn: polePower(state, 'CN'),
+      alliance: pooledLeverage(state),
+      me: round1(convertedPoints(state) + state.tempSpike)
+    }
   };
 }

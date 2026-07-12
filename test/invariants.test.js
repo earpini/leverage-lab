@@ -187,8 +187,8 @@ test('invariant 5: unchecked concentration ends in a hard cutoff; alliances soft
     assert.ok(passive.cutoff.severity > 0.45, `${seed}: an unprotected cutoff must be severe (got ${passive.cutoff.severity.toFixed(2)})`);
     const pEco = passive.history;
     assert.ok(
-      pEco[pEco.length - 1].economy <= 10,
-      `${seed}: the bystander economy must crater (got ${pEco[pEco.length - 1].economy})`
+      pEco[pEco.length - 1].economy <= pEco[0].economy - 20,
+      `${seed}: the bystander economy must fall hard from its baseline (${pEco[0].economy} → ${pEco[pEco.length - 1].economy})`
     );
 
     // Strong-alliance run, same world: later/softer cutoff or none at all.
@@ -202,8 +202,8 @@ test('invariant 5: unchecked concentration ends in a hard cutoff; alliances soft
       assert.ok(active.cutoff.turn >= passive.cutoff.turn, `${seed}: an alliance must not hasten the cutoff`);
     }
     assert.ok(
-      active.history[active.history.length - 1].economy > pEco[pEco.length - 1].economy,
-      `${seed}: the alliance-builder must end economically better off than the bystander`
+      active.history[active.history.length - 1].economy >= pEco[pEco.length - 1].economy + 10,
+      `${seed}: the alliance-builder must end clearly better off than the bystander (${active.history[active.history.length - 1].economy} vs ${pEco[pEco.length - 1].economy})`
     );
   }
 

@@ -55,7 +55,7 @@ export function createState({ params, countries, scenarios, events, seed, scenar
       ...normaliseStart(params.criteriaStart),
       c3: params.criteriaStart.c3 + (positional ? params.conversion.positionalStartHeat : 0)
     },
-    nature: params.outcomes.natureStart,
+    nature: (player.baseline ?? params.outcomes.fallbackBaseline).nature,
     concentration: params.concentration.start,
     cutoff: null,
     c1Flat: 0,

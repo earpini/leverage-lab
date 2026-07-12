@@ -21,9 +21,18 @@ export function render(root, g, handlers, ui = {}) {
     <div class="container">
       ${coachTip(g, ui)}
       <div class="board">
-        <section>${thisYearPanel(g)}${standingPanel(g, snap)}</section>
-        <section>${playerPanel(g, snap)}${alliesPanel(g)}${invitePanel(g, acts)}</section>
-        <section>${movesPanel(g, acts)}${storyPanel(g)}</section>
+        <section>
+          <p class="zone-label">What's happening</p>
+          ${thisYearPanel(g)}${storyPanel(g)}
+        </section>
+        <section>
+          <p class="zone-label">Where you stand</p>
+          ${playerPanel(g, snap)}${alliesPanel(g)}${standingPanel(g, snap)}
+        </section>
+        <section class="control-zone">
+          <p class="zone-label">What you can do</p>
+          ${movesPanel(g, acts)}${invitePanel(g, acts)}
+        </section>
       </div>
     </div>
     ${ui.summary && !g.ended ? summarySheet(g, ui.summary) : ''}
@@ -57,16 +66,21 @@ function hero(g, snap, ui) {
             <button class="btn-ghost" data-help>${esc(INTRO.reopen)}</button>
           </div>
         </div>
-        <p class="hero-kicker">Your goal — push the gold bar past the line</p>
-        <div class="nums">
-          <span class="pooled">${snap.pooled}</span>
-          <span class="of">your alliance's bargaining power · <strong>${snap.threshold} needed</strong> for a seat at the table</span>
+        <div class="hero-grid">
+          <div>
+            <p class="hero-kicker">Your goal — push the gold bar past the line</p>
+            <div class="nums">
+              <span class="pooled">${snap.pooled}</span>
+              <span class="of">your alliance's bargaining power · <strong>${snap.threshold} needed</strong> for a seat at the table</span>
+            </div>
+            <div class="bar"><i style="width:${ratio * 100}%"></i></div>
+            <p class="hero-note">${ratio >= 1
+              ? 'You are past the line. Now hold it until 2033: keep your allies in and public trust up.'
+              : 'Below the line, the superpowers can ignore your alliance. Grow the bar: set conditions at home, add allies, share technology.'}</p>
+            ${gripBar(g, snap)}
+          </div>
+          ${powersPanel(g, snap)}
         </div>
-        <div class="bar"><i style="width:${ratio * 100}%"></i></div>
-        <p class="hero-note">${ratio >= 1
-          ? 'You are past the line. Now hold it until 2033: keep your allies in and public trust up.'
-          : 'Below the line, the superpowers can ignore your alliance. Grow the bar: set conditions at home, add allies, share technology.'}</p>
-        ${gripBar(g, snap)}
         <div class="outcomes">
           ${OUTCOME_TILES.map((t) => {
             const v = snap[t.key];
@@ -84,6 +98,30 @@ function hero(g, snap, ui) {
           </div>
         </div>
       </div>
+    </div>`;
+}
+
+function powersPanel(g, snap) {
+  const player = g.data.byCode[g.player.code];
+  const rows = [
+    { label: 'United States', value: snap.powers.us, cls: 'pole' },
+    { label: 'China', value: snap.powers.cn, cls: 'pole' },
+    { label: `Your alliance (${snap.members + 1} countr${snap.members === 0 ? 'y' : 'ies'})`, value: snap.powers.alliance, cls: 'alliance' },
+    { label: `${player.name} alone`, value: snap.powers.me, cls: 'me' }
+  ];
+  const max = Math.max(...rows.map((r) => r.value), 1);
+  return `
+    <div class="powers" title="Same units as the goal bar. Every ally you add moves your alliance's bar up — alone, nobody gets close.">
+      <p class="hero-kicker">The balance of power</p>
+      ${rows.map((r) => `
+        <div class="power-row">
+          <span class="p-label">${esc(r.label)}</span>
+          <div class="p-bar"><i class="${r.cls}" style="width:${(r.value / max) * 100}%"></i></div>
+          <span class="p-val">${r.value}</span>
+        </div>`).join('')}
+      <p class="hero-note" style="margin-top: var(--ea-space-2)">${snap.members > 0
+        ? 'Every ally adds to your side of the scale.'
+        : 'Alone, nobody gets close. Allies are the only way up.'}</p>
     </div>`;
 }
 
@@ -125,7 +163,7 @@ function thisYearPanel(g) {
   const dispatches = g.log.filter((l) => l.turn === g.turn && l.phase === 'poles');
   return `
     <div class="panel">
-      <h2><span class="step">1</span>This year — ${yearOf(g)}</h2>
+      <h2>This year — ${yearOf(g)}</h2>
       ${DIALS.map((d) => `
         <div class="dial" title="${esc(d.hint)}">
           <span class="name"><span>${esc(d.label)}</span><span>${Math.round(g.dials[d.key] * 100)}</span></span>
@@ -241,7 +279,7 @@ function movesPanel(g, acts) {
   const boosted = g.turnMods.m1Boost > 0;
   return `
     <div class="panel">
-      <h2><span class="step">2</span>Your moves</h2>
+      <h2>Your moves — ${g.ap} left</h2>
       <div class="actions">
         ${order.map((id) => {
           const a = acts[id];
@@ -256,7 +294,7 @@ function movesPanel(g, acts) {
           </button>`;
         }).join('')}
       </div>
-      <button class="btn-primary" data-end-turn><span class="step inv">3</span>End the year${g.ap > 0 ? ` (${g.ap} move${g.ap > 1 ? 's' : ''} unused)` : ''}</button>
+      <button class="btn-primary" data-end-turn>End the year${g.ap > 0 ? ` (${g.ap} move${g.ap > 1 ? 's' : ''} unused)` : ''}</button>
     </div>`;
 }
 

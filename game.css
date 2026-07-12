@@ -152,6 +152,55 @@ html, body { margin: 0; padding: 0; }
 }
 .hero-note { font-size: var(--ea-size-small); color: var(--ea-gray); margin: var(--ea-space-3) 0 0; max-width: 72ch; }
 
+/* hero layout: goal + grip on the left, balance of power on the right */
+.hero-grid {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: var(--ea-space-9);
+  align-items: start;
+}
+@media (max-width: 860px) {
+  .hero-grid { grid-template-columns: 1fr; gap: var(--ea-space-6); }
+}
+
+/* the balance of power */
+.powers { cursor: help; }
+.power-row {
+  display: grid;
+  grid-template-columns: minmax(110px, auto) 1fr 40px;
+  gap: var(--ea-space-3);
+  align-items: center;
+  margin-bottom: var(--ea-space-2);
+  font-size: var(--ea-size-small);
+}
+.p-label { color: var(--ea-gray); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.p-val { text-align: right; color: var(--ea-text-inverse); font-variant-numeric: tabular-nums; font-weight: var(--ea-weight-semibold); }
+.p-bar { height: 8px; background: rgba(255, 255, 255, 0.12); border-radius: var(--ea-radius-sm); overflow: hidden; }
+.p-bar > i { display: block; height: 100%; border-radius: var(--ea-radius-sm); transition: width var(--ea-dur-slow) var(--ea-ease); }
+.p-bar > i.pole { background: rgba(255, 255, 255, 0.45); }
+.p-bar > i.alliance { background: var(--ea-accent); }
+.p-bar > i.me { background: var(--ea-slate); }
+
+/* board zones */
+.zone-label {
+  font-size: var(--ea-size-micro);
+  font-weight: var(--ea-weight-semibold);
+  letter-spacing: var(--ea-tracking-label);
+  text-transform: uppercase;
+  color: var(--ea-text-muted);
+  margin: 0 0 var(--ea-space-4);
+  padding-bottom: var(--ea-space-2);
+  border-bottom: var(--ea-border-hair) solid var(--ea-border);
+}
+.control-zone .zone-label { color: var(--ea-accent-ink); border-bottom-color: var(--ea-accent); }
+.control-zone .panel {
+  background: var(--ea-bg-sunken);
+  border-radius: var(--ea-radius-md);
+  padding: var(--ea-space-5);
+}
+.control-zone .panel h2 { border-bottom-color: var(--ea-accent); }
+.control-zone .btn { background: var(--ea-paper); }
+
 /* the grip: the antagonist's clock */
 .grip { margin-top: var(--ea-space-5); cursor: help; }
 .grip-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: var(--ea-space-2); }

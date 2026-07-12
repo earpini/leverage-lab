@@ -67,22 +67,24 @@
     "juniorTermsPenalty": 0.3
   },
   "outcomes": {
-    "natureStart": 65,
     "natureDriftBase": 0.5,
     "natureDriftDemand": 1.5,
     "m1NatureGain": 2,
     "natureTrustLine": 25,
     "natureTrustCost": 2,
-    "people": { "c6": 0.55, "c5": 0.25, "c4": 0.2 },
-    "economy": { "c1": 0.4, "ratio": 0.3, "c7": 0.3 },
-    "frontier": { "partialRatio": 0.6 }
+    "people": { "c6": 0.45, "c5": 0.2, "c4": 0.2 },
+    "economy": { "c1": 0.3, "ratio": 20, "c7": 0.25 },
+    "frontier": { "partialRatio": 0.6 },
+    "fallbackBaseline": { "people": 60, "economy": 55, "nature": 60 }
   },
   "pool": {
     "memberFactor": 0.45,
     "positionalFactor": 1.0,
     "m6FactorBonus": 0.04,
     "m6FactorBonusCap": 0.2,
-    "positionalCountries": ["TW", "NL", "KR"]
+    "positionalCountries": ["TW", "NL", "KR"],
+    "polePowerBase": 0.8,
+    "polePowerConcWeight": 0.6
   },
   "chokepoint": {
     "paceWeight": 8,
