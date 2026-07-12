@@ -1,0 +1,34 @@
+{
+  "_meta": {
+    "note": "Three scenario trajectories from the working paper. Dials are 0-1; drift applies each world phase and clamps to [0,1]. chokepointBase is in axis-points (see docs/model-notes.md)."
+  },
+  "scenarios": [
+    {
+      "id": "bipolar",
+      "name": "Bipolar lock-in",
+      "blurb": "Rivalry hardens into blocs. Offers get better and the exits close.",
+      "dials": { "rivalry": 0.55, "pace": 0.5, "demand": 0.5 },
+      "drift": { "rivalry": 0.05, "pace": 0.02, "demand": 0.03 },
+      "chokepointBase": 24,
+      "trustDecayMod": 1.0
+    },
+    {
+      "id": "acceleration",
+      "name": "Frontier acceleration",
+      "blurb": "Capability runs ahead of everyone's plans. The window narrows fastest here.",
+      "dials": { "rivalry": 0.45, "pace": 0.6, "demand": 0.55 },
+      "drift": { "rivalry": 0.02, "pace": 0.06, "demand": 0.04 },
+      "chokepointBase": 28,
+      "trustDecayMod": 1.0
+    },
+    {
+      "id": "spring",
+      "name": "Multilateral spring",
+      "blurb": "The convening lanes reopen. Cheaper to organise — if anyone bothers.",
+      "dials": { "rivalry": 0.5, "pace": 0.45, "demand": 0.5 },
+      "drift": { "rivalry": -0.02, "pace": 0.02, "demand": 0.02 },
+      "chokepointBase": 20,
+      "trustDecayMod": 0.7
+    }
+  ]
+}

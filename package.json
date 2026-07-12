@@ -1,0 +1,12 @@
+{
+  "name": "leverage-lab",
+  "version": "0.1.0",
+  "description": "A browser war-game about middle-power leverage in the AI order",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node --test 'test/*.test.js'",
+    "serve": "python3 -m http.server 8080"
+  },
+  "author": "Ettore Arpini"
+}

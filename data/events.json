@@ -1,0 +1,93 @@
+{
+  "_meta": {
+    "note": "12 event cards. One fires per world phase, weighted by scenario, drawn without replacement. Real instruments (REDATA, TFFF, PL 2780, ILO-169) are cited where true; the events themselves are fictional. Effects DSL documented in docs/model-notes.md."
+  },
+  "events": [
+    {
+      "id": "tariff-wave",
+      "name": "Tariff wave",
+      "copy": "Washington signals a new tariff schedule aimed at countries that condition inbound tech capital. Your conditioning agenda just acquired a price tag.",
+      "weights": { "bipolar": 3, "acceleration": 2, "spring": 1 },
+      "effects": { "c3": 3, "rivalry": 0.05 }
+    },
+    {
+      "id": "export-control-wave",
+      "name": "Export-control wave",
+      "copy": "A fresh round of controls lands on advanced accelerators. Every coalition partner that depends on US compute rereads its contracts tonight.",
+      "weights": { "bipolar": 3, "acceleration": 3, "spring": 1 },
+      "effects": { "rivalry": 0.06, "defRiskAll": 4 }
+    },
+    {
+      "id": "datacentre-offer",
+      "name": "Hyperscaler datacentre offer",
+      "copy": "A hyperscaler proposes a multi-gigawatt campus on your grid. Brazil's REDATA regime exists for exactly this moment: terms attached now convert far better than terms begged for later.",
+      "weights": { "bipolar": 2, "acceleration": 2, "spring": 2 },
+      "effects": { "m1Boost": 0.5 }
+    },
+    {
+      "id": "licensing-conflict",
+      "name": "Licensing conflict",
+      "copy": "Your courts take up a training-data licensing case against a frontier lab, with PL 2780's copyright provisions in the background. The docket itself is leverage — for one news cycle.",
+      "weights": { "bipolar": 2, "acceleration": 2, "spring": 2 },
+      "effects": { "c3": 2, "tempSpike": 0.8 }
+    },
+    {
+      "id": "summit",
+      "name": "Multilateral summit",
+      "copy": "A working summit on AI and development actually works: communiqué with numbers in it, corridors full of ministers who return your calls. Recruiting is cheaper this turn.",
+      "weights": { "bipolar": 1, "acceleration": 1, "spring": 3 },
+      "effects": { "trust": 4, "c5": 3, "c6": 1, "recruitDiscount": 1 }
+    },
+    {
+      "id": "brics-tech-bank",
+      "name": "BRICS technology bank",
+      "copy": "Beijing circulates a draft charter for a BRICS technology bank — concessional compute, favourable terms, familiar institutions. The pull is real, and it is addressed to you.",
+      "weights": { "bipolar": 2, "acceleration": 1, "spring": 2 },
+      "effects": { "offerPlayer": "cn", "memberPressure": { "pole": "cn", "amount": 6 } }
+    },
+    {
+      "id": "continental-compute-pact",
+      "name": "Continental compute pact",
+      "copy": "Washington floats a hemisphere-wide compute pact: preferential access for partners who align their data-centre rules. Your US-leaning partners find it hard to look away.",
+      "weights": { "bipolar": 2, "acceleration": 2, "spring": 1 },
+      "effects": { "offerPlayer": "us", "memberPressure": { "pole": "us", "amount": 8 } }
+    },
+    {
+      "id": "minerals-squeeze",
+      "name": "Minerals squeeze",
+      "copy": "Processing bottlenecks bite and spot prices for niobium and heavy rare earths jump. Countries that converted their minerals position feel it as leverage; the rest feel it as weather.",
+      "weights": { "bipolar": 2, "acceleration": 2, "spring": 1 },
+      "effects": { "demand": 0.08, "ifConvertedMinerals": { "c1Flat": 3 } }
+    },
+    {
+      "id": "ilo-169-halt",
+      "name": "Consultation halt",
+      "copy": "A federal court pauses a datacentre over ILO-169 consultation requirements. The obligation is real; how it lands depends on whether your coalition built process before it built concrete.",
+      "weights": { "bipolar": 2, "acceleration": 2, "spring": 2 },
+      "effects": { "c6": -3, "c5": -1 },
+      "ifFacilityFunded": { "c6": -1, "c5": 0 }
+    },
+    {
+      "id": "water-conflict",
+      "name": "Water conflict",
+      "copy": "A cooling-water dispute puts a host municipality on the evening news, dry reservoirs behind the reporter. Public benefit stops being an abstraction.",
+      "weights": { "bipolar": 1, "acceleration": 2, "spring": 1 },
+      "effects": { "c6": -3, "demand": 0.03 }
+    },
+    {
+      "id": "benefit-audit",
+      "name": "Benefit audit",
+      "copy": "An independent audit — TFFF-style, receipts and all — asks where the promised local benefit actually went. Coalitions that pooled with autocracies have the worst week.",
+      "weights": { "bipolar": 2, "acceleration": 2, "spring": 2 },
+      "effects": { "c6": -1 },
+      "ifTierD": { "c6": -4 }
+    },
+    {
+      "id": "frontier-leap",
+      "name": "Frontier leap",
+      "copy": "A capability jump nobody scheduled. The poles' bypass options widen, and the gap between frontier and everyone else opens another notch.",
+      "weights": { "bipolar": 1, "acceleration": 3, "spring": 1 },
+      "effects": { "pace": 0.08, "c7": -2 }
+    }
+  ]
+}

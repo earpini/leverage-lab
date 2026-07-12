@@ -1,0 +1,123 @@
+{
+  "_meta": {
+    "note": "Every tunable coefficient in the game lives here. One-line rationale for each in docs/model-notes.md. Nothing numeric is hard-coded in engine/.",
+    "vintage": "Jul 2026"
+  },
+  "game": {
+    "turns": 8,
+    "startYear": 2026,
+    "apPerTurn": 2,
+    "playerCode": "BR"
+  },
+  "criteriaStart": {
+    "c3": 10,
+    "c4": 25,
+    "c5": 60,
+    "c6": 70,
+    "c7": 10
+  },
+  "criteria": {
+    "c1Base": 8,
+    "c1PerConvertedPoint": 4.5,
+    "c1SpikeFactor": 4.5,
+    "c2TrustWeight": 0.55,
+    "c2PerMember": 7,
+    "c2DefRiskWeight": 0.15,
+    "c3DecayPerTurn": 2,
+    "c4DecayPerTurn": 1,
+    "c7DecayPerTurn": 0.5,
+    "c5IncoherenceThreshold": 40,
+    "c5IncoherenceTrustCost": 2,
+    "c6BreachLine": 30,
+    "c3SpiralLine": 90,
+    "tierDC6CostPerTurn": 1.5,
+    "tierDC5CostPerTurn": 1
+  },
+  "trust": {
+    "start": 40,
+    "fundedGain": 3,
+    "unfundedDecay": 4,
+    "defectionCost": 8,
+    "recruitGain": 2
+  },
+  "conversion": {
+    "axes": ["minerals", "compute", "market"]
+  },
+  "pool": {
+    "memberFactor": 0.45,
+    "positionalFactor": 1.0,
+    "m6FactorBonus": 0.04,
+    "m6FactorBonusCap": 0.2,
+    "positionalCountries": ["TW", "NL", "KR"]
+  },
+  "chokepoint": {
+    "paceWeight": 8,
+    "demandWeight": -4,
+    "floor": 12
+  },
+  "instruments": {
+    "m1": { "ap": 1, "convertShare": 0.25, "c4": 6, "c3": 3 },
+    "m2": {
+      "apBase": 1,
+      "apSurcharge": 1,
+      "apCap": 2,
+      "surchargeTiers": ["C", "D"],
+      "surchargeRegimeDistance": 2,
+      "defRiskBase": 22,
+      "defRiskPerAffinity": 7,
+      "defRiskAnchorRelief": 4,
+      "defRiskPositionalPenalty": 6
+    },
+    "m3": {
+      "apFirst": 2,
+      "ap": 1,
+      "reliefBase": 6,
+      "reliefPerStreak": 1.2,
+      "c5Gain": 2,
+      "unfundedDefRiskDrift": 3
+    },
+    "m4": { "ap": 1, "spikePoints": 2.5, "spikeDecay": 0.5, "c3": 12 },
+    "m5": { "ap": 1, "c1Flat": 3, "diminish": 0.8, "c3Relief": 2, "trustCost": 3, "c5Cost": 2 },
+    "m6": {
+      "ap": 1,
+      "c7Gain": 7,
+      "diminish": 0.85,
+      "structuralRelief": 3,
+      "c4Gain": 2,
+      "c6Gain": 1
+    }
+  },
+  "poles": {
+    "pressureBase": 4,
+    "pressureRivalryWeight": 6,
+    "pressurePooledWeight": 0.18,
+    "courtTurns": { "us": [3, 6], "cn": [2, 5, 7] },
+    "declineC3Cost": 2,
+    "autoDeclineC3Cost": 2
+  },
+  "defection": {
+    "rollLine": 55,
+    "chancePerPoint": 2.2,
+    "chanceCap": 85,
+    "affinityWeight": 3,
+    "rivalryWeight": 8,
+    "c7Relief": 0.25,
+    "fundedRelief": 6,
+    "defRiskFloor": 5,
+    "defRiskCap": 95
+  },
+  "regimeDistance": {
+    "Full": 0,
+    "Flawed": 1,
+    "Hybrid": 2,
+    "Authoritarian": 3
+  },
+  "endings": {
+    "seat": { "base": 75, "c7Weight": 0.1, "c6Weight": 0.05, "minMembers": 3, "minC2": 50, "minC6": 45 },
+    "broker": { "base": 45, "ratioWeight": 10, "minRatio": 0.6, "minMembers": 1, "minC2": 35 },
+    "junior": { "base": 25, "termsC1": 0.22, "termsC4": 0.18, "termsC2": 0.08, "termsCap": 40 },
+    "menu": { "base": 10, "c1Weight": 0.08 },
+    "integritySpiral": { "score": 8 },
+    "retaliationSpiral": { "score": 9 }
+  }
+}
