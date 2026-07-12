@@ -33,8 +33,9 @@ coalition, and try to institutionalise it before the two poles buy your partners
    drift on a scenario trajectory; an event fires (tariff threat, export-control wave, datacentre
    offer, licensing conflict, summit).
 2. **Pole phase** — the US and China AIs each make one move. Their doctrine is bilateral capture:
-   target the coalition member with the highest `defection risk` and offer it a deal it must
-   respond to. This is the accommodation trap as an opponent, not a diagram.
+   target the coalition member with the highest `defection risk × affinity` and offer it a deal
+   it must respond to — and sometimes address the offer to the player directly. This is the
+   accommodation trap as an opponent, not a diagram.
 3. **Player phase** — spend limited action points on generalised instruments:
    - **Condition** (M1): attach terms to inbound capital → converts `compute/minerals/market`
      axes into leverage, raises C1/C4, small retaliation cost.
@@ -52,14 +53,37 @@ coalition, and try to institutionalise it before the two poles buy your partners
    C4 dependency, C5 coherence, C6 integrity & public benefit, C7 peer gains); defection checks
    roll against facility funding + C7 + pole pressure.
 
-## Win / lose
+## Alignment and temptation
 
-- **Win ("a seat at the table")**: by 2033, pooled coalition leverage crosses the chokepoint
-  threshold — the point where the poles' cost of bypassing the coalition exceeds the cost of
-  negotiating with it — with C6 unbroken and ≥ N of your recruits still in.
-- **Lose**: coalition collapse (accommodation trap), retaliation crisis (C3 maxed), or a C6
-  breach spiral (licence crises: ILO-169 halt, water conflict, benefit-audit scandal). C6 is a
-  hard bound, exactly as in the paper — leverage bought by breaking it is a loss, not a win.
+Accommodation must be genuinely attractive or the trap teaches nothing. Every country carries a
+draft **pole affinity** score (`affinity: {us, cn}` in `data/countries.json`): Brazil and South
+Africa pull toward Beijing through BRICS, Australia and Canada toward Washington through the
+alliance system, the Gulf states play both. Affinity works three ways:
+
+- **Poles exploit it.** Offers to high-affinity members are cheaper for the pole and harder to
+  refuse — the US peels Canada with a continental compute pact; China peels Brazil with a BRICS
+  technology bank. Defection checks weight affinity.
+- **The player feels it.** Pole offers arrive addressed to *you* too, and they are good: real
+  compute access, tariff relief, investment. Taking one is always a legal move.
+- **It is pull, not preference.** India shows the difference: institutional pull toward China
+  (BRICS/SCO) alongside active rivalry (border, Quad) — see `affinity_note` fields. The engine
+  should let pull and trust diverge.
+
+## Endings (a spectrum, not win/lose)
+
+1. **A seat at the table** — pooled coalition leverage crosses the chokepoint threshold (the
+   poles' cost of bypassing the coalition exceeds the cost of negotiating with it), C6 unbroken,
+   coalition intact. The paper's recommended path, and the hardest.
+2. **Balancing broker** — partial coalition, hedged between poles; real but fragile gains.
+3. **Junior partner** — you took a pole's offer. Not a fail state: the ending is scored by the
+   *terms*, and terms scale with leverage converted **before** signing. This is the game's
+   sharpest lesson — even a player who intends to align does better by converting first.
+   Alignment with unconverted assets is just delivery.
+4. **On the menu** — coalition collapsed to the accommodation trap, or you aligned with nothing
+   converted; the poles set your terms.
+5. **Crisis endings** — retaliation spiral (C3 maxed) or C6 breach spiral (ILO-169 halt, water
+   conflict, benefit-audit scandal). C6 stays a hard bound: leverage bought by breaking it never
+   scores above ending 4.
 
 ## Design principles
 

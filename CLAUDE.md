@@ -19,7 +19,8 @@ the design contract. Companion to the working paper *Leverage outside the chain*
 - **Determinism**: all randomness through one seeded RNG; the seed is in the URL.
 - **Tests**: engine unit tests in `test/` runnable with `node --test`. Balance changes must
   keep the invariant tests green (M5 dominated in every scenario; unfunded coalitions decay;
-  C6 breach is never a winning line).
+  C6 breach is never a winning line; defecting after conversion always yields better junior-partner
+  terms than defecting before it).
 - **Voice for game copy**: calm urgency, concrete, no doom performance — the register of the
   paper and of BRAND.md §2. Cite real instruments (REDATA, TFFF, PL 2780) in flavour text where
   true, and keep invented events clearly fictional.
