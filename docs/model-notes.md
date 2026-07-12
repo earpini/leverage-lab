@@ -120,7 +120,7 @@ test 5 (`test/invariants.test.js`) checks it.
 | `m2.apSurcharge` rules | +1 for tier C/D, regime distance ≥ 2, or positional | Distance is expensive: values friction and pole alignment both raise the price of a signature. |
 | `m2.defRisk*` | 22 + 7·affinity − 4·anchor + 6·positional | Arrivals are loyal in proportion to how little the poles pull on them. |
 | `m3.apFirst` / `ap` | 2 / 1 | Brazil-style seeding is expensive up front, cheaper to sustain — and it compounds. |
-| `m3.reliefBase` / `reliefPerStreak` | 6 / 1.2 | The anti-defection instrument: relief grows with the funding streak (credibility compounds). |
+| `m3.reliefBase` / `reliefPerStreak` | 7 / 1.5 | The anti-defection instrument: relief grows with the funding streak (credibility compounds), and outgrows steady pole pressure by year three. |
 | `m3.unfundedDefRiskDrift` | 3 | Skip a year and every member drifts toward the exits. |
 | `m4.spikePoints` / `spikeDecay` / `c3` | 2.5 / 0.5 / 12 | A regulatory strike is real one-turn leverage with a long retaliation tail — usable, dominated as a posture. |
 | `m5.c1Flat` / `diminish` | 3 / 0.8 | Going alone feels good now, converts nothing, and pays less each time (invariant test 1: dominated). |
@@ -135,9 +135,9 @@ test 5 (`test/invariants.test.js`) checks it.
 | `pressureBase` + `rivalry·6` + `pooled·0.18` | — | **The accommodation trap as an opponent**: the more effective the coalition, the harder the poles pull at it. |
 | `courtTurns` us [3,6], cn [2,5,7] | — | Scripted priority tables, no ML; China courts Brazil earlier and more often (affinity 2 vs 1). |
 | `declineC3Cost` | 2 | Saying no to a pole is never free. |
-| `rollLine` / `chancePerPoint` / `chanceCap` | 55 / 2.2 / 85 | Members below 55 risk never roll — well-tended coalitions are safe; neglected ones face compounding odds. |
+| `rollLine` / `chancePerPoint` / `chanceCap` | 60 / 1.8 / 70 | Alliances are sticky — that is the point of having one. Members below 60 risk never roll; a coalition funded every year loses nobody (verified: 0 defections across 20 funded runs), while neglect still bleeds out. |
 | `affinityWeight` / `rivalryWeight` | 3 / 8 | Defection checks weight affinity (per CONCEPT.md) and the world's temperature. |
-| `c7Relief` / `fundedRelief` | 0.25 / 6 | Both anti-defection channels, structural (M6) and financial (M3), read here. |
+| `c7Relief` / `fundedRelief` | 0.25 / 10 | Both anti-defection channels, structural (M6) and financial (M3), read here; funding this year is strong protection because credible money is what actually holds coalitions. |
 
 ## endings
 

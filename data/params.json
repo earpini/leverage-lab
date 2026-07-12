@@ -46,8 +46,16 @@
     "positionalStartHeat": 8
   },
   "latecomer": {
-    "clubMembers": ["IN", "ID", "ZA"],
-    "clubSubstitutes": ["CA", "SG", "NO"],
+    "clubMembers": [
+      "IN",
+      "ID",
+      "ZA"
+    ],
+    "clubSubstitutes": [
+      "CA",
+      "SG",
+      "NO"
+    ],
     "entryBar": 4,
     "joinAp": 1,
     "joinTrustGain": 4,
@@ -80,15 +88,33 @@
     "m1NatureGain": 2,
     "natureTrustLine": 25,
     "natureTrustCost": 2,
-    "people": { "c6": 0.45, "c5": 0.2, "c4": 0.2 },
-    "economy": { "c1": 0.3, "ratio": 20, "c7": 0.25 },
-    "frontier": { "partialRatio": 0.6 },
-    "fallbackBaseline": { "people": 60, "economy": 55, "nature": 60 }
+    "people": {
+      "c6": 0.45,
+      "c5": 0.2,
+      "c4": 0.2
+    },
+    "economy": {
+      "c1": 0.3,
+      "ratio": 20,
+      "c7": 0.25
+    },
+    "frontier": {
+      "partialRatio": 0.6
+    },
+    "fallbackBaseline": {
+      "people": 60,
+      "economy": 55,
+      "nature": 60
+    }
   },
   "pool": {
     "memberFactor": 0.45,
-    "positionalFactor": 1.0,
-    "positionalCountries": ["TW", "NL", "KR"],
+    "positionalFactor": 1,
+    "positionalCountries": [
+      "TW",
+      "NL",
+      "KR"
+    ],
     "polePowerBase": 0.8,
     "polePowerConcWeight": 0.6
   },
@@ -98,14 +124,24 @@
     "floor": 12
   },
   "instruments": {
-    "m1": { "ap": 1, "convertShare": 0.25, "c4": 6, "c3": 3, "govFactorBase": 0.9, "govFactorPerLevel": 0.05 },
+    "m1": {
+      "ap": 1,
+      "convertShare": 0.25,
+      "c4": 6,
+      "c3": 3,
+      "govFactorBase": 0.9,
+      "govFactorPerLevel": 0.05
+    },
     "m2": {
       "apBase": 1,
       "apSurcharge": 1,
       "apCap": 2,
-      "surchargeTiers": ["C", "D"],
+      "surchargeTiers": [
+        "C",
+        "D"
+      ],
       "surchargeRegimeDistance": 2,
-      "defRiskBase": 22,
+      "defRiskBase": 20,
       "defRiskPerAffinity": 7,
       "defRiskAnchorRelief": 4,
       "defRiskPositionalPenalty": 6
@@ -114,13 +150,27 @@
       "apFirst": 2,
       "ap": 1,
       "memberCostDivisor": 5,
-      "reliefBase": 6,
-      "reliefPerStreak": 1.2,
+      "reliefBase": 7,
+      "reliefPerStreak": 1.5,
       "c5Gain": 2,
       "unfundedDefRiskDrift": 3
     },
-    "m4": { "ap": 1, "spikePoints": 2.5, "spikeDecay": 0.5, "c3": 12, "gateC5": 70, "gateGov": 3 },
-    "m5": { "ap": 1, "c1Flat": 3, "diminish": 0.8, "c3Relief": 2, "trustCost": 3, "c5Cost": 2 },
+    "m4": {
+      "ap": 1,
+      "spikePoints": 2.5,
+      "spikeDecay": 0.5,
+      "c3": 12,
+      "gateC5": 70,
+      "gateGov": 3
+    },
+    "m5": {
+      "ap": 1,
+      "c1Flat": 3,
+      "diminish": 0.8,
+      "c3Relief": 2,
+      "trustCost": 3,
+      "c5Cost": 2
+    },
     "m7": {
       "ap": 1,
       "c5Gain": 2,
@@ -132,9 +182,27 @@
       "ap": 1,
       "factorBonusCap": 0.2,
       "tiers": [
-        { "c7": 7, "structuralRelief": 3, "factorBonus": 0.04, "c4": 2, "c6": 1 },
-        { "c7": 6, "structuralRelief": 3, "factorBonus": 0.08, "c4": 2, "c6": 1 },
-        { "c7": 5, "structuralRelief": 5, "factorBonus": 0.04, "c4": 1, "c6": 1 }
+        {
+          "c7": 7,
+          "structuralRelief": 3,
+          "factorBonus": 0.04,
+          "c4": 2,
+          "c6": 1
+        },
+        {
+          "c7": 6,
+          "structuralRelief": 3,
+          "factorBonus": 0.08,
+          "c4": 2,
+          "c6": 1
+        },
+        {
+          "c7": 5,
+          "structuralRelief": 5,
+          "factorBonus": 0.04,
+          "c4": 1,
+          "c6": 1
+        }
       ]
     }
   },
@@ -142,18 +210,28 @@
     "pressureBase": 4,
     "pressureRivalryWeight": 6,
     "pressurePooledWeight": 0.18,
-    "courtTurns": { "us": [3, 6], "cn": [2, 5, 7] },
+    "courtTurns": {
+      "us": [
+        3,
+        6
+      ],
+      "cn": [
+        2,
+        5,
+        7
+      ]
+    },
     "declineC3Cost": 2,
     "autoDeclineC3Cost": 2
   },
   "defection": {
-    "rollLine": 55,
-    "chancePerPoint": 2.2,
-    "chanceCap": 85,
+    "rollLine": 60,
+    "chancePerPoint": 1.8,
+    "chanceCap": 70,
     "affinityWeight": 3,
     "rivalryWeight": 8,
     "c7Relief": 0.25,
-    "fundedRelief": 6,
+    "fundedRelief": 10,
     "defRiskFloor": 5,
     "defRiskCap": 95
   },
@@ -164,11 +242,37 @@
     "Authoritarian": 3
   },
   "endings": {
-    "seat": { "base": 75, "c7Weight": 0.1, "c6Weight": 0.05, "minMembers": 3, "minC2": 50, "minC6": 45 },
-    "broker": { "base": 45, "ratioWeight": 10, "minRatio": 0.6, "minMembers": 1, "minC2": 35 },
-    "junior": { "base": 25, "termsC1": 0.22, "termsC4": 0.18, "termsC2": 0.08, "termsCap": 40 },
-    "menu": { "base": 10, "c1Weight": 0.08 },
-    "integritySpiral": { "score": 8 },
-    "retaliationSpiral": { "score": 9 }
+    "seat": {
+      "base": 75,
+      "c7Weight": 0.1,
+      "c6Weight": 0.05,
+      "minMembers": 3,
+      "minC2": 50,
+      "minC6": 45
+    },
+    "broker": {
+      "base": 45,
+      "ratioWeight": 10,
+      "minRatio": 0.6,
+      "minMembers": 1,
+      "minC2": 35
+    },
+    "junior": {
+      "base": 25,
+      "termsC1": 0.22,
+      "termsC4": 0.18,
+      "termsC2": 0.08,
+      "termsCap": 40
+    },
+    "menu": {
+      "base": 10,
+      "c1Weight": 0.08
+    },
+    "integritySpiral": {
+      "score": 8
+    },
+    "retaliationSpiral": {
+      "score": 9
+    }
   }
 }
