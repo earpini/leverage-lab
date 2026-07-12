@@ -388,6 +388,7 @@ function debriefSheet(g, snap) {
           <li>Where you ended: bar at ${snap.pooled} of ${snap.threshold} needed · ${snap.members} all${snap.members === 1 ? 'y' : 'ies'} · public trust ${snap.c6}.</li>
         </ul>
         <p class="seedlink">Challenge a friend — same game, same events: <a href="${esc(url)}">${esc(url)}</a></p>
+        <p class="seedlink">Something felt wrong, unclear, or great? <a href="https://www.admonymous.co/arpini" target="_blank" rel="noopener">Tell me anonymously</a>.</p>
         <div class="row" style="margin-top: var(--ea-space-4)">
           <button class="btn-quiet" data-new-seed>New game</button>
           <button class="btn-primary" data-replay>Replay this one</button>
