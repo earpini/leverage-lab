@@ -93,6 +93,42 @@ test('a bigger coalition costs more to fund', () => {
   assert.equal(cost(g), 2, 'five members, bigger bill');
 });
 
+test('fieldbuilding: slow, compounding, and yours even from outside the alliance', () => {
+  const g = start('field', 'bipolar');
+  applyAction(g, { type: 'event', choice: 'b' });
+  assert.equal(g.govLevel, 2, 'Brazil starts at Medium');
+  const c5Before = g.crit.c5;
+  applyAction(g, { type: 'm7' });
+  assert.equal(g.crit.c5, c5Before + g.params.instruments.m7.c5Gain, 'steadier policy per investment');
+  assert.equal(g.govLevel, 2, 'no level yet — ecosystems grow slowly');
+  applyAction(g, { type: 'm7' });
+  assert.equal(g.govLevel, 3, 'second investment lifts maturity');
+  const m7 = legalActions(g).find((a) => a.type === 'm7');
+  assert.ok(!m7.enabled && /full strength/.test(m7.reason), 'capped at strong');
+  g.ap = 2; // fresh moves so the gate check isn't confounded by an empty purse
+  const m4 = legalActions(g).find((a) => a.type === 'm4');
+  assert.ok(m4.enabled, 'a strong ecosystem keeps the courtroom door open');
+
+  // Faster conversion after the level-up: compare against a twin that never invested.
+  const plain = start('field', 'bipolar');
+  applyAction(plain, { type: 'event', choice: 'b' });
+  plain.ap = 1; g.ap = 1;
+  g.turnMods.m1Boost = 0; plain.turnMods.m1Boost = 0;
+  applyAction(g, { type: 'm1' });
+  applyAction(plain, { type: 'm1' });
+  const axis = g.player.convertAxes[0];
+  assert.ok(g.player.converted[axis] > plain.player.converted[axis], 'maturity converts faster');
+
+  // A latecomer outsider can still build the field at home.
+  const late = newGameLate('field-late');
+  if (late.pendingEvent) applyAction(late, { type: 'event', choice: 'b' });
+  assert.ok(legalActions(late).find((a) => a.type === 'm7').enabled, 'fieldbuilding is domestic — no alliance needed');
+});
+
+function newGameLate(seed) {
+  return newGame({ ...data, seed, scenarioId: 'bipolar', playerCode: 'BR', variant: 'latecomer' });
+}
+
 test('decisions are deterministic: same seed, same choices, same game', () => {
   const play = () => {
     const g = start('det-choice', 'acceleration');

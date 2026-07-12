@@ -63,8 +63,7 @@ export function initialDefRisk(state, country) {
     writes enforceable terms faster: gov 3 converts at 105%, gov 1 at 95%, gov 0 at 90%. */
 function applyM1(state) {
   const m1 = state.params.instruments.m1;
-  const gov = countryByCode(state, state.player.code).gov ?? 2;
-  const govFactor = m1.govFactorBase + m1.govFactorPerLevel * gov;
+  const govFactor = m1.govFactorBase + m1.govFactorPerLevel * state.govLevel;
   const share = (m1.convertShare + state.turnMods.m1Boost) * govFactor;
   for (const axis of state.player.convertAxes) {
     const remaining = 1 - state.player.converted[axis];
@@ -136,9 +135,30 @@ function applyM6(state) {
   log(state, 'player', M6_LOGS[Math.min(state.m6Uses - 1, M6_LOGS.length - 1)]);
 }
 
-/** M4 needs an opening: a live case in your courts, or institutions strong enough to make one. */
+/** M4 needs an opening: a live case, institutions strong enough to make one,
+    or a governance ecosystem mature enough to always have one ready. */
 export function m4Open(state) {
-  return state.legalOpening > 0 || state.crit.c5 >= state.params.instruments.m4.gateC5;
+  const m4 = state.params.instruments.m4;
+  return state.legalOpening > 0 || state.crit.c5 >= m4.gateC5 || state.govLevel >= m4.gateGov;
+}
+
+/** M7 Build the field: fund the people and institutions who write and enforce terms.
+    Slow and compounding — every Nth investment lifts governance maturity a level. */
+const GOV_MILESTONES = [
+  'nascent', 'developing', 'solid', 'strong'
+];
+
+function applyM7(state) {
+  const m7 = state.params.instruments.m7;
+  state.fieldbuilding += 1;
+  state.crit.c5 = clamp(state.crit.c5 + m7.c5Gain);
+  if (state.fieldbuilding % m7.investmentsPerLevel === 0 && state.govLevel < m7.maxGov) {
+    state.govLevel += 1;
+    state.crit.c6 = clamp(state.crit.c6 + m7.c6GainOnLevel);
+    log(state, 'player', `Fieldbuilding pays off: your governance ecosystem is now ${GOV_MILESTONES[state.govLevel]}. Terms convert faster, and your institutions hold a steadier line.`);
+  } else {
+    log(state, 'player', 'You invest in the field: training, institutes, civil society. Nothing visible this year. That is how ecosystems grow.');
+  }
 }
 
 function apCost(state, action) {
@@ -154,6 +174,7 @@ function apCost(state, action) {
     case 'm4': return ins.m4.ap;
     case 'm5': return ins.m5.ap;
     case 'm6': return ins.m6.ap;
+    case 'm7': return ins.m7.ap;
     default: return 0;
   }
 }
@@ -194,6 +215,13 @@ export function legalActions(state) {
       opening: state.legalOpening
     },
     { type: 'm5', ap: apCost(state, { type: 'm5' }), enabled: state.ap >= apCost(state, { type: 'm5' }) },
+    {
+      type: 'm7',
+      ap: apCost(state, { type: 'm7' }),
+      enabled: state.ap >= apCost(state, { type: 'm7' }) && state.govLevel < state.params.instruments.m7.maxGov,
+      reason: state.govLevel >= state.params.instruments.m7.maxGov ? 'Your governance ecosystem is already at full strength' : null,
+      progress: { invested: state.fieldbuilding % state.params.instruments.m7.investmentsPerLevel, perLevel: state.params.instruments.m7.investmentsPerLevel, level: state.govLevel }
+    },
     {
       type: 'm6',
       ap: apCost(state, { type: 'm6' }),
@@ -263,6 +291,10 @@ export function applyAction(state, action) {
       applyM4(state);
       break;
     case 'm5': applyM5(state); break;
+    case 'm7':
+      if (state.govLevel >= state.params.instruments.m7.maxGov) throw new Error('Governance ecosystem already at full strength');
+      applyM7(state);
+      break;
     case 'm6':
       if (isOutside(state)) throw new Error('Not in the alliance yet');
       if (state.coalition.length < 1) throw new Error('m6 needs a coalition');

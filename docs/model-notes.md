@@ -165,6 +165,15 @@ because drift is a choice too. Deciding costs no moves, but some assertive optio
 grants `legalOpening` either way (2 years if you let it run, 1 if you settle) — which is what
 the court move needs.
 
+## m7 — build the field (game-side extension of the paper's M1–M6)
+
+Fieldbuilding: fund training, institutes, civil society — the report's governance-ecosystem gap
+made playable. 1 move per investment: +2 C5 immediately; every 2nd investment lifts governance
+maturity a level (+2 C6, cap High). Maturity feeds M1's conversion factor and, at High, keeps
+the M4 gate permanently open (mature ecosystems always have a case ready — the EU-core starting
+position). Deliberately slow: two full years to gain a level, which is what fieldbuilding is.
+Available while outside the latecomer alliance — the field is domestic.
+
 ## evolving moves
 
 M4 (take them to court) requires an opening: `legalOpening > 0` or C5 ≥ 70 — no live case, no

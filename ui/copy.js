@@ -37,6 +37,12 @@ export const INSTRUMENTS = {
     verb: 'Share technology',
     blurb: 'Pool computing power, data and AI know-how with your allies so everyone levels up.',
     effect: 'Allies gain capability, and leaving gets less tempting.'
+  },
+  m7: {
+    name: 'Build the field',
+    verb: 'Build the governance field',
+    blurb: 'Fund training, institutes, civil society — the people who write terms and enforce them. Nothing visible this year.',
+    effect: 'Steadier policy now; every 2nd investment lifts governance maturity — faster conversion, courts stay open.'
   }
 };
 

@@ -119,8 +119,15 @@
       "c5Gain": 2,
       "unfundedDefRiskDrift": 3
     },
-    "m4": { "ap": 1, "spikePoints": 2.5, "spikeDecay": 0.5, "c3": 12, "gateC5": 70 },
+    "m4": { "ap": 1, "spikePoints": 2.5, "spikeDecay": 0.5, "c3": 12, "gateC5": 70, "gateGov": 3 },
     "m5": { "ap": 1, "c1Flat": 3, "diminish": 0.8, "c3Relief": 2, "trustCost": 3, "c5Cost": 2 },
+    "m7": {
+      "ap": 1,
+      "c5Gain": 2,
+      "investmentsPerLevel": 2,
+      "c6GainOnLevel": 2,
+      "maxGov": 3
+    },
     "m6": {
       "ap": 1,
       "factorBonusCap": 0.2,

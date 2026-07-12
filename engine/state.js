@@ -51,6 +51,8 @@ export function createState({ params, countries, scenarios, events, seed, scenar
     ap: params.game.apPerTurn,
     dials: { ...scenario.dials },
     player: { code: playerCode, converted, convertAxes, positional },
+    govLevel: player.gov ?? 2,
+    fieldbuilding: 0,
     crit: {
       ...normaliseStart(params.criteriaStart),
       c3: params.criteriaStart.c3 + (positional ? params.conversion.positionalStartHeat : 0)

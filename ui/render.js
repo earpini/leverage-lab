@@ -308,7 +308,7 @@ function invitePanel(g, acts) {
 
 function movesPanel(g, acts) {
   if (g.ended) return '';
-  const order = ['m1', 'm3', 'm6', 'm4', 'm5'];
+  const order = ['m1', 'm3', 'm6', 'm7', 'm4', 'm5'];
   const boosted = g.turnMods.m1Boost > 0;
   const copy = instrumentCopy(g.data.byCode[g.player.code], g.player.convertAxes, g.player.positional);
   return `
@@ -326,6 +326,7 @@ function movesPanel(g, acts) {
           let badge = id === 'm1' && boosted ? '<span class="badge">extra strong this year</span>' : '';
           if (id === 'm4' && a.enabled && g.legalOpening > 0) badge = `<span class="badge">live case: ${g.legalOpening} year${g.legalOpening > 1 ? 's' : ''}</span>`;
           if (id === 'm6' && g.m6Uses > 0) badge = `<span class="badge cool">tier ${Math.min(g.m6Uses + 1, M6_TIERS.length)}</span>`;
+          if (id === 'm7') badge = `<span class="badge cool">${esc(GOV_NAMES[g.govLevel] ?? '')}${g.govLevel < 3 && g.fieldbuilding % 2 === 1 ? ' · halfway to next' : ''}</span>`;
           return `
           <button class="btn action-card" data-action="${id}" ${a.enabled ? '' : 'disabled'} ${a.reason ? `title="${esc(a.reason)}"` : ''}>
             <span class="action-head">${esc(meta.name)} ${badge}<span class="cost">${a.ap} move${a.ap > 1 ? 's' : ''}</span></span>
