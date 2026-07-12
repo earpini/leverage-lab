@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>On the menu — a middle-power AI war-game</title>
+  <meta name="description" content="You are the foreign-policy strategist of one middle power. Convert what you hold, pool it, and get a seat at the table before the window closes. Companion to the working paper Leverage outside the chain.">
+  <link rel="stylesheet" href="brand.css">
+  <link rel="stylesheet" href="game.css">
+</head>
+<body>
+  <header class="masthead">
+    <div class="container masthead-row">
+      <div>
+        <p class="eyebrow">A middle-power AI war-game</p>
+        <h1 class="wordmark">On the menu</h1>
+        <p class="sub">If you're not at the table, you're on the menu. Eight turns, 2026–2033: convert what Brazil holds, pool it, and hold the coalition together while the poles try to buy your partners out from under you.</p>
+      </div>
+      <div class="run-controls">
+        <div>
+          <label for="scenario-select">Scenario</label>
+          <select id="scenario-select"></select>
+        </div>
+        <div>
+          <label for="seed-input">Seed</label>
+          <input id="seed-input" type="text" spellcheck="false" autocomplete="off">
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <button id="new-run" class="btn-quiet">New run</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="app" class="container" aria-live="polite"></main>
+
+  <details class="model container">
+    <summary>The model — how this game argues</summary>
+    <div class="grid">
+      <div class="cell"><strong>Positional vs convertible</strong>Taiwan, the Netherlands and Korea count at full value the moment they join — that is positional leverage. Brazil's axes count only once converted (M1): that is the game making you do the work the paper describes.</div>
+      <div class="cell"><strong>The accommodation trap</strong>The poles target the member with the highest defection risk × affinity, and their pressure grows with your pooled leverage. The better your coalition, the better the offers against it.</div>
+      <div class="cell"><strong>The chokepoint threshold</strong>You get a seat when bypassing your pool costs the poles more than negotiating with it. Frontier pace raises the bar; minerals demand lowers it.</div>
+      <div class="cell"><strong>Honest numbers</strong>Every coefficient lives in <a href="data/params.json">data/params.json</a>, with a one-line rationale in <a href="docs/model-notes.md">docs/model-notes.md</a>. Country scores and provenance: <a href="docs/leverage-matrix-reference.html">the leverage matrix</a>.</div>
+      <div class="cell"><strong>Deterministic seeds</strong>All randomness flows through one seeded generator; the seed is in the URL. Share a run, replay a run, critique a run.</div>
+      <div class="cell"><strong>C6 is a hard bound</strong>Integrity and public benefit are not a resource to spend. Leverage bought by breaking C6 never scores above being on the menu.</div>
+    </div>
+  </details>
+
+  <footer class="site container">
+    <span>Ettore Arpini · companion to <a href="https://earpini.github.io/brazil-ai-analysis">Leverage outside the chain</a></span>
+    <span>Data vintage 2024–26 · fictional events, real instruments</span>
+  </footer>
+
+  <noscript>
+    <p class="noscript">This game needs JavaScript — it is one page, no tracking, no build.</p>
+  </noscript>
+  <script>
+    // Chrome blocks ES-module imports on file:// pages. Fail politely.
+    window.addEventListener('error', function (e) {
+      if (location.protocol === 'file:' && !window.__booted && !document.getElementById('file-note')) {
+        var p = document.createElement('p');
+        p.className = 'module-error';
+        p.id = 'file-note';
+        p.innerHTML = 'Your browser will not load ES modules from file:// (Safari will). Run <code>python3 -m http.server 8080</code> in this folder and open <code>http://localhost:8080</code>.';
+        document.getElementById('app').appendChild(p);
+      }
+    }, true);
+  </script>
+  <script type="module">
+    import './ui/main.js';
+    window.__booted = true;
+  </script>
+</body>
+</html>

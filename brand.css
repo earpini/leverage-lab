@@ -1,0 +1,119 @@
+/* Fonts: Helvetica Neue is a system font (real on Apple, Arial fallback elsewhere).
+   The two Google faces load from this import. */
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,600&display=swap');
+
+:root {
+  /* ---------- COLOR ---------- */
+  /* Neutrals: ink & paper */
+  --ea-ink:        #191919;  /* headlines, body, dark sections */
+  --ea-ink-2:      #3a3a38;  /* lead paragraphs, secondary body */
+  --ea-gray:       #6c6760;  /* captions, labels, footnotes */
+  --ea-paper:      #ffffff;  /* the page — clean, not cream */
+  --ea-paper-2:    #f7f6f3;  /* inset blocks, cards, fills */
+  --ea-line:       #e4e1db;  /* hairlines, borders, rules */
+
+  /* Clay — primary accent (warm, human) */
+  --ea-clay:       #C0512E;  /* the bar, links, card rules, numbers */
+  --ea-clay-ink:   #A23F1F;  /* clay for small text & links (AA on paper) */
+  --ea-clay-soft:  rgba(192, 81, 46, 0.10);
+
+  /* Gold — the spark (highlights only, NEVER body or links) */
+  --ea-gold:       #E2A33C;
+  --ea-gold-ink:   #9a6c14;
+  --ea-gold-soft:  rgba(226, 163, 60, 0.12);
+
+  /* Slate — secondary (cool, analytical) */
+  --ea-slate:      #2F6E7B;
+  --ea-slate-ink:  #245863;
+  --ea-slate-soft: rgba(47, 110, 123, 0.10);
+
+  /* Semantic aliases — prefer these in components */
+  --ea-text:            var(--ea-ink);
+  --ea-text-secondary:  var(--ea-ink-2);
+  --ea-text-muted:      var(--ea-gray);
+  --ea-text-inverse:    var(--ea-paper);
+  --ea-bg:              var(--ea-paper);
+  --ea-bg-sunken:       var(--ea-paper-2);
+  --ea-bg-inverse:      var(--ea-ink);
+  --ea-border:          var(--ea-line);
+  --ea-border-strong:   var(--ea-ink);
+  --ea-accent:          var(--ea-clay);
+  --ea-accent-ink:      var(--ea-clay-ink);
+  --ea-accent-soft:     var(--ea-clay-soft);
+  --ea-spark:           var(--ea-gold);
+  --ea-cool:            var(--ea-slate);
+  --ea-link:            var(--ea-clay-ink);
+  --ea-selection-bg:    var(--ea-clay);
+  --ea-selection-fg:    #ffffff;
+  --ea-series-1: var(--ea-clay);
+  --ea-series-2: var(--ea-slate);
+  --ea-series-3: var(--ea-gold);
+
+  /* ---------- TYPOGRAPHY ---------- */
+  --ea-font-display: "Helvetica Neue", "Helvetica", Arial, sans-serif; /* display/headlines/wordmark */
+  --ea-font-ui:      "Hanken Grotesk", system-ui, sans-serif;          /* body/labels/interface */
+  --ea-font-serif:   "Source Serif 4", Georgia, "Times New Roman", serif; /* essays/pull-quotes */
+
+  --ea-weight-body: 400; --ea-weight-medium: 500; --ea-weight-semibold: 600;
+  --ea-weight-bold: 700; --ea-weight-heavy: 800;  --ea-weight-black: 900;
+
+  /* Display scale (use clamp() where noted) */
+  --ea-size-hero:  116px;  /* clamp(48px,10vw,116px) */
+  --ea-size-h1:    82px;
+  --ea-size-h2:    40px;   /* clamp(27px,4vw,40px) */
+  --ea-size-h3:    22px;
+  --ea-size-h4:    19px;
+  /* Body scale */
+  --ea-size-lead:  21px; --ea-size-body: 17.5px; --ea-size-ui: 16px;
+  --ea-size-small: 14px; --ea-size-micro: 11px;
+  /* Serif reading */
+  --ea-size-read:  21px; --ea-size-quote: 33px;  /* clamp(24px,4vw,33px) */
+
+  --ea-leading-tight: 0.92; --ea-leading-snug: 1.02; --ea-leading-heading: 1.12;
+  --ea-leading-body: 1.66;  --ea-leading-read: 1.55; --ea-leading-quote: 1.28;
+
+  --ea-tracking-hero: -0.025em; --ea-tracking-head: -0.018em;
+  --ea-tracking-tight: -0.01em; --ea-tracking-normal: 0;
+  --ea-tracking-label: 0.15em;  --ea-tracking-kicker: 0.18em;
+
+  /* ---------- SPACING (4px base) ---------- */
+  --ea-space-1: 4px;  --ea-space-2: 8px;   --ea-space-3: 12px;  --ea-space-4: 16px;
+  --ea-space-5: 20px; --ea-space-6: 26px;  --ea-space-7: 32px;  --ea-space-8: 40px;
+  --ea-space-9: 56px; --ea-space-10: 72px; --ea-space-11: 96px; --ea-space-12: 128px;
+
+  /* Layout */
+  --ea-measure: 680px;    /* ideal reading column */
+  --ea-container: 1120px; /* max content width */
+  --ea-gutter: 40px; --ea-gutter-mobile: 24px; --ea-section-gap: 72px;
+
+  /* ---------- RADII (restrained — the brand is square-edged) ---------- */
+  --ea-radius-sm: 3px;  --ea-radius-md: 7px;  --ea-radius-lg: 9px; --ea-radius-full: 999px;
+
+  /* ---------- BORDERS ---------- */
+  --ea-border-hair: 1px; --ea-border-rule: 2px; --ea-border-accent: 3px; --ea-border-quote: 5px;
+
+  /* ---------- SHADOW (used sparingly — lean on rules & space, not depth) ---------- */
+  --ea-shadow-sm: 0 1px 2px rgba(25,25,25,0.05);
+  --ea-shadow-md: 0 6px 24px -12px rgba(25,25,25,0.18);
+  --ea-shadow-lg: 0 24px 60px -28px rgba(25,25,25,0.28);
+
+  /* ---------- MOTION (calm urgency: quick, no bounce) ---------- */
+  --ea-ease: cubic-bezier(0.22,0.61,0.36,1);
+  --ea-ease-in-out: cubic-bezier(0.65,0,0.35,1);
+  --ea-dur-fast: 120ms; --ea-dur: 200ms; --ea-dur-slow: 320ms;
+  --ea-focus-ring: 0 0 0 2px var(--ea-paper), 0 0 0 4px var(--ea-clay);
+}
+
+/* Base defaults — apply to the app root */
+body {
+  background: var(--ea-bg);
+  color: var(--ea-text);
+  font-family: var(--ea-font-ui);
+  font-size: var(--ea-size-body);
+  line-height: var(--ea-leading-body);
+}
+h1, h2, h3, h4 { font-family: var(--ea-font-display); font-weight: var(--ea-weight-heavy); letter-spacing: var(--ea-tracking-head); }
+a { color: var(--ea-link); text-decoration: none; }
+a:hover { color: var(--ea-clay); text-decoration: underline; }
+::selection { background: var(--ea-selection-bg); color: var(--ea-selection-fg); }
+*:focus-visible { outline: none; box-shadow: var(--ea-focus-ring); }
