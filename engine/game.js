@@ -7,7 +7,8 @@ import { polePhase } from './poles.js';
 import { snapshot, pooledLeverage, chokepointThreshold } from './criteria.js';
 import { checkCrisis, evaluateEnding } from './endings.js';
 
-export { legalActions, applyAction, recruitCandidates, recruitCost, offersOpen } from './instruments.js';
+export { legalActions, applyAction, recruitCandidates, recruitCost, offersOpen, isOutside } from './instruments.js';
+import { initialDefRisk, isOutside } from './instruments.js';
 export { snapshot, pooledLeverage, chokepointThreshold, convertedPoints, c1, c2 } from './criteria.js';
 export { computeTerms, evaluateEnding } from './endings.js';
 
@@ -16,7 +17,7 @@ export function yearOf(state) {
 }
 
 /** Start a new game: init state, then run turn 1's world and pole phases. */
-export function newGame({ params, countries, scenarios, events, seed = 'davos', scenarioId = 'bipolar', playerCode }) {
+export function newGame({ params, countries, scenarios, events, seed = 'davos', scenarioId = 'bipolar', playerCode, variant = 'founder' }) {
   const state = createState({
     params,
     countries,
@@ -24,8 +25,23 @@ export function newGame({ params, countries, scenarios, events, seed = 'davos', 
     events,
     seed,
     scenarioId,
-    playerCode: playerCode ?? params.game.playerCode
+    playerCode: playerCode ?? params.game.playerCode,
+    variant
   });
+  if (state.club) {
+    // An alliance already exists — and you are not in it. Founders substitute
+    // in from the reserve list if you happen to be one of them.
+    const lc = params.latecomer;
+    const roster = [...lc.clubMembers, ...lc.clubSubstitutes]
+      .filter((code) => code !== state.player.code)
+      .slice(0, lc.clubMembers.length);
+    for (const code of roster) {
+      const country = state.data.byCode[code];
+      state.coalition.push({ code, joinedTurn: 0, defRisk: initialDefRisk(state, country) });
+    }
+    state.facility.everFunded = true; // their facility exists; sustaining it later costs you 1, not 2
+    log(state, 'world', `An alliance already exists — ${roster.map((c) => state.data.byCode[c].name).join(', ')} — and you are not in it. They pool without you. The door opens when your converted leverage reaches ${state.club.entryBar} points.`);
+  }
   log(state, 'world', `New game — scenario: ${state.scenario.name}, game code: ${state.seed}. Eight years, ${yearOf(state)}–${params.game.startYear + params.game.turns - 1}.`);
   drawEvent(state);
   polePhase(state);
@@ -51,6 +67,13 @@ export function endTurn(state) {
     state.offers.player = null;
     state.crit.c3 = clamp(state.crit.c3 + p.poles.autoDeclineC3Cost);
     log(state, 'resolution', 'You let the superpower’s offer expire. They read silence as a no: heat goes up a little.');
+  }
+
+  // 0b. While you are outside, the club funds its own facility every other year
+  // — solvent, but not solid. Their coalition still decays on the off years.
+  if (isOutside(state) && state.coalition.length > 0 && state.turn % 2 === 1 && !state.facility.fundedThisTurn) {
+    state.facility.fundedThisTurn = true;
+    log(state, 'resolution', 'The alliance funds its own facility this year — without you.');
   }
 
   // 1. Facility: relief when funded, decay when not (the trap's fuel).
@@ -124,6 +147,13 @@ export function endTurn(state) {
   }
   state.coalition = survivors;
 
+  // 5b-pre. If the club empties before you ever joined, there is no club left
+  // to join — you are a founder now, whether you wanted to be or not.
+  if (isOutside(state) && state.coalition.length === 0) {
+    state.club = null;
+    log(state, 'resolution', 'The alliance you were courting has collapsed — everyone took a bilateral deal. If there is going to be a pool now, you will have to build it yourself.');
+  }
+
   // 5b. The superpowers' grip on AI tightens — faster when the frontier races
   // ahead and when your side bleeds members; slower when your alliance is real.
   // The accommodation trap's endgame: at the cutoff line, the door closes.
@@ -139,8 +169,10 @@ export function endTurn(state) {
       defectionsThisTurn * k.defectionBoost
   ));
   if (!state.cutoff && state.concentration >= k.cutoffLine) {
+    // An alliance you are not in barely shields you.
+    const outsideFactor = isOutside(state) ? p.latecomer.outsideProtection : 1;
     const protection = Math.min(1,
-      ratio * k.protectRatioWeight + (state.crit.c7 / 100) * k.protectC7Weight);
+      (ratio * k.protectRatioWeight + (state.crit.c7 / 100) * k.protectC7Weight) * outsideFactor);
     const severity = (state.concentration / 100) * (1 - protection);
     state.cutoff = { turn: state.turn, year: p.game.startYear + state.turn - 1, severity };
     state.crit.c7 = clamp(state.crit.c7 - k.cutoffC7Loss);

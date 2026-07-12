@@ -125,6 +125,20 @@ export function outcomeWord(v) {
 
 export const FRONTIER_LABEL = 'Frontier AI access';
 
+export const LATECOMER = {
+  toggleFounder: 'Found your own alliance',
+  toggleFounderSub: 'The classic game: start alone, build the pool.',
+  toggleLate: 'Earn your way in',
+  toggleLateSub: 'An alliance already exists — without you. Convert your assets to qualify.',
+  alliesTitle: (n) => `The alliance (${n}) — you're not in it`,
+  alliesNote: 'They pool their assets without you. Yours count for nothing here until you join.',
+  joinTitle: 'Join the alliance',
+  joinBlurb: 'They want proof you bring something to the pool: converted leverage, not promises. Set conditions at home until you qualify.',
+  joinButton: 'Ask to join',
+  joinProgress: (have, need) => `Your converted leverage: ${have} of ${need} needed`,
+  coachTip: 'You start outside the alliance. Set conditions (your top move) until your converted leverage reaches the entry bar — then join, and their pool becomes yours too.'
+};
+
 export const GRIP = {
   label: 'Superpower grip on AI',
   hint: 'How locked-up AI power is. It tightens every year — faster when AI races ahead, when allies defect, and when you cut solo deals. A strong alliance loosens it. At the red line, the cutoff comes: frontier models stop at the superpowers’ borders.',

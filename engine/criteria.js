@@ -30,11 +30,20 @@ export function memberContribution(state, member) {
   return axesSum(country) * factor;
 }
 
-/** Pooled coalition leverage in axis points (player conversion + members + spikes). */
+/** Pooled coalition leverage in axis points (player conversion + members + spikes).
+    In the latecomer variant, your own conversion pools only once you're inside. */
 export function pooledLeverage(state) {
-  let pool = convertedPoints(state) + state.tempSpike;
+  const outside = state.club != null && !state.club.joined;
+  let pool = outside ? 0 : convertedPoints(state) + state.tempSpike;
   for (const m of state.coalition) pool += memberContribution(state, m);
   return round1(pool);
+}
+
+/** How much of the pool's access actually reaches YOUR economy. */
+export function accessRatio(state) {
+  const ratio = Math.min(1, pooledLeverage(state) / chokepointThreshold(state));
+  if (state.club != null && !state.club.joined) return 0;
+  return ratio;
 }
 
 /** The chokepoint threshold: the poles' cost of bypassing the coalition. */
@@ -95,7 +104,7 @@ export function peopleScore(state) {
 export function economyScore(state) {
   const w = state.params.outcomes.economy;
   const k = state.params.concentration;
-  const ratio = Math.min(1, pooledLeverage(state) / chokepointThreshold(state));
+  const ratio = accessRatio(state);
   const delta =
     (c1(state) - state.params.criteria.c1Base) * w.c1 +
     ratio * w.ratio +
@@ -114,6 +123,11 @@ export function frontierAccess(state) {
   if (state.flags.acceptedPole) {
     const pole = state.flags.acceptedPole.pole === 'us' ? 'the US' : 'China';
     return { level: 'granted', label: `on ${pole}'s terms` };
+  }
+  if (state.club != null && !state.club.joined) {
+    return state.cutoff
+      ? { level: 'cutoff', label: 'cut off, and outside the alliance' }
+      : { level: 'outside', label: 'outside the alliance — earn your way in' };
   }
   const ratio = pooledLeverage(state) / chokepointThreshold(state);
   if (state.cutoff) {

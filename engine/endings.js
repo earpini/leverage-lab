@@ -57,8 +57,10 @@ export function evaluateEnding(state, crisis = null) {
       signedTurn: turn
     });
   }
+  const outside = state.club != null && !state.club.joined;
   const s = e.seat;
   if (
+    !outside &&
     pooled >= threshold &&
     state.coalition.length >= s.minMembers &&
     c2(state) >= s.minC2 &&
@@ -71,7 +73,7 @@ export function evaluateEnding(state, crisis = null) {
     });
   }
   const b = e.broker;
-  if (pooled >= threshold * b.minRatio && state.coalition.length >= b.minMembers && c2(state) >= b.minC2) {
+  if (!outside && pooled >= threshold * b.minRatio && state.coalition.length >= b.minMembers && c2(state) >= b.minC2) {
     return finish(state, {
       id: 'broker',
       title: 'Balancing broker',
@@ -138,6 +140,18 @@ export function debriefLines(state, ending) {
 
   if (state.m5Uses >= 3) {
     lines.push(`You cut ${state.m5Uses} solo deals. Each one felt good that year. None of them added up to anything.`);
+  }
+
+  // The latecomer's story: the door you did or didn't get through.
+  if (state.club) {
+    if (state.club.joined) {
+      const year = state.params.game.startYear + state.club.joinedTurn - 1;
+      lines.push(`You started outside the alliance and earned your way in, in ${year}. The entry fee was converted leverage — proof you brought something to the pool. That is the whole game in one move.`);
+    } else if (pooledLeverage(state) >= chokepointThreshold(state) * 0.6) {
+      lines.push('An alliance did well this decade — without you. You watched other countries pool their way toward the table while your own assets sat unconverted. Their seat is not your seat.');
+    } else {
+      lines.push('You never got inside the alliance, and it never got strong enough to matter. Two failures for the price of one.');
+    }
   }
 
   // The cutoff: the fable at the centre of the game.

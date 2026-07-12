@@ -42,7 +42,12 @@ export function recruitCandidates(state) {
     .map((c) => ({ code: c.code, name: c.name, tier: c.tier, cost: recruitCost(state, c.code) }));
 }
 
-function initialDefRisk(state, country) {
+/** Latecomer variant: true while an existing alliance has not yet let you in. */
+export function isOutside(state) {
+  return state.club != null && !state.club.joined;
+}
+
+export function initialDefRisk(state, country) {
   const m2 = state.params.instruments.m2;
   const maxAff = Math.max(country.affinity.us, country.affinity.cn);
   const positional = state.params.pool.positionalCountries.includes(country.code);
@@ -138,6 +143,8 @@ export function legalActions(state) {
   const remaining = state.player.convertAxes
     .map((a) => 1 - state.player.converted[a])
     .reduce((x, y) => x + y, 0);
+  const outside = isOutside(state);
+  const outsideReason = 'You are not in the alliance yet — earn your way in first';
   const list = [
     {
       type: 'm1',
@@ -148,19 +155,37 @@ export function legalActions(state) {
     {
       type: 'm2',
       ap: null,
-      candidates: recruitCandidates(state),
-      enabled: state.ap >= 1 && recruitCandidates(state).some((c) => c.cost <= state.ap)
+      candidates: outside ? [] : recruitCandidates(state),
+      enabled: !outside && state.ap >= 1 && recruitCandidates(state).some((c) => c.cost <= state.ap),
+      reason: outside ? outsideReason : null
     },
-    { type: 'm3', ap: apCost(state, { type: 'm3' }), enabled: state.ap >= apCost(state, { type: 'm3' }) },
+    {
+      type: 'm3',
+      ap: apCost(state, { type: 'm3' }),
+      enabled: !outside && state.ap >= apCost(state, { type: 'm3' }),
+      reason: outside ? outsideReason : null
+    },
     { type: 'm4', ap: apCost(state, { type: 'm4' }), enabled: state.ap >= apCost(state, { type: 'm4' }) },
     { type: 'm5', ap: apCost(state, { type: 'm5' }), enabled: state.ap >= apCost(state, { type: 'm5' }) },
     {
       type: 'm6',
       ap: apCost(state, { type: 'm6' }),
-      enabled: state.ap >= apCost(state, { type: 'm6' }) && state.coalition.length >= 1,
-      reason: state.coalition.length < 1 ? 'Needs at least one coalition member' : null
+      enabled: !outside && state.ap >= apCost(state, { type: 'm6' }) && state.coalition.length >= 1,
+      reason: outside ? outsideReason : state.coalition.length < 1 ? 'Needs at least one coalition member' : null
     }
   ];
+  if (outside && state.coalition.length > 0) {
+    const converted = state.player.convertAxes.reduce(
+      (a, axis) => a + countryByCode(state, state.player.code).axes[axis] * state.player.converted[axis], 0);
+    const bar = state.club.entryBar;
+    list.push({
+      type: 'join',
+      ap: state.params.latecomer.joinAp,
+      enabled: converted >= bar && state.ap >= state.params.latecomer.joinAp,
+      progress: { converted: Math.round(converted * 10) / 10, bar },
+      reason: converted < bar ? `They want proof: converted leverage ${bar}+ (you have ${Math.round(converted * 10) / 10})` : null
+    });
+  }
   if (offersOpen(state)) {
     list.push({ type: 'accept', ap: 0, enabled: true });
     list.push({ type: 'decline', ap: 0, enabled: true });
@@ -178,11 +203,15 @@ export function applyAction(state, action) {
   if (action.type === 'accept' || action.type === 'decline') {
     return respondToOffer(state, action.type);
   }
+  if (action.type === 'join') {
+    return joinClub(state);
+  }
   const cost = apCost(state, action);
   if (state.ap < cost) throw new Error(`Not enough AP for ${action.type} (needs ${cost}, has ${state.ap})`);
   switch (action.type) {
     case 'm1': applyM1(state); break;
     case 'm2': {
+      if (isOutside(state)) throw new Error('Not in the alliance yet');
       if (!action.code) throw new Error('m2 needs a country code');
       if (state.coalition.some((m) => m.code === action.code)) throw new Error('Already a member');
       const country = countryByCode(state, action.code);
@@ -191,18 +220,36 @@ export function applyAction(state, action) {
       break;
     }
     case 'm3':
+      if (isOutside(state)) throw new Error('Not in the alliance yet');
       if (state.facility.fundedThisTurn) throw new Error('Facility already funded this turn');
       applyM3(state);
       break;
     case 'm4': applyM4(state); break;
     case 'm5': applyM5(state); break;
     case 'm6':
+      if (isOutside(state)) throw new Error('Not in the alliance yet');
       if (state.coalition.length < 1) throw new Error('m6 needs a coalition');
       applyM6(state);
       break;
     default: throw new Error(`Unknown action: ${action.type}`);
   }
   state.ap -= cost;
+  return state;
+}
+
+function joinClub(state) {
+  if (!isOutside(state)) throw new Error('No alliance to join');
+  if (state.coalition.length === 0) throw new Error('The alliance collapsed before you joined');
+  const lc = state.params.latecomer;
+  const converted = state.player.convertAxes.reduce(
+    (a, axis) => a + countryByCode(state, state.player.code).axes[axis] * state.player.converted[axis], 0);
+  if (converted < state.club.entryBar) throw new Error('Not enough converted leverage to join');
+  if (state.ap < lc.joinAp) throw new Error('Not enough moves to join');
+  state.ap -= lc.joinAp;
+  state.club.joined = true;
+  state.club.joinedTurn = state.turn;
+  state.trust = clamp(state.trust + lc.joinTrustGain);
+  log(state, 'player', 'You are in. Your converted leverage was the ticket — now the alliance pools your assets with theirs, and its problems become yours to help hold.');
   return state;
 }
 

@@ -45,6 +45,14 @@
     "positionalPreconverted": 1,
     "positionalStartHeat": 8
   },
+  "latecomer": {
+    "clubMembers": ["IN", "ID", "ZA"],
+    "clubSubstitutes": ["CA", "SG", "NO"],
+    "entryBar": 4,
+    "joinAp": 1,
+    "joinTrustGain": 4,
+    "outsideProtection": 0.2
+  },
   "concentration": {
     "start": 50,
     "growthBase": 3.5,

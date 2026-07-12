@@ -170,3 +170,15 @@ axis converted) — each replaces or adds to the base effects as noted in `event
 Poles are priority tables, not learners. Events apply effects without player choices inside the
 card. Only the top defection channels are modelled (no exchange-rate or election shocks). The
 niobium overweight in Brazil's `key` line is corrected in game copy, per `countries.json` `_meta`.
+
+## latecomer variant
+
+An alliance of three (India, Indonesia, South Africa — substitutes fill in if you play one of
+them) exists at game start, and you are not in it. Outside, you can only convert at home, go to
+court, or cut solo deals; their pool counts against the poles' concentration but gives you no
+access (economy ratio = 0) and almost no cutoff protection (×0.2). The club funds its own
+facility every other year — solvent, not solid. The door opens at `entryBar` = 4 converted
+points (about three focused years for Brazil; joining costs 1 move). Once inside, your
+conversion pools, all instruments unlock, and the funding burden becomes shared — i.e. yours.
+If every founder defects before you join, the club dissolves and you are a founder again.
+The lesson runs the other way here: leverage is the ticket in, not the prize.

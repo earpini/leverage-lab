@@ -7,8 +7,9 @@ import { playerConvertAxes } from '../engine/state.js';
 import {
   INSTRUMENTS, CRITERIA, DIALS, POLE_NAMES, OFFER_COPY, ENDINGS,
   AXIS_NAMES, countryGloss, leanGloss, riskLabel, COACH_TIPS, INTRO,
-  COUNTRY_HOOKS, playerNote, PICKER, OUTCOME_TILES, outcomeWord, FRONTIER_LABEL, REGIME_NAMES, GRIP
+  COUNTRY_HOOKS, playerNote, PICKER, OUTCOME_TILES, outcomeWord, FRONTIER_LABEL, REGIME_NAMES, GRIP, LATECOMER
 } from './copy.js';
+import { isOutside } from '../engine/game.js';
 
 const esc = (s) =>
   String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -31,14 +32,14 @@ export function render(root, g, handlers, ui = {}) {
         </section>
         <section class="control-zone">
           <p class="zone-label">What you can do</p>
-          ${movesPanel(g, acts)}${invitePanel(g, acts)}
+          ${joinPanel(g, acts)}${movesPanel(g, acts)}${invitePanel(g, acts)}
         </section>
       </div>
     </div>
     ${ui.summary && !g.ended ? summarySheet(g, ui.summary) : ''}
     ${offerSheet(g)}
     ${debriefSheet(g, snap)}
-    ${ui.showPicker && !ui.showIntro ? pickerSheet(g) : ''}
+    ${ui.showPicker && !ui.showIntro ? pickerSheet(g, ui) : ''}
     ${ui.showIntro ? introSheet(ui) : ''}
   `;
   wire(root, handlers);
@@ -148,10 +149,12 @@ function gripBar(g, snap) {
 }
 
 function coachTip(g, ui) {
-  if (g.ended || ui.tipsDismissed || !COACH_TIPS[g.turn]) return '';
+  if (g.ended || ui.tipsDismissed) return '';
+  const tip = isOutside(g) && g.turn <= 2 ? LATECOMER.coachTip : COACH_TIPS[g.turn];
+  if (!tip) return '';
   return `
     <div class="tip">
-      <span>${esc(COACH_TIPS[g.turn])}</span>
+      <span>${esc(tip)}</span>
       <button class="btn-ghost dark" data-dismiss-tips>Hide tips</button>
     </div>`;
 }
@@ -239,16 +242,35 @@ function alliesPanel(g) {
       </div>`;
   }).join('');
   const lost = g.lostMembers.map((l) => `${esc(l.name)} (to ${l.pole === 'us' ? 'the US' : 'China'})`).join(', ');
+  const outside = isOutside(g);
   return `
     <div class="panel">
-      <h2>Your allies (${g.coalition.length})</h2>
+      <h2>${outside ? esc(LATECOMER.alliesTitle(g.coalition.length)) : `Your allies (${g.coalition.length})`}</h2>
+      ${outside ? `<p class="keyline warn">${esc(LATECOMER.alliesNote)}</p>` : ''}
       ${members || '<p class="keyline">Nobody yet. No country crosses the line alone — invite allies below.</p>'}
       ${lost ? `<p class="keyline muted">Left the alliance: ${lost}.</p>` : ''}
     </div>`;
 }
 
+function joinPanel(g, acts) {
+  if (g.ended || !acts.join) return '';
+  const a = acts.join;
+  const pct = Math.min(100, (a.progress.converted / a.progress.bar) * 100);
+  return `
+    <div class="panel">
+      <h2>${esc(LATECOMER.joinTitle)}</h2>
+      <p class="hintline">${esc(LATECOMER.joinBlurb)}</p>
+      <div class="conv" title="Set conditions to raise this.">
+        <span>${esc(LATECOMER.joinProgress(a.progress.converted, a.progress.bar))}</span>
+        <div class="meter warm"><i style="width:${pct}%"></i></div>
+        <span class="pct">${Math.round(pct)}%</span>
+      </div>
+      <button class="btn-primary" data-action="join" ${a.enabled ? '' : 'disabled'} ${a.reason ? `title="${esc(a.reason)}"` : ''}>${esc(LATECOMER.joinButton)} (${a.ap} move)</button>
+    </div>`;
+}
+
 function invitePanel(g, acts) {
-  if (g.ended) return '';
+  if (g.ended || isOutside(g)) return '';
   const candidates = (acts.m2?.candidates ?? []).slice().sort((a, b) => a.cost - b.cost || a.name.localeCompare(b.name));
   const discount = g.turnMods.recruitDiscount > 0 ? '<p class="keyline">The summit made this cheaper this year.</p>' : '';
   return `
@@ -372,7 +394,8 @@ function debriefSheet(g, snap) {
     </div>`;
 }
 
-function pickerSheet(g) {
+function pickerSheet(g, ui) {
+  const variant = ui.variant ?? 'founder';
   const cards = g.data.countries.countries
     .filter((c) => c.tier !== 'X')
     .map((c) => ({
@@ -387,6 +410,14 @@ function pickerSheet(g) {
         <p class="kicker">${esc(PICKER.kicker)}</p>
         <h3>${esc(PICKER.title)}</h3>
         <p class="read small" style="margin-bottom: var(--ea-space-5)">${esc(PICKER.note)}</p>
+        <div class="variant-toggle">
+          <button class="variant${variant === 'founder' ? ' selected' : ''}" data-variant="founder">
+            <strong>${esc(LATECOMER.toggleFounder)}</strong><span>${esc(LATECOMER.toggleFounderSub)}</span>
+          </button>
+          <button class="variant${variant === 'latecomer' ? ' selected' : ''}" data-variant="latecomer">
+            <strong>${esc(LATECOMER.toggleLate)}</strong><span>${esc(LATECOMER.toggleLateSub)}</span>
+          </button>
+        </div>
         <div class="picker-grid">
           ${cards.map(({ c, potential, positional }) => `
             <button class="pick-card" data-pick="${esc(c.code)}">
@@ -423,7 +454,8 @@ function shareUrl(g) {
   const base = location.origin === 'null' || location.protocol === 'file:'
     ? location.pathname.split('/').pop()
     : location.pathname;
-  return `${base}?seed=${encodeURIComponent(g.seed)}&scenario=${encodeURIComponent(g.scenarioId)}&country=${encodeURIComponent(g.player.code)}`;
+  const variant = g.club ? '&start=latecomer' : '';
+  return `${base}?seed=${encodeURIComponent(g.seed)}&scenario=${encodeURIComponent(g.scenarioId)}&country=${encodeURIComponent(g.player.code)}${variant}`;
 }
 
 /* ---------- wiring ---------- */
@@ -437,6 +469,9 @@ function wire(root, handlers) {
   }
   for (const btn of root.querySelectorAll('[data-pick]')) {
     btn.addEventListener('click', () => handlers.onPick(btn.dataset.pick));
+  }
+  for (const btn of root.querySelectorAll('[data-variant]')) {
+    btn.addEventListener('click', () => handlers.onVariant(btn.dataset.variant));
   }
   root.querySelector('[data-end-turn]')?.addEventListener('click', handlers.onEndTurn);
   root.querySelector('[data-replay]')?.addEventListener('click', handlers.onReplay);

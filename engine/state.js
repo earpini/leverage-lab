@@ -23,7 +23,7 @@ export function countryByCode(state, code) {
  * Create initial state. `data` bundles the four JSON files so the engine has
  * no I/O of its own (Node tests read from fs; the browser imports JSON modules).
  */
-export function createState({ params, countries, scenarios, events, seed, scenarioId, playerCode }) {
+export function createState({ params, countries, scenarios, events, seed, scenarioId, playerCode, variant }) {
   const scenario = scenarios.scenarios.find((s) => s.id === scenarioId);
   if (!scenario) throw new Error(`Unknown scenario: ${scenarioId}`);
   const byCode = Object.fromEntries(countries.countries.map((c) => [c.code, c]));
@@ -58,6 +58,7 @@ export function createState({ params, countries, scenarios, events, seed, scenar
     nature: (player.baseline ?? params.outcomes.fallbackBaseline).nature,
     concentration: params.concentration.start,
     cutoff: null,
+    club: variant === 'latecomer' ? { joined: false, joinedTurn: null, entryBar: params.latecomer.entryBar } : null,
     c1Flat: 0,
     tempSpike: 0,
     trust: params.trust.start,
