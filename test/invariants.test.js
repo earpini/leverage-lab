@@ -171,6 +171,57 @@ test('invariant 4: convert-then-sign beats sign-first junior terms', () => {
 });
 
 // ---------------------------------------------------------------------------
+// Invariant 5 — letting the poles dominate hurts.
+// Passivity gets you the cutoff, hard; a strong alliance delays or softens it;
+// and the poles' dominance shrinks the terms they will ever offer you.
+// ---------------------------------------------------------------------------
+test('invariant 5: unchecked concentration ends in a hard cutoff; alliances soften it', () => {
+  for (const seed of SEEDS) {
+    // Passive run: the grip tightens unopposed and the cutoff lands hard.
+    const passive = start(seed, 'bipolar');
+    while (!passive.ended) {
+      declineOffer(passive);
+      endTurn(passive);
+    }
+    assert.ok(passive.cutoff, `${seed}: doing nothing must trigger the cutoff by 2033`);
+    assert.ok(passive.cutoff.severity > 0.45, `${seed}: an unprotected cutoff must be severe (got ${passive.cutoff.severity.toFixed(2)})`);
+    const pEco = passive.history;
+    assert.ok(
+      pEco[pEco.length - 1].economy <= 10,
+      `${seed}: the bystander economy must crater (got ${pEco[pEco.length - 1].economy})`
+    );
+
+    // Strong-alliance run, same world: later/softer cutoff or none at all.
+    const active = start(seed, 'bipolar');
+    run(active, policyConvert);
+    if (active.cutoff) {
+      assert.ok(
+        active.cutoff.severity < passive.cutoff.severity,
+        `${seed}: an alliance must soften the cutoff (${active.cutoff.severity.toFixed(2)} vs ${passive.cutoff.severity.toFixed(2)})`
+      );
+      assert.ok(active.cutoff.turn >= passive.cutoff.turn, `${seed}: an alliance must not hasten the cutoff`);
+    }
+    assert.ok(
+      active.history[active.history.length - 1].economy > pEco[pEco.length - 1].economy,
+      `${seed}: the alliance-builder must end economically better off than the bystander`
+    );
+  }
+
+  // Dominance shrinks the deal you can ever sign: same state, tighter grip, worse terms.
+  const g = start('grip-terms', 'bipolar');
+  const looser = computeTerms(g);
+  g.concentration = 95;
+  const tighter = computeTerms(g);
+  assert.ok(tighter < looser, `terms must shrink as the poles dominate (${looser} → ${tighter})`);
+
+  // Solo deals feed the machine that eats you.
+  const s = start('grip-solo', 'bipolar');
+  const before = s.concentration;
+  applyAction(s, { type: 'm5' });
+  assert.ok(s.concentration > before, 'cutting a solo deal must tighten the grip');
+});
+
+// ---------------------------------------------------------------------------
 // Supporting invariant — terms are monotone in conversion at any fixed moment.
 // ---------------------------------------------------------------------------
 test('invariant 4b: at a fixed state, more conversion means better terms', () => {

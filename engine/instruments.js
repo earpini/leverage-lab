@@ -102,7 +102,9 @@ function applyM5(state) {
   state.crit.c3 = clamp(state.crit.c3 - m5.c3Relief);
   state.crit.c5 = clamp(state.crit.c5 - m5.c5Cost);
   state.trust = clamp(state.trust - m5.trustCost);
-  log(state, 'player', 'You cut a solo deal. A quick win for your country this year. Your allies took note.');
+  // Every solo deal routes through a pole's stack — their grip tightens.
+  state.concentration = Math.min(100, state.concentration + state.params.concentration.soloBoost);
+  log(state, 'player', 'You cut a solo deal. A quick win for your country this year. Your allies took note — and the superpowers got a little more indispensable.');
 }
 
 /** M6 Pool the commons: raises C7, lowers defection risk structurally. */

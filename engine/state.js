@@ -56,6 +56,8 @@ export function createState({ params, countries, scenarios, events, seed, scenar
       c3: params.criteriaStart.c3 + (positional ? params.conversion.positionalStartHeat : 0)
     },
     nature: params.outcomes.natureStart,
+    concentration: params.concentration.start,
+    cutoff: null,
     c1Flat: 0,
     tempSpike: 0,
     trust: params.trust.start,

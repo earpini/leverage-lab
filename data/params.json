@@ -45,6 +45,27 @@
     "positionalPreconverted": 1,
     "positionalStartHeat": 8
   },
+  "concentration": {
+    "start": 50,
+    "growthBase": 3.5,
+    "paceWeight": 4,
+    "ratioRelief": 8,
+    "c7Relief": 0.06,
+    "defectionBoost": 4,
+    "soloBoost": 1.5,
+    "cutoffLine": 82,
+    "protectRatioWeight": 0.6,
+    "protectC7Weight": 0.4,
+    "cutoffC7Loss": 8,
+    "cutoffC6Loss": 4,
+    "cutoffEconomyHit": 30,
+    "cutoffPeopleHit": 15,
+    "gripEconomyPenalty": 20,
+    "gripPeoplePenalty": 10,
+    "gripFreeBand": 40,
+    "gripNaturePressure": 1.2,
+    "juniorTermsPenalty": 0.3
+  },
   "outcomes": {
     "natureStart": 65,
     "natureDriftBase": 0.5,

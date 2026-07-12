@@ -125,6 +125,13 @@ export function outcomeWord(v) {
 
 export const FRONTIER_LABEL = 'Frontier AI access';
 
+export const GRIP = {
+  label: 'Superpower grip on AI',
+  hint: 'How locked-up AI power is. It tightens every year — faster when AI races ahead, when allies defect, and when you cut solo deals. A strong alliance loosens it. At the red line, the cutoff comes: frontier models stop at the superpowers’ borders.',
+  cutoffNote: (year) => `The cutoff happened in ${year}. Frontier models now stop at the superpowers’ borders — your economy runs on what your alliance built.`,
+  nearNote: 'The grip is close to the red line. When it gets there, the cutoff comes — and only a strong alliance softens it.'
+};
+
 /** Plain names for the eight value-chain axes. */
 export const AXIS_NAMES = {
   minerals: 'critical minerals',
@@ -194,8 +201,8 @@ export const INTRO = {
       p: 'Push the gold bar past the line: make your alliance so valuable the superpowers must negotiate with it. That is what buys your people access to frontier AI — and a thriving economy as AI advances. Meanwhile the superpowers will try to buy your allies out, one by one, and sometimes they will offer YOU a deal. You can take it and end the game. The terms depend entirely on what you built first.'
     },
     {
-      h: 'Two ways to lose instantly',
-      p: 'Let public trust collapse (broken promises to your own people), or draw so much superpower heat they crush you.'
+      h: 'The clock you are racing',
+      p: 'Every year the superpowers’ grip on AI tightens. If it reaches the red line, the cutoff comes: frontier models stop at their borders, and everyone outside takes the hit — hardest wherever the alliance is weakest. Also, two ways to lose instantly: let public trust collapse, or draw so much superpower heat they crush you.'
     }
   ],
   start: 'Choose your country',

@@ -67,15 +67,29 @@ export function c2(state) {
    Derived from the criteria (no separate stocks except nature, which events and
    conditioning move). PESTLE areas map onto the inputs; these three are the point. */
 
+/** How much of the superpowers' grip actually bites, beyond the free band. */
+function gripBite(state) {
+  const k = state.params.concentration;
+  return Math.max(0, state.concentration - k.gripFreeBand) / 100;
+}
+
 export function peopleScore(state) {
   const w = state.params.outcomes.people;
-  return clamp(Math.round(state.crit.c6 * w.c6 + state.crit.c5 * w.c5 + state.crit.c4 * w.c4));
+  const k = state.params.concentration;
+  const base = state.crit.c6 * w.c6 + state.crit.c5 * w.c5 + state.crit.c4 * w.c4;
+  const grip = gripBite(state) * k.gripPeoplePenalty;
+  const cutoff = state.cutoff ? state.cutoff.severity * k.cutoffPeopleHit : 0;
+  return clamp(Math.round(base - grip - cutoff));
 }
 
 export function economyScore(state) {
   const w = state.params.outcomes.economy;
+  const k = state.params.concentration;
   const ratio = Math.min(1, pooledLeverage(state) / chokepointThreshold(state));
-  return clamp(Math.round(c1(state) * w.c1 + ratio * 100 * w.ratio + state.crit.c7 * w.c7));
+  const base = c1(state) * w.c1 + ratio * 100 * w.ratio + state.crit.c7 * w.c7;
+  const grip = gripBite(state) * k.gripEconomyPenalty;
+  const cutoff = state.cutoff ? state.cutoff.severity * k.cutoffEconomyHit : 0;
+  return clamp(Math.round(base - grip - cutoff));
 }
 
 export function natureScore(state) {
@@ -89,6 +103,11 @@ export function frontierAccess(state) {
     return { level: 'granted', label: `on ${pole}'s terms` };
   }
   const ratio = pooledLeverage(state) / chokepointThreshold(state);
+  if (state.cutoff) {
+    return ratio >= 1
+      ? { level: 'secured', label: 'your alliance kept the lights on' }
+      : { level: 'cutoff', label: 'cut off — running on what you built' };
+  }
   if (ratio >= 1) return { level: 'secured', label: 'secured — if you hold the line' };
   if (ratio >= state.params.outcomes.frontier.partialRatio) return { level: 'partial', label: 'partial — you have real cards' };
   return { level: 'precarious', label: 'precarious — whatever they offer' };
@@ -113,6 +132,8 @@ export function snapshot(state) {
     people: peopleScore(state),
     economy: economyScore(state),
     nature: natureScore(state),
-    frontier: frontierAccess(state)
+    frontier: frontierAccess(state),
+    concentration: Math.round(state.concentration),
+    cutoff: state.cutoff
   };
 }

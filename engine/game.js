@@ -4,7 +4,7 @@
 import { createState, clamp, log } from './state.js';
 import { drawEvent } from './events.js';
 import { polePhase } from './poles.js';
-import { snapshot } from './criteria.js';
+import { snapshot, pooledLeverage, chokepointThreshold } from './criteria.js';
 import { checkCrisis, evaluateEnding } from './endings.js';
 
 export { legalActions, applyAction, recruitCandidates, recruitCost, offersOpen } from './instruments.js';
@@ -85,9 +85,14 @@ export function endTurn(state) {
   if (state.tempSpike < 0.1) state.tempSpike = 0;
 
   // 4b. Nature: the AI build-out presses on land, water and grids every year,
-  // harder when demand runs hot. Degraded nature erodes public trust.
+  // harder when demand runs hot — and harder still when the superpowers race
+  // unchecked. Degraded nature erodes public trust.
   state.nature = clamp(
-    state.nature - (p.outcomes.natureDriftBase + state.dials.demand * p.outcomes.natureDriftDemand)
+    state.nature -
+      (p.outcomes.natureDriftBase +
+        state.dials.demand * p.outcomes.natureDriftDemand +
+        (Math.max(0, state.concentration - p.concentration.gripFreeBand) / 100) *
+          p.concentration.gripNaturePressure)
   );
   if (state.nature < p.outcomes.natureTrustLine) {
     state.crit.c6 = clamp(state.crit.c6 - p.outcomes.natureTrustCost);
@@ -118,6 +123,33 @@ export function endTurn(state) {
     }
   }
   state.coalition = survivors;
+
+  // 5b. The superpowers' grip on AI tightens — faster when the frontier races
+  // ahead and when your side bleeds members; slower when your alliance is real.
+  // The accommodation trap's endgame: at the cutoff line, the door closes.
+  const k = p.concentration;
+  const defectionsThisTurn = state.lostMembers.filter((l) => l.turn === state.turn).length;
+  const ratio = Math.min(1, pooledLeverage(state) / chokepointThreshold(state));
+  state.concentration = Math.min(100, Math.max(0,
+    state.concentration +
+      k.growthBase +
+      state.dials.pace * k.paceWeight -
+      ratio * k.ratioRelief -
+      state.crit.c7 * k.c7Relief +
+      defectionsThisTurn * k.defectionBoost
+  ));
+  if (!state.cutoff && state.concentration >= k.cutoffLine) {
+    const protection = Math.min(1,
+      ratio * k.protectRatioWeight + (state.crit.c7 / 100) * k.protectC7Weight);
+    const severity = (state.concentration / 100) * (1 - protection);
+    state.cutoff = { turn: state.turn, year: p.game.startYear + state.turn - 1, severity };
+    state.crit.c7 = clamp(state.crit.c7 - k.cutoffC7Loss);
+    state.crit.c6 = clamp(state.crit.c6 - k.cutoffC6Loss);
+    log(state, 'resolution',
+      severity > 0.45
+        ? 'THE CUTOFF. The frontier labs, under government order, stop serving their most powerful models to anyone outside the superpowers’ orbit. No warning, no appeal. Your alliance was too weak to cushion it: overnight, the best technology on earth is something other people have.'
+        : 'THE CUTOFF. The frontier labs, under government order, stop serving their most powerful models outside the superpowers’ orbit. But your alliance saw it coming: pooled computing, shared models, terms already set. The shock passes around you, not through you.');
+  }
 
   // 6. Housekeeping + history.
   state.facility.fundedThisTurn = false;

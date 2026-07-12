@@ -152,6 +152,39 @@ html, body { margin: 0; padding: 0; }
 }
 .hero-note { font-size: var(--ea-size-small); color: var(--ea-gray); margin: var(--ea-space-3) 0 0; max-width: 72ch; }
 
+/* the grip: the antagonist's clock */
+.grip { margin-top: var(--ea-space-5); cursor: help; }
+.grip-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: var(--ea-space-2); }
+.grip-val {
+  font-family: var(--ea-font-display);
+  font-weight: var(--ea-weight-heavy);
+  font-size: var(--ea-size-ui);
+  color: var(--ea-gray);
+  font-variant-numeric: tabular-nums;
+}
+.grip-val.hot { color: var(--ea-accent); }
+.grip-bar {
+  position: relative;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: var(--ea-radius-sm);
+}
+.grip-bar > i {
+  display: block;
+  height: 100%;
+  border-radius: var(--ea-radius-sm);
+  background: var(--ea-slate);
+  transition: width var(--ea-dur-slow) var(--ea-ease);
+  max-width: 100%;
+}
+.grip-line {
+  position: absolute;
+  top: -3px;
+  width: 2px;
+  height: 12px;
+  background: var(--ea-accent);
+}
+
 /* outcome tiles: what it all means for the people who live there */
 .outcomes {
   display: grid;

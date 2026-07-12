@@ -75,6 +75,26 @@ or "on their terms" after signing with a pole. PESTLE areas map onto the inputs 
 economic C1/C4, social C6, technological C7, legal M4, environmental nature); the three tiles are
 what those areas add up to for the people who live there.
 
+## concentration (the grip and the cutoff)
+
+| param | value | rationale |
+|---|---|---|
+| `start` | 50 | The poles already hold half the board in 2026. |
+| `growthBase` + `pace·4` | 3.5 | Concentration is the default trajectory: doing nothing loses ground, faster when the frontier races. |
+| `ratioRelief` / `c7Relief` | 8 / 0.06 | The only counterweights are a real pool and real peer capability — the alliance is the brake, and it must visibly out-brake the drift or building one wouldn't pay. |
+| `defectionBoost` / `soloBoost` | 4 / 1.5 | Every ally bought and every solo deal routes more of the world through a pole's stack. |
+| `cutoffLine` | 82 | Past this, exclusion is cheaper than engagement: the cutoff fires (once, deterministically). |
+| protection = 0.6·ratio + 0.4·(C7/100) | — | Pooled leverage and pooled capability are what soften the shock; severity = (conc/100)·(1−protection). |
+| `cutoffC7Loss` / `cutoffC6Loss` | 8 / 4 | The flow of models and compute stops; the public asks how you let it happen. |
+| `cutoffEconomyHit` / `cutoffPeopleHit` | 30 / 15 | ×severity, permanent: getting cut off unprepared is the worst economic event in the game. |
+| `gripEconomyPenalty` / `gripPeoplePenalty` / band 40 | 20 / 10 | Even before the cutoff, concentrated power quietly taxes everyone outside it (pricing, standards, dependence) — a tax, not a guillotine; the guillotine is the cutoff. |
+| `gripNaturePressure` | 1.2 | An unchecked race burns land, water and grids faster — nobody makes it pay its way. |
+| `juniorTermsPenalty` | 0.3 | The more dominant the poles, the less they need you: terms shrink up to 30% as concentration maxes. |
+
+Because concentration rises over time for the unprepared, a late cutoff is automatically a
+harder cutoff — the "later and weaker means worse" rule holds by construction, and invariant
+test 5 (`test/invariants.test.js`) checks it.
+
 ## pool / chokepoint
 
 | param | value | rationale |

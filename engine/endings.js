@@ -7,11 +7,13 @@ import {
   frontierAccess, peopleScore, economyScore, natureScore
 } from './criteria.js';
 
-/** Junior-partner terms at signing time: convert first, sign second, get more. */
+/** Junior-partner terms at signing time: convert first, sign second, get more.
+    The more dominant the poles already are, the less they need you — terms shrink. */
 export function computeTerms(state) {
   const j = state.params.endings.junior;
   const raw = j.termsC1 * c1(state) + j.termsC4 * state.crit.c4 + j.termsC2 * c2(state);
-  return Math.min(j.termsCap, Math.round(raw));
+  const gripFactor = 1 - (state.concentration / 100) * state.params.concentration.juniorTermsPenalty;
+  return Math.min(j.termsCap, Math.round(raw * gripFactor));
 }
 
 /** Crisis checks run during resolution; either ends the game immediately. */
@@ -136,6 +138,20 @@ export function debriefLines(state, ending) {
 
   if (state.m5Uses >= 3) {
     lines.push(`You cut ${state.m5Uses} solo deals. Each one felt good that year. None of them added up to anything.`);
+  }
+
+  // The cutoff: the fable at the centre of the game.
+  if (state.cutoff) {
+    const sev = state.cutoff.severity;
+    if (sev > 0.45) {
+      lines.push(`The cutoff came in ${state.cutoff.year}, and it found you unprepared. The longer the superpowers concentrate power unchallenged, the harder that door slams — and nothing on your side of it could soften the blow.`);
+    } else {
+      lines.push(`The cutoff came in ${state.cutoff.year} — and mostly missed you. Pooled computing, shared models, terms set in advance: that is what "too valuable to cut off" looks like.`);
+    }
+  } else if (state.concentration >= 70) {
+    lines.push('The cutoff never came — this time. But the superpowers ended 2033 with a tighter grip than they started, and the door was closing as the credits rolled.');
+  } else if (state.concentration < 55) {
+    lines.push('And the quiet win: your alliance kept AI power spread out enough that no one could ever slam the door. The cutoff never came because you made it too expensive.');
   }
 
   // What it all meant for the people who live there.

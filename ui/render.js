@@ -7,7 +7,7 @@ import { playerConvertAxes } from '../engine/state.js';
 import {
   INSTRUMENTS, CRITERIA, DIALS, POLE_NAMES, OFFER_COPY, ENDINGS,
   AXIS_NAMES, countryGloss, leanGloss, riskLabel, COACH_TIPS, INTRO,
-  COUNTRY_HOOKS, playerNote, PICKER, OUTCOME_TILES, outcomeWord, FRONTIER_LABEL, REGIME_NAMES
+  COUNTRY_HOOKS, playerNote, PICKER, OUTCOME_TILES, outcomeWord, FRONTIER_LABEL, REGIME_NAMES, GRIP
 } from './copy.js';
 
 const esc = (s) =>
@@ -66,6 +66,7 @@ function hero(g, snap, ui) {
         <p class="hero-note">${ratio >= 1
           ? 'You are past the line. Now hold it until 2033: keep your allies in and public trust up.'
           : 'Below the line, the superpowers can ignore your alliance. Grow the bar: set conditions at home, add allies, share technology.'}</p>
+        ${gripBar(g, snap)}
         <div class="outcomes">
           ${OUTCOME_TILES.map((t) => {
             const v = snap[t.key];
@@ -83,6 +84,28 @@ function hero(g, snap, ui) {
           </div>
         </div>
       </div>
+    </div>`;
+}
+
+function gripBar(g, snap) {
+  const k = g.params.concentration;
+  const pct = snap.concentration;
+  const linePct = k.cutoffLine;
+  const near = !snap.cutoff && pct >= linePct - 10;
+  const note = snap.cutoff
+    ? GRIP.cutoffNote(snap.cutoff.year)
+    : near ? GRIP.nearNote : null;
+  return `
+    <div class="grip" title="${esc(GRIP.hint)}">
+      <div class="grip-head">
+        <span class="hero-kicker" style="margin:0">${esc(GRIP.label)}</span>
+        <span class="grip-val${snap.cutoff || near ? ' hot' : ''}">${snap.cutoff ? 'the cutoff has happened' : pct}</span>
+      </div>
+      <div class="grip-bar">
+        <i style="width:${pct}%"></i>
+        <span class="grip-line" style="left:${linePct}%"></span>
+      </div>
+      ${note ? `<p class="hero-note">${esc(note)}</p>` : ''}
     </div>`;
 }
 
