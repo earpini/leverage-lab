@@ -1,0 +1,471 @@
+{
+  "_meta": {
+    "source": "AI value-chain leverage analysis (own research, Jun 2026): 19 countries scored 0-3 on eight leverage axes; leverage index = sum /24 (breadth); top10 = irreplaceability-weighted strategic rank.",
+    "axes": {
+      "minerals": "Minerals & materials",
+      "equip": "Equipment, design & IP",
+      "fab": "Fabrication, packaging & memory",
+      "compute": "Compute, data centres & energy",
+      "capital": "Capital",
+      "models": "Models & talent",
+      "market": "Market & data / DPI",
+      "gov_conv": "Governance & convening"
+    },
+    "gov_levels": [
+      "Nascent",
+      "Developing",
+      "Medium",
+      "High"
+    ],
+    "tiers": {
+      "A": "Anchor (high leverage, democratic, under-organised)",
+      "B": "Bridge (democratic core, organised)",
+      "C": "Engage selectively",
+      "D": "Counterpart, not member",
+      "X": "Pole (US/China reference)"
+    },
+    "caveats": "Data 2024-26; announced GW and fund sizes are targets, not built. Refresh before external use. Niobium overweighted in Brazil's 'key' line relative to the working paper's correction (see leverage-outside-the-chain, section 2)."
+  },
+  "countries": [
+    {
+      "name": "Taiwan",
+      "code": "TW",
+      "region": "East Asia",
+      "democracy": "Full",
+      "gov": 2,
+      "axes": {
+        "minerals": 0,
+        "equip": 1,
+        "fab": 3,
+        "compute": 1,
+        "capital": 1,
+        "models": 2,
+        "market": 1,
+        "gov_conv": 1
+      },
+      "leverage": 10,
+      "tier": "C",
+      "key": "TSMC >90% of leading-edge fabrication + CoWoS advanced packaging - the most indispensable manufacturing node.",
+      "caveat": "Diplomatically locked out of GPAI/UN/AISI network; geopolitical flashpoint.",
+      "top10": 1
+    },
+    {
+      "name": "Netherlands",
+      "code": "NL",
+      "region": "Europe",
+      "democracy": "Full",
+      "gov": 3,
+      "axes": {
+        "minerals": 0,
+        "equip": 3,
+        "fab": 1,
+        "compute": 1,
+        "capital": 1,
+        "models": 1,
+        "market": 1,
+        "gov_conv": 3
+      },
+      "leverage": 11,
+      "tier": "B",
+      "key": "ASML - sole supplier of EUV lithography; the single hardest chokepoint in AI hardware.",
+      "caveat": "Frontier leverage rests on one firm; #1 on responsible-AI (GIRAI).",
+      "top10": 2
+    },
+    {
+      "name": "South Korea",
+      "code": "KR",
+      "region": "East Asia",
+      "democracy": "Full",
+      "gov": 3,
+      "axes": {
+        "minerals": 0,
+        "equip": 1,
+        "fab": 3,
+        "compute": 1,
+        "capital": 2,
+        "models": 2,
+        "market": 1,
+        "gov_conv": 2
+      },
+      "leverage": 12,
+      "tier": "B",
+      "key": "SK Hynix + Samsung ~80-88% of HBM (the AI-memory bottleneck) + Samsung fabs; AI Basic Act in force Jan 2026.",
+      "caveat": "",
+      "top10": 3
+    },
+    {
+      "name": "Japan",
+      "code": "JP",
+      "region": "East Asia",
+      "democracy": "Full",
+      "gov": 3,
+      "axes": {
+        "minerals": 3,
+        "equip": 2,
+        "fab": 1,
+        "compute": 1,
+        "capital": 2,
+        "models": 2,
+        "market": 2,
+        "gov_conv": 3
+      },
+      "leverage": 16,
+      "tier": "B",
+      "key": "Silicon wafers (~53%) + EUV photoresist (~100% sub-7nm) + Tokyo Electron tools; led the G7 Hiroshima Process.",
+      "caveat": "",
+      "top10": 4
+    },
+    {
+      "name": "United Arab Emirates",
+      "code": "AE",
+      "region": "Gulf",
+      "democracy": "Authoritarian",
+      "gov": 2,
+      "axes": {
+        "minerals": 0,
+        "equip": 0,
+        "fab": 0,
+        "compute": 3,
+        "capital": 3,
+        "models": 2,
+        "market": 1,
+        "gov_conv": 2
+      },
+      "leverage": 11,
+      "tier": "D",
+      "key": "MGX/ADIA/Mubadala capital + Stargate UAE (5GW planned) + Falcon/MBZUAI; cheap energy.",
+      "caveat": "Autocracy; compute is US-chip-dependent - leverage-as-dependency.",
+      "top10": 5
+    },
+    {
+      "name": "India",
+      "code": "IN",
+      "region": "South Asia",
+      "democracy": "Flawed",
+      "gov": 2,
+      "axes": {
+        "minerals": 1,
+        "equip": 1,
+        "fab": 0,
+        "compute": 2,
+        "capital": 1,
+        "models": 3,
+        "market": 3,
+        "gov_conv": 2
+      },
+      "leverage": 13,
+      "tier": "A",
+      "key": "AI talent scale (#1 skill penetration) + 1.4B market & Aadhaar/UPI rails + IndiaAI compute (38k GPUs); co-hosted the 2026 AI Impact Summit.",
+      "caveat": "No AI-localization mandate exists (a common overstatement); leverage is market + talent.",
+      "top10": 6
+    },
+    {
+      "name": "Germany",
+      "code": "DE",
+      "region": "Europe",
+      "democracy": "Full",
+      "gov": 3,
+      "axes": {
+        "minerals": 1,
+        "equip": 2,
+        "fab": 2,
+        "compute": 1,
+        "capital": 2,
+        "models": 2,
+        "market": 2,
+        "gov_conv": 3
+      },
+      "leverage": 15,
+      "tier": "B",
+      "key": "Zeiss optics & Trumpf lasers (essential to ASML's EUV) + ESMC Dresden fab + largest EU market; EU AI Act enforcement.",
+      "caveat": "",
+      "top10": 7
+    },
+    {
+      "name": "France",
+      "code": "FR",
+      "region": "Europe",
+      "democracy": "Flawed",
+      "gov": 3,
+      "axes": {
+        "minerals": 0,
+        "equip": 1,
+        "fab": 1,
+        "compute": 2,
+        "capital": 2,
+        "models": 3,
+        "market": 1,
+        "gov_conv": 3
+      },
+      "leverage": 13,
+      "tier": "B",
+      "key": "Mistral - the only democratic frontier-adjacent lab - + nuclear-powered compute (EUR109B) + GPAI/OECD seat & Paris Summit host.",
+      "caveat": "EIU downgraded France to 'flawed democracy' (2024).",
+      "top10": 8
+    },
+    {
+      "name": "Saudi Arabia",
+      "code": "SA",
+      "region": "Gulf",
+      "democracy": "Authoritarian",
+      "gov": 2,
+      "axes": {
+        "minerals": 1,
+        "equip": 0,
+        "fab": 0,
+        "compute": 3,
+        "capital": 3,
+        "models": 1,
+        "market": 1,
+        "gov_conv": 1
+      },
+      "leverage": 10,
+      "tier": "D",
+      "key": "PIF sovereign capital + HUMAIN compute + cheap energy; first Arab GPAI member (2026).",
+      "caveat": "Autocracy; US-chip-dependent.",
+      "top10": 9
+    },
+    {
+      "name": "United Kingdom",
+      "code": "GB",
+      "region": "Europe",
+      "democracy": "Full",
+      "gov": 3,
+      "axes": {
+        "minerals": 0,
+        "equip": 2,
+        "fab": 0,
+        "compute": 1,
+        "capital": 1,
+        "models": 3,
+        "market": 1,
+        "gov_conv": 3
+      },
+      "leverage": 11,
+      "tier": "C",
+      "key": "Arm - the CPU architecture behind >99% of mobile & much AI-edge compute - + elite talent + first AI (Security) Institute & Bletchley.",
+      "caveat": "DeepMind is Alphabet (US)-owned; UK did not sign the Paris 2025 declaration.",
+      "top10": 10
+    },
+    {
+      "name": "Brazil",
+      "code": "BR",
+      "region": "Americas",
+      "democracy": "Flawed",
+      "gov": 2,
+      "axes": {
+        "minerals": 2,
+        "equip": 0,
+        "fab": 0,
+        "compute": 2,
+        "capital": 1,
+        "models": 1,
+        "market": 3,
+        "gov_conv": 2
+      },
+      "leverage": 11,
+      "tier": "A",
+      "key": "Clean-energy data-centre host of the Americas (TikTok $37.7B in Ceara) + niobium & latent heavy-REE + Pix DPI (213M).",
+      "caveat": "Natural global-south anchor (clean energy + minerals + market).",
+      "top10": null
+    },
+    {
+      "name": "Canada",
+      "code": "CA",
+      "region": "Americas",
+      "democracy": "Full",
+      "gov": 3,
+      "axes": {
+        "minerals": 2,
+        "equip": 0,
+        "fab": 0,
+        "compute": 2,
+        "capital": 1,
+        "models": 3,
+        "market": 1,
+        "gov_conv": 3
+      },
+      "leverage": 12,
+      "tier": "B",
+      "key": "Mila/Vector talent (#2 worldwide) & Cohere + hydro compute & a C$2B sovereign-compute fund; CAISI + GPAI co-founder.",
+      "caveat": "",
+      "top10": null
+    },
+    {
+      "name": "Singapore",
+      "code": "SG",
+      "region": "SE Asia",
+      "democracy": "Hybrid",
+      "gov": 3,
+      "axes": {
+        "minerals": 0,
+        "equip": 1,
+        "fab": 1,
+        "compute": 1,
+        "capital": 3,
+        "models": 2,
+        "market": 1,
+        "gov_conv": 3
+      },
+      "leverage": 12,
+      "tier": "C",
+      "key": "Temasek/GIC (~$1.3T) capital + governance leadership (Singapore Consensus) + orchestration of regional data centres.",
+      "caveat": "Electoral-authoritarian / hybrid regime - a values caveat for a democratic coalition.",
+      "top10": null
+    },
+    {
+      "name": "Australia",
+      "code": "AU",
+      "region": "Oceania",
+      "democracy": "Full",
+      "gov": 2,
+      "axes": {
+        "minerals": 3,
+        "equip": 0,
+        "fab": 0,
+        "compute": 1,
+        "capital": 1,
+        "models": 1,
+        "market": 1,
+        "gov_conv": 2
+      },
+      "leverage": 9,
+      "tier": "C",
+      "key": "Lynas - the only producer of separated HEAVY rare earths outside China - + lithium #1; new AISI (2025).",
+      "caveat": "",
+      "top10": null
+    },
+    {
+      "name": "Indonesia",
+      "code": "ID",
+      "region": "SE Asia",
+      "democracy": "Flawed",
+      "gov": 1,
+      "axes": {
+        "minerals": 3,
+        "equip": 0,
+        "fab": 0,
+        "compute": 2,
+        "capital": 1,
+        "models": 1,
+        "market": 2,
+        "gov_conv": 1
+      },
+      "leverage": 10,
+      "tier": "A",
+      "key": "Nickel (~55-62% of mine supply) + 285M market / ASEAN's largest digital economy + Batam data centres.",
+      "caveat": "Refining is Chinese-controlled; grid coal-heavy; no AI law yet.",
+      "top10": null
+    },
+    {
+      "name": "South Africa",
+      "code": "ZA",
+      "region": "Africa",
+      "democracy": "Flawed",
+      "gov": 1,
+      "axes": {
+        "minerals": 3,
+        "equip": 0,
+        "fab": 0,
+        "compute": 1,
+        "capital": 1,
+        "models": 1,
+        "market": 2,
+        "gov_conv": 2
+      },
+      "leverage": 10,
+      "tier": "A",
+      "key": "Platinum-group metals incl. ruthenium/iridium (entering advanced chips) + African responsible-AI leadership (hosts GIRAI).",
+      "caveat": "Draft National AI Policy withdrawn Apr 2026 over AI-hallucinated citations; grid-constrained.",
+      "top10": null
+    },
+    {
+      "name": "Norway",
+      "code": "NO",
+      "region": "Europe",
+      "democracy": "Full",
+      "gov": 2,
+      "axes": {
+        "minerals": 1,
+        "equip": 0,
+        "fab": 0,
+        "compute": 2,
+        "capital": 3,
+        "models": 1,
+        "market": 1,
+        "gov_conv": 2
+      },
+      "leverage": 10,
+      "tier": "C",
+      "key": "GPFG ($2.2T - largest transparent shareholder of the AI stack) + hydro-powered compute (Stargate Norway).",
+      "caveat": "Its capital is index-passive, not a deal vehicle.",
+      "top10": null
+    },
+    {
+      "name": "Israel",
+      "code": "IL",
+      "region": "MENA",
+      "democracy": "Flawed",
+      "gov": 1,
+      "axes": {
+        "minerals": 0,
+        "equip": 2,
+        "fab": 1,
+        "compute": 0,
+        "capital": 1,
+        "models": 3,
+        "market": 0,
+        "gov_conv": 1
+      },
+      "leverage": 8,
+      "tier": "C",
+      "key": "Chip-design centres (Intel/Nvidia/Tower) + #1 per-capita AI talent density (AI21 Labs).",
+      "caveat": "Thin governance institutions; no AISI; not in the international network.",
+      "top10": null
+    },
+    {
+      "name": "United States",
+      "code": "US",
+      "region": "Americas",
+      "democracy": "Flawed",
+      "gov": 3,
+      "axes": {
+        "minerals": 1,
+        "equip": 3,
+        "fab": 2,
+        "compute": 3,
+        "capital": 3,
+        "models": 3,
+        "market": 2,
+        "gov_conv": 3
+      },
+      "leverage": 20,
+      "tier": "X",
+      "key": "The frontier pole: EDA + equipment + Nvidia GPUs + hyperscale compute + capital + export-control leverage.",
+      "caveat": "Reference benchmark - one of the two concentrated poles.",
+      "top10": null
+    },
+    {
+      "name": "China",
+      "code": "CN",
+      "region": "East Asia",
+      "democracy": "Authoritarian",
+      "gov": 2,
+      "axes": {
+        "minerals": 3,
+        "equip": 1,
+        "fab": 2,
+        "compute": 3,
+        "capital": 3,
+        "models": 3,
+        "market": 3,
+        "gov_conv": 2
+      },
+      "leverage": 20,
+      "tier": "X",
+      "key": "The other pole: ~70-90% of critical-mineral processing + scale compute, capital, models and market.",
+      "caveat": "Reference benchmark - the other concentrated pole.",
+      "top10": null
+    }
+  ]
+}

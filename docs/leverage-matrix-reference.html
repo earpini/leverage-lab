@@ -1,0 +1,77 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Map of Leverage (interactive)</title>
+<style>
+:root{--navy:#16365C;--blue:#2E74B5;--teal:#2E8B8B;--amber:#C8860D;--red:#B23A48;--green:#1E5C3A;--ink:#1A1A1A;--grey:#6B7280;--line:#E3E8EF;--bg:#F7F9FC}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+.wrap{max-width:1180px;margin:0 auto;padding:24px 20px 80px}
+h1{font-size:26px;color:var(--navy);margin:0 0 4px}
+.sub{color:var(--grey);margin:0 0 18px;font-size:15px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:16px 0;box-shadow:0 1px 2px rgba(20,40,80,.04)}
+.controls{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+.group{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.group .lbl{font-size:12px;color:var(--grey);text-transform:uppercase;letter-spacing:.04em;margin-right:2px}
+button.chip{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:5px 12px;font-size:13px;cursor:pointer}
+button.chip.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+input#q{border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:14px;min-width:160px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:center;white-space:nowrap}
+th{position:sticky;top:0;background:var(--navy);color:#fff;cursor:pointer;font-weight:600;font-size:12px;z-index:2}
+th.l,td.l{text-align:left}
+th:hover{background:#1d4576}
+td.name{text-align:left;font-weight:600}
+.rank{display:inline-block;min-width:18px;font-size:11px;color:#fff;background:var(--blue);border-radius:6px;padding:1px 5px;margin-right:6px}
+.dem{font-size:11px;padding:2px 7px;border-radius:999px;color:#fff}
+.tbl-scroll{max-height:620px;overflow:auto;border:1px solid var(--line);border-radius:10px}
+.note{font-size:12px;color:var(--grey);text-align:left;white-space:normal;max-width:340px}
+.cav{color:var(--amber)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--grey);margin-top:8px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.scatter-wrap{overflow:auto}
+circle.pt{cursor:pointer;stroke:#fff;stroke-width:1.4}
+.axt{font-size:12px;fill:var(--grey)}
+.gl{stroke:#EEF1F5}
+.foot{font-size:12px;color:var(--grey);margin-top:8px}
+.tabs{display:flex;gap:8px;margin:4px 0 0}
+.tab{padding:7px 14px;border:1px solid var(--line);border-bottom:none;border-radius:10px 10px 0 0;background:#eef2f7;cursor:pointer;font-size:13px;color:var(--navy)}
+.tab.on{background:#fff;font-weight:600}
+.hide{display:none}
+.kv{font-size:13px}
+</style></head><body><div class="wrap">
+<h1>The Map of Leverage</h1>
+<p class="sub">Interactive companion to the leverage briefing — AI value-chain leverage and governance maturity, by country. Sort, filter, hover. Data 2024–2026; figures carry sources in the report.</p>
+
+<div class="card"><div class="controls">
+<div class="group"><span class="lbl">Focus tier</span><span id="fTier"></span></div>
+<div class="group"><span class="lbl">Regime</span><span id="fDem"></span></div>
+<div class="group"><span class="lbl">Region</span><select id="fRegion"></select></div>
+<div class="group"><input id="q" placeholder="Search country…"></div>
+<div class="group"><label class="kv"><input type="checkbox" id="poles"> show US/China poles</label></div>
+</div>
+<div class="legend">
+<span><i style="background:#1E5C3A"></i>Tier A anchor</span><span><i style="background:#16365C"></i>Tier B bridge</span>
+<span><i style="background:#C8860D"></i>Tier C engage</span><span><i style="background:#B23A48"></i>Tier D counterpart</span>
+<span style="margin-left:14px"><i style="background:#2E74B5"></i>Full dem</span><span><i style="background:#2E8B8B"></i>Flawed</span><span><i style="background:#C8860D"></i>Hybrid</span><span><i style="background:#B23A48"></i>Authoritarian</span>
+</div></div>
+
+<div class="tabs">
+<div class="tab on" data-view="table">Heatmap table</div>
+<div class="tab" data-view="scatter">Leverage × governance</div>
+</div>
+
+<div class="card" id="view-table">
+<div class="tbl-scroll"><table id="t"><thead><tr id="head"></tr></thead><tbody id="body"></tbody></table></div>
+<div class="foot">Axis scores 0–3 (darker = stronger). <b>Σ</b> = leverage index /24 (breadth). Click a header to sort; the Top-10 column reflects strategic, irreplaceability-weighted rank. Click a row to reveal its headline leverage &amp; caveat.</div>
+</div>
+
+<div class="card hide" id="view-scatter">
+<div class="scatter-wrap"><svg id="sc" width="940" height="540" viewBox="0 0 940 540"></svg></div>
+<div class="foot">x = leverage breadth (0–24) · y = governance maturity · colour = regime type. Hover a point for the country's headline leverage. The anchor targets sit lower-right of the democratic cloud: real leverage, thinner governance.</div>
+</div>
+</div>
+
+<script>
+const DATA=[{"name": "Taiwan", "code": "TW", "region": "East Asia", "democracy": "Full", "gov": 2, "axes": {"minerals": 0, "equip": 1, "fab": 3, "compute": 1, "capital": 1, "models": 2, "market": 1, "gov_conv": 1}, "leverage": 10, "tier": "C", "key": "TSMC >90% of leading-edge fabrication + CoWoS advanced packaging - the most indispensable manufacturing node.", "caveat": "Diplomatically locked out of GPAI/UN/AISI network; geopolitical flashpoint.", "top10": 1}, {"name": "Netherlands", "code": "NL", "region": "Europe", "democracy": "Full", "gov": 3, "axes": {"minerals": 0, "equip": 3, "fab": 1, "compute": 1, "capital": 1, "models": 1, "market": 1, "gov_conv": 3}, "leverage": 11, "tier": "B", "key": "ASML - sole supplier of EUV lithography; the single hardest chokepoint in AI hardware.", "caveat": "Frontier leverage rests on one firm; #1 on responsible-AI (GIRAI).", "top10": 2}, {"name": "South Korea", "code": "KR", "region": "East Asia", "democracy": "Full", "gov": 3, "axes": {"minerals": 0, "equip": 1, "fab": 3, "compute": 1, "capital": 2, "models": 2, "market": 1, "gov_conv": 2}, "leverage": 12, "tier": "B", "key": "SK Hynix + Samsung ~80-88% of HBM (the AI-memory bottleneck) + Samsung fabs; AI Basic Act in force Jan 2026.", "caveat": "", "top10": 3}, {"name": "Japan", "code": "JP", "region": "East Asia", "democracy": "Full", "gov": 3, "axes": {"minerals": 3, "equip": 2, "fab": 1, "compute": 1, "capital": 2, "models": 2, "market": 2, "gov_conv": 3}, "leverage": 16, "tier": "B", "key": "Silicon wafers (~53%) + EUV photoresist (~100% sub-7nm) + Tokyo Electron tools; led the G7 Hiroshima Process.", "caveat": "", "top10": 4}, {"name": "United Arab Emirates", "code": "AE", "region": "Gulf", "democracy": "Authoritarian", "gov": 2, "axes": {"minerals": 0, "equip": 0, "fab": 0, "compute": 3, "capital": 3, "models": 2, "market": 1, "gov_conv": 2}, "leverage": 11, "tier": "D", "key": "MGX/ADIA/Mubadala capital + Stargate UAE (5GW planned) + Falcon/MBZUAI; cheap energy.", "caveat": "Autocracy; compute is US-chip-dependent - leverage-as-dependency.", "top10": 5}, {"name": "India", "code": "IN", "region": "South Asia", "democracy": "Flawed", "gov": 2, "axes": {"minerals": 1, "equip": 1, "fab": 0, "compute": 2, "capital": 1, "models": 3, "market": 3, "gov_conv": 2}, "leverage": 13, "tier": "A", "key": "AI talent scale (#1 skill penetration) + 1.4B market & Aadhaar/UPI rails + IndiaAI compute (38k GPUs); co-hosted the 2026 AI Impact Summit.", "caveat": "No AI-localization mandate exists (a common overstatement); leverage is market + talent.", "top10": 6}, {"name": "Germany", "code": "DE", "region": "Europe", "democracy": "Full", "gov": 3, "axes": {"minerals": 1, "equip": 2, "fab": 2, "compute": 1, "capital": 2, "models": 2, "market": 2, "gov_conv": 3}, "leverage": 15, "tier": "B", "key": "Zeiss optics & Trumpf lasers (essential to ASML's EUV) + ESMC Dresden fab + largest EU market; EU AI Act enforcement.", "caveat": "", "top10": 7}, {"name": "France", "code": "FR", "region": "Europe", "democracy": "Flawed", "gov": 3, "axes": {"minerals": 0, "equip": 1, "fab": 1, "compute": 2, "capital": 2, "models": 3, "market": 1, "gov_conv": 3}, "leverage": 13, "tier": "B", "key": "Mistral - the only democratic frontier-adjacent lab - + nuclear-powered compute (EUR109B) + GPAI/OECD seat & Paris Summit host.", "caveat": "EIU downgraded France to 'flawed democracy' (2024).", "top10": 8}, {"name": "Saudi Arabia", "code": "SA", "region": "Gulf", "democracy": "Authoritarian", "gov": 2, "axes": {"minerals": 1, "equip": 0, "fab": 0, "compute": 3, "capital": 3, "models": 1, "market": 1, "gov_conv": 1}, "leverage": 10, "tier": "D", "key": "PIF sovereign capital + HUMAIN compute + cheap energy; first Arab GPAI member (2026).", "caveat": "Autocracy; US-chip-dependent.", "top10": 9}, {"name": "United Kingdom", "code": "GB", "region": "Europe", "democracy": "Full", "gov": 3, "axes": {"minerals": 0, "equip": 2, "fab": 0, "compute": 1, "capital": 1, "models": 3, "market": 1, "gov_conv": 3}, "leverage": 11, "tier": "C", "key": "Arm - the CPU architecture behind >99% of mobile & much AI-edge compute - + elite talent + first AI (Security) Institute & Bletchley.", "caveat": "DeepMind is Alphabet (US)-owned; UK did not sign the Paris 2025 declaration.", "top10": 10}, {"name": "Brazil", "code": "BR", "region": "Americas", "democracy": "Flawed", "gov": 2, "axes": {"minerals": 2, "equip": 0, "fab": 0, "compute": 2, "capital": 1, "models": 1, "market": 3, "gov_conv": 2}, "leverage": 11, "tier": "A", "key": "Clean-energy data-centre host of the Americas (TikTok $37.7B in Ceara) + niobium & latent heavy-REE + Pix DPI (213M).", "caveat": "Natural global-south anchor (clean energy + minerals + market).", "top10": null}, {"name": "Canada", "code": "CA", "region": "Americas", "democracy": "Full", "gov": 3, "axes": {"minerals": 2, "equip": 0, "fab": 0, "compute": 2, "capital": 1, "models": 3, "market": 1, "gov_conv": 3}, "leverage": 12, "tier": "B", "key": "Mila/Vector talent (#2 worldwide) & Cohere + hydro compute & a C$2B sovereign-compute fund; CAISI + GPAI co-founder.", "caveat": "", "top10": null}, {"name": "Singapore", "code": "SG", "region": "SE Asia", "democracy": "Hybrid", "gov": 3, "axes": {"minerals": 0, "equip": 1, "fab": 1, "compute": 1, "capital": 3, "models": 2, "market": 1, "gov_conv": 3}, "leverage": 12, "tier": "C", "key": "Temasek/GIC (~$1.3T) capital + governance leadership (Singapore Consensus) + orchestration of regional data centres.", "caveat": "Electoral-authoritarian / hybrid regime - a values caveat for a democratic coalition.", "top10": null}, {"name": "Australia", "code": "AU", "region": "Oceania", "democracy": "Full", "gov": 2, "axes": {"minerals": 3, "equip": 0, "fab": 0, "compute": 1, "capital": 1, "models": 1, "market": 1, "gov_conv": 2}, "leverage": 9, "tier": "C", "key": "Lynas - the only producer of separated HEAVY rare earths outside China - + lithium #1; new AISI (2025).", "caveat": "", "top10": null}, {"name": "Indonesia", "code": "ID", "region": "SE Asia", "democracy": "Flawed", "gov": 1, "axes": {"minerals": 3, "equip": 0, "fab": 0, "compute": 2, "capital": 1, "models": 1, "market": 2, "gov_conv": 1}, "leverage": 10, "tier": "A", "key": "Nickel (~55-62% of mine supply) + 285M market / ASEAN's largest digital economy + Batam data centres.", "caveat": "Refining is Chinese-controlled; grid coal-heavy; no AI law yet.", "top10": null}, {"name": "South Africa", "code": "ZA", "region": "Africa", "democracy": "Flawed", "gov": 1, "axes": {"minerals": 3, "equip": 0, "fab": 0, "compute": 1, "capital": 1, "models": 1, "market": 2, "gov_conv": 2}, "leverage": 10, "tier": "A", "key": "Platinum-group metals incl. ruthenium/iridium (entering advanced chips) + African responsible-AI leadership (hosts GIRAI).", "caveat": "Draft National AI Policy withdrawn Apr 2026 over AI-hallucinated citations; grid-constrained.", "top10": null}, {"name": "Norway", "code": "NO", "region": "Europe", "democracy": "Full", "gov": 2, "axes": {"minerals": 1, "equip": 0, "fab": 0, "compute": 2, "capital": 3, "models": 1, "market": 1, "gov_conv": 2}, "leverage": 10, "tier": "C", "key": "GPFG ($2.2T - largest transparent shareholder of the AI stack) + hydro-powered compute (Stargate Norway).", "caveat": "Its capital is index-passive, not a deal vehicle.", "top10": null}, {"name": "Israel", "code": "IL", "region": "MENA", "democracy": "Flawed", "gov": 1, "axes": {"minerals": 0, "equip": 2, "fab": 1, "compute": 0, "capital": 1, "models": 3, "market": 0, "gov_conv": 1}, "leverage": 8, "tier": "C", "key": "Chip-design centres (Intel/Nvidia/Tower) + #1 per-capita AI talent density (AI21 Labs).", "caveat": "Thin governance institutions; no AISI; not in the international network.", "top10": null}, {"name": "United States", "code": "US", "region": "Americas", "democracy": "Flawed", "gov": 3, "axes": {"minerals": 1, "equip": 3, "fab": 2, "compute": 3, "capital": 3, "models": 3, "market": 2, "gov_conv": 3}, "leverage": 20, "tier": "X", "key": "The frontier pole: EDA + equipment + Nvidia GPUs + hyperscale compute + capital + export-control leverage.", "caveat": "Reference benchmark - one of the two concentrated poles.", "top10": null}, {"name": "China", "code": "CN", "region": "East Asia", "democracy": "Authoritarian", "gov": 2, "axes": {"minerals": 3, "equip": 1, "fab": 2, "compute": 3, "capital": 3, "models": 3, "market": 3, "gov_conv": 2}, "leverage": 20, "tier": "X", "key": "The other pole: ~70-90% of critical-mineral processing + scale compute, capital, models and market.", "caveat": "Reference benchmark - the other concentrated pole.", "top10": null}];
+const AX=["minerals","equip","fab","compute","capital","models","market","gov_conv"];
+</script></body></html>
