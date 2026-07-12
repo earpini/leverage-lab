@@ -2,7 +2,10 @@
 // crisis endings score strictly below any menu score; junior-partner terms scale with
 // what was converted before signing.
 
-import { c1, c2, pooledLeverage, chokepointThreshold, convertedPoints } from './criteria.js';
+import {
+  c1, c2, pooledLeverage, chokepointThreshold, convertedPoints,
+  frontierAccess, peopleScore, economyScore, natureScore
+} from './criteria.js';
 
 /** Junior-partner terms at signing time: convert first, sign second, get more. */
 export function computeTerms(state) {
@@ -107,7 +110,7 @@ export function debriefLines(state, ending) {
       if (state.facility.totalFunded >= 4) lines.push(`You financed the alliance fund ${state.facility.totalFunded} of ${state.params.game.turns} years. Boring, unglamorous, and the single biggest reason your allies stayed.`);
       break;
     case 'broker': {
-      lines.push('You built something real, but not decisive. Brazil ends 2033 with options and with risks: one good superpower offer to the wrong ally and the whole position wobbles.');
+      lines.push('You built something real, but not decisive. You end 2033 with options and with risks: one good superpower offer to the wrong ally and the whole position wobbles.');
       break;
     }
     case 'junior-partner': {
@@ -120,7 +123,7 @@ export function debriefLines(state, ending) {
       break;
     }
     case 'menu':
-      if (convertedPoints(state) < 1.5) lines.push('Brazil had real assets — energy, minerals, a huge market — but you never set terms on any of them. Assets you never bargain with might as well belong to someone else.');
+      if (convertedPoints(state) < 1.5) lines.push('Your country had real assets, but you never set terms on any of them. Assets you never bargain with might as well belong to someone else.');
       else lines.push('You built real bargaining power at home, but never pooled enough of it with allies. Alone, no middle power crosses the line.');
       break;
     case 'integrity-spiral':
@@ -133,6 +136,18 @@ export function debriefLines(state, ending) {
 
   if (state.m5Uses >= 3) {
     lines.push(`You cut ${state.m5Uses} solo deals. Each one felt good that year. None of them added up to anything.`);
+  }
+
+  // What it all meant for the people who live there.
+  const access = frontierAccess(state);
+  lines.push(`Access to frontier AI in 2033: ${access.label}.`);
+  const people = peopleScore(state);
+  const economy = economyScore(state);
+  const nature = natureScore(state);
+  if (nature < 35) {
+    lines.push(`And at home: people ${people}, economy ${economy}, nature ${nature} — the AI build-out chewed through water, land and grids, and nobody made it pay its way.`);
+  } else {
+    lines.push(`And at home: people ${people}, economy ${economy}, nature ${nature}.`);
   }
   return lines;
 }

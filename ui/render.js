@@ -3,9 +3,11 @@
 
 import { snapshot, legalActions, computeTerms, offersOpen, yearOf } from '../engine/game.js';
 import { memberContribution } from '../engine/criteria.js';
+import { playerConvertAxes } from '../engine/state.js';
 import {
-  INSTRUMENTS, CRITERIA, DIALS, POLE_NAMES, OFFER_COPY, ENDINGS, PLAYER_NOTE,
-  CONVERT_AXIS_LABELS, countryGloss, leanGloss, riskLabel, COACH_TIPS, INTRO
+  INSTRUMENTS, CRITERIA, DIALS, POLE_NAMES, OFFER_COPY, ENDINGS,
+  AXIS_NAMES, countryGloss, leanGloss, riskLabel, COACH_TIPS, INTRO,
+  COUNTRY_HOOKS, playerNote, PICKER, OUTCOME_TILES, outcomeWord, FRONTIER_LABEL, REGIME_NAMES
 } from './copy.js';
 
 const esc = (s) =>
@@ -20,13 +22,14 @@ export function render(root, g, handlers, ui = {}) {
       ${coachTip(g, ui)}
       <div class="board">
         <section>${thisYearPanel(g)}${standingPanel(g, snap)}</section>
-        <section>${brazilPanel(g, snap)}${alliesPanel(g)}${invitePanel(g, acts)}</section>
+        <section>${playerPanel(g, snap)}${alliesPanel(g)}${invitePanel(g, acts)}</section>
         <section>${movesPanel(g, acts)}${storyPanel(g)}</section>
       </div>
     </div>
     ${ui.summary && !g.ended ? summarySheet(g, ui.summary) : ''}
     ${offerSheet(g)}
     ${debriefSheet(g, snap)}
+    ${ui.showPicker ? pickerSheet(g) : ''}
     ${ui.showIntro ? introSheet() : ''}
   `;
   wire(root, handlers);
@@ -63,6 +66,22 @@ function hero(g, snap, ui) {
         <p class="hero-note">${ratio >= 1
           ? 'You are past the line. Now hold it until 2033: keep your allies in and public trust up.'
           : 'Below the line, the superpowers can ignore your alliance. Grow the bar: set conditions at home, add allies, share technology.'}</p>
+        <div class="outcomes">
+          ${OUTCOME_TILES.map((t) => {
+            const v = snap[t.key];
+            return `
+            <div class="outcome" title="${esc(t.hint)}">
+              <span class="o-label">${esc(t.label)}</span>
+              <span class="o-val">${v}</span>
+              <div class="o-meter"><i style="width:${v}%"></i></div>
+              <span class="o-word">${esc(outcomeWord(v))}</span>
+            </div>`;
+          }).join('')}
+          <div class="outcome frontier" title="The point of all of this: does your country get to use the most advanced AI, on liveable terms?">
+            <span class="o-label">${esc(FRONTIER_LABEL)}</span>
+            <span class="o-frontier">${esc(snap.frontier.label)}</span>
+          </div>
+        </div>
       </div>
     </div>`;
 }
@@ -122,17 +141,18 @@ function standingPanel(g, snap) {
 
 /* ---------- column 2: your alliance ---------- */
 
-function brazilPanel(g, snap) {
+function playerPanel(g, snap) {
   const player = g.data.byCode[g.player.code];
   return `
     <div class="panel">
-      <h2>Brazil — what you hold</h2>
-      <p class="keyline">${esc(PLAYER_NOTE)}</p>
-      ${g.params.conversion.axes.map((a) => {
+      <h2>${esc(player.name)} — what you hold</h2>
+      <p class="keyline">${esc(playerNote(player, g.player.positional))}</p>
+      ${g.player.convertAxes.map((a) => {
         const pct = Math.round(g.player.converted[a] * 100);
+        const label = AXIS_NAMES[a] ?? a;
         return `
         <div class="conv" title="Set conditions (your move #1) to raise this. Assets only count once terms are set on them.">
-          <span>${esc(CONVERT_AXIS_LABELS[a] ?? a)} (${player.axes[a]})</span>
+          <span>${esc(label[0].toUpperCase() + label.slice(1))} (${player.axes[a]})</span>
           <div class="meter warm"><i style="width:${pct}%"></i></div>
           <span class="pct">${pct}%</span>
         </div>`;
@@ -161,7 +181,7 @@ function alliesPanel(g) {
   return `
     <div class="panel">
       <h2>Your allies (${g.coalition.length})</h2>
-      ${members || '<p class="keyline">Nobody yet. Brazil alone can\'t cross the line — invite countries below.</p>'}
+      ${members || '<p class="keyline">Nobody yet. No country crosses the line alone — invite allies below.</p>'}
       ${lost ? `<p class="keyline muted">Left the alliance: ${lost}.</p>` : ''}
     </div>`;
 }
@@ -291,6 +311,36 @@ function debriefSheet(g, snap) {
     </div>`;
 }
 
+function pickerSheet(g) {
+  const cards = g.data.countries.countries
+    .filter((c) => c.tier !== 'X')
+    .map((c) => ({
+      c,
+      potential: playerConvertAxes(g.params, c).reduce((a, k) => a + c.axes[k], 0),
+      positional: g.params.pool.positionalCountries.includes(c.code)
+    }))
+    .sort((a, b) => (a.c.code === 'BR' ? -1 : b.c.code === 'BR' ? 1 : b.potential - a.potential));
+  return `
+    <div class="overlay">
+      <div class="sheet wide">
+        <p class="kicker">${esc(PICKER.kicker)}</p>
+        <h3>${esc(PICKER.title)}</h3>
+        <p class="read small" style="margin-bottom: var(--ea-space-5)">${esc(PICKER.note)}</p>
+        <div class="picker-grid">
+          ${cards.map(({ c, potential, positional }) => `
+            <button class="pick-card" data-pick="${esc(c.code)}">
+              <span class="pick-head">${esc(c.name)}
+                ${c.code === 'BR' ? `<span class="badge">${esc(PICKER.firstGame)}</span>` : ''}
+                ${positional ? `<span class="badge cool">${esc(PICKER.positionalBadge)}</span>` : ''}
+              </span>
+              <span class="pick-hook">${esc(COUNTRY_HOOKS[c.code] ?? '')}</span>
+              <span class="pick-meta">${esc(REGIME_NAMES[c.democracy] ?? c.democracy)} · ${esc(leanGloss(c.affinity))} · ${esc(PICKER.potential)} ${potential} pts</span>
+            </button>`).join('')}
+        </div>
+      </div>
+    </div>`;
+}
+
 function introSheet() {
   return `
     <div class="overlay">
@@ -311,7 +361,7 @@ function shareUrl(g) {
   const base = location.origin === 'null' || location.protocol === 'file:'
     ? location.pathname.split('/').pop()
     : location.pathname;
-  return `${base}?seed=${encodeURIComponent(g.seed)}&scenario=${encodeURIComponent(g.scenarioId)}`;
+  return `${base}?seed=${encodeURIComponent(g.seed)}&scenario=${encodeURIComponent(g.scenarioId)}&country=${encodeURIComponent(g.player.code)}`;
 }
 
 /* ---------- wiring ---------- */
@@ -322,6 +372,9 @@ function wire(root, handlers) {
   }
   for (const btn of root.querySelectorAll('[data-recruit]')) {
     btn.addEventListener('click', () => handlers.onAction({ type: 'm2', code: btn.dataset.recruit }));
+  }
+  for (const btn of root.querySelectorAll('[data-pick]')) {
+    btn.addEventListener('click', () => handlers.onPick(btn.dataset.pick));
   }
   root.querySelector('[data-end-turn]')?.addEventListener('click', handlers.onEndTurn);
   root.querySelector('[data-replay]')?.addEventListener('click', handlers.onReplay);

@@ -51,6 +51,9 @@ export function applyEffects(state, effects) {
       case 'trust':
         state.trust = clamp(state.trust + value);
         break;
+      case 'nature':
+        state.nature = clamp(state.nature + value);
+        break;
       case 'rivalry': case 'pace': case 'demand':
         state.dials[key] = Math.min(1, Math.max(0, state.dials[key] + value));
         break;

@@ -14,18 +14,20 @@ const seedInput = document.getElementById('seed-input');
 const newRunBtn = document.getElementById('new-run');
 
 let game = null;
-const ui = { showIntro: true, summary: null, tipsDismissed: false };
+const ui = { showIntro: true, showPicker: false, summary: null, tipsDismissed: false };
 
 function readUrl() {
   const q = new URLSearchParams(location.search);
+  const country = countries.countries.find((c) => c.code === q.get('country') && c.tier !== 'X');
   return {
     seed: q.get('seed') || randomSeed(),
-    scenarioId: scenarios.scenarios.some((s) => s.id === q.get('scenario')) ? q.get('scenario') : 'bipolar'
+    scenarioId: scenarios.scenarios.some((s) => s.id === q.get('scenario')) ? q.get('scenario') : 'bipolar',
+    countryCode: country ? country.code : null
   };
 }
 
-function writeUrl(seed, scenarioId) {
-  const q = new URLSearchParams({ seed, scenario: scenarioId });
+function writeUrl(seed, scenarioId, countryCode) {
+  const q = new URLSearchParams({ seed, scenario: scenarioId, country: countryCode });
   try {
     history.replaceState(null, '', `${location.pathname}?${q}`);
   } catch {
@@ -38,10 +40,11 @@ function randomSeed() {
   return words[Math.floor(Math.random() * words.length)] + '-' + Math.floor(Math.random() * 9999);
 }
 
-function startRun(seed, scenarioId) {
-  game = newGame({ params, countries, scenarios, events, seed, scenarioId });
+function startRun(seed, scenarioId, countryCode) {
+  game = newGame({ params, countries, scenarios, events, seed, scenarioId, playerCode: countryCode });
   ui.summary = null;
-  writeUrl(seed, scenarioId);
+  ui.showPicker = false;
+  writeUrl(seed, scenarioId, game.player.code);
   scenarioSelect.value = scenarioId;
   seedInput.value = seed;
   draw();
@@ -69,10 +72,17 @@ const handlers = {
     draw();
   },
   onReplay() {
-    startRun(game.seed, game.scenarioId);
+    startRun(game.seed, game.scenarioId, game.player.code);
   },
   onNewSeed() {
-    startRun(randomSeed(), game.scenarioId);
+    // New game: fresh code, and back to the country picker.
+    seedInput.value = randomSeed();
+    ui.showPicker = true;
+    ui.summary = null;
+    draw();
+  },
+  onPick(code) {
+    startRun(seedInput.value.trim() || randomSeed(), scenarioSelect.value, code);
   },
   onHelp() {
     ui.showIntro = true;
@@ -80,6 +90,8 @@ const handlers = {
   },
   onCloseIntro() {
     ui.showIntro = false;
+    ui.showPicker = !urlHadCountry;
+    urlHadCountry = true; // only skip the picker once
     draw();
   },
   onDismissTips() {
@@ -102,11 +114,13 @@ for (const s of scenarios.scenarios) {
 }
 
 newRunBtn.addEventListener('click', () => {
-  startRun(seedInput.value.trim() || randomSeed(), scenarioSelect.value);
+  ui.showPicker = true;
+  draw();
 });
 scenarioSelect.addEventListener('change', () => {
-  startRun(seedInput.value.trim() || randomSeed(), scenarioSelect.value);
+  startRun(seedInput.value.trim() || randomSeed(), scenarioSelect.value, game.player.code);
 });
 
-const { seed, scenarioId } = readUrl();
-startRun(seed, scenarioId);
+const { seed, scenarioId, countryCode } = readUrl();
+let urlHadCountry = countryCode != null;
+startRun(seed, scenarioId, countryCode ?? undefined);

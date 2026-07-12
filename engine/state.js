@@ -31,8 +31,14 @@ export function createState({ params, countries, scenarios, events, seed, scenar
   if (!player) throw new Error(`Unknown player country: ${playerCode}`);
   if (player.tier === 'X') throw new Error('Poles are not playable');
 
+  // A country converts its signature strengths: its top N axes by value.
+  const convertAxes = playerConvertAxes(params, player);
+  const positional = params.pool.positionalCountries.includes(playerCode);
   const converted = {};
-  for (const axis of params.conversion.axes) converted[axis] = 0;
+  convertAxes.forEach((axis, i) => {
+    // Positional countries sit on a bottleneck already: the top axis counts from day one.
+    converted[axis] = positional && i < params.conversion.positionalPreconverted ? 1 : 0;
+  });
 
   return {
     seed: String(seed),
@@ -44,8 +50,12 @@ export function createState({ params, countries, scenarios, events, seed, scenar
     turn: 1,
     ap: params.game.apPerTurn,
     dials: { ...scenario.dials },
-    player: { code: playerCode, converted },
-    crit: { ...normaliseStart(params.criteriaStart) },
+    player: { code: playerCode, converted, convertAxes, positional },
+    crit: {
+      ...normaliseStart(params.criteriaStart),
+      c3: params.criteriaStart.c3 + (positional ? params.conversion.positionalStartHeat : 0)
+    },
+    nature: params.outcomes.natureStart,
     c1Flat: 0,
     tempSpike: 0,
     trust: params.trust.start,
@@ -68,6 +78,15 @@ export function createState({ params, countries, scenarios, events, seed, scenar
 
 function normaliseStart(start) {
   return { c3: start.c3, c4: start.c4, c5: start.c5, c6: start.c6, c7: start.c7 };
+}
+
+/** A player's convertible axes: top N by value (ties broken by fixed axis order), zeros excluded. */
+export function playerConvertAxes(params, country) {
+  return Object.entries(country.axes)
+    .filter(([, v]) => v > 0)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, params.conversion.topAxes)
+    .map(([k]) => k);
 }
 
 export function log(state, phase, text) {

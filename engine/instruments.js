@@ -56,13 +56,15 @@ function initialDefRisk(state, country) {
 function applyM1(state) {
   const m1 = state.params.instruments.m1;
   const share = m1.convertShare + state.turnMods.m1Boost;
-  for (const axis of state.params.conversion.axes) {
+  for (const axis of state.player.convertAxes) {
     const remaining = 1 - state.player.converted[axis];
     state.player.converted[axis] = Math.min(1, state.player.converted[axis] + remaining * share);
   }
   state.crit.c4 = clamp(state.crit.c4 + m1.c4);
   state.crit.c3 = clamp(state.crit.c3 + m1.c3);
-  log(state, 'player', 'You set conditions on incoming tech money. Brazil’s assets are now worth more at the table (and the superpowers noticed).');
+  // Conditions include local-benefit and environmental terms.
+  state.nature = clamp(state.nature + state.params.outcomes.m1NatureGain);
+  log(state, 'player', 'You set conditions on incoming tech money. Your assets are now worth more at the table (and the superpowers noticed).');
 }
 
 /** M2 Recruit: bring a country into the coalition. */
@@ -100,7 +102,7 @@ function applyM5(state) {
   state.crit.c3 = clamp(state.crit.c3 - m5.c3Relief);
   state.crit.c5 = clamp(state.crit.c5 - m5.c5Cost);
   state.trust = clamp(state.trust - m5.trustCost);
-  log(state, 'player', 'You cut a solo deal. A quick win for Brazil this year. Your allies took note.');
+  log(state, 'player', 'You cut a solo deal. A quick win for your country this year. Your allies took note.');
 }
 
 /** M6 Pool the commons: raises C7, lowers defection risk structurally. */
@@ -131,7 +133,7 @@ function apCost(state, action) {
 /** Legal actions with costs and disable reasons — the UI renders this directly. */
 export function legalActions(state) {
   if (state.ended) return [];
-  const remaining = state.params.conversion.axes
+  const remaining = state.player.convertAxes
     .map((a) => 1 - state.player.converted[a])
     .reduce((x, y) => x + y, 0);
   const list = [

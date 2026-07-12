@@ -54,6 +54,27 @@ leverage, instruments M1–M6, criteria C1–C7, the accommodation trap.
 | `defectionCost` | 8 | Each defection makes the next one easier. |
 | `recruitGain` | 2 | Momentum from a new signature. |
 
+## conversion (any-country play)
+
+| param | value | rationale |
+|---|---|---|
+| `topAxes` | 3 | A country converts its signature strengths — its three strongest axes. For Brazil this reproduces the original minerals/compute/market set exactly, so balance is unchanged. |
+| `positionalPreconverted` | 1 | Positional countries (TW/NL/KR) sit on a bottleneck already: their top axis counts from day one — that is what positional means. |
+| `positionalStartHeat` | 8 | Sitting on a chokepoint means the poles already watch you: positional players start with extra heat. |
+
+## outcomes (people, economy, nature — the point of the whole exercise)
+
+People and economy are derived, not stocks: people = 0.55·C6 + 0.25·C5 + 0.20·C4 (quality of
+life is trust, steadiness, independence); economy = 0.40·C1 + 0.30·(pool/threshold) + 0.30·C7
+(thriving is bargaining power, frontier access, allies' capability). Nature is the one new
+stock: starts at 65, drifts down by 0.5 + 1.5·demand each year (the build-out presses on water,
+land and grids), recovers +2 per M1 (conditions include environmental and local-benefit terms),
+and moves with events. Below 25 it costs 2 C6 a year — degraded nature erodes public trust.
+Frontier access is a label, not a number: secured (pool ≥ threshold), partial (≥ 0.6), precarious,
+or "on their terms" after signing with a pole. PESTLE areas map onto the inputs (political C5,
+economic C1/C4, social C6, technological C7, legal M4, environmental nature); the three tiles are
+what those areas add up to for the people who live there.
+
 ## pool / chokepoint
 
 | param | value | rationale |

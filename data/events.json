@@ -20,14 +20,14 @@
     {
       "id": "datacentre-offer",
       "name": "The data centre offer",
-      "copy": "A tech giant wants to build a huge data centre in Brazil, drawn by cheap clean energy. Perfect timing to demand terms — this year, Set conditions works extra hard. (Brazil really has a law for this: REDATA.)",
+      "copy": "A tech giant wants to build a huge data centre on your grid. Perfect timing to demand terms — this year, Set conditions works extra hard. (Brazil pioneered a law for exactly this moment, called REDATA.)",
       "weights": { "bipolar": 2, "acceleration": 2, "spring": 2 },
-      "effects": { "m1Boost": 0.5 }
+      "effects": { "m1Boost": 0.5, "nature": -2 }
     },
     {
       "id": "licensing-conflict",
       "name": "Big Tech vs your courts",
-      "copy": "Brazilian courts take on a major AI company for training its models on local content without paying. For one season, the giants need something from you.",
+      "copy": "Your courts take on a major AI company for training its models on local content without paying. For one season, the giants need something from you.",
       "weights": { "bipolar": 2, "acceleration": 2, "spring": 2 },
       "effects": { "c3": 2, "tempSpike": 0.8 }
     },
@@ -36,7 +36,7 @@
       "name": "A summit that works",
       "copy": "A global AI summit actually goes well for once. Ministers return your calls. Inviting countries into your alliance is cheaper this year.",
       "weights": { "bipolar": 1, "acceleration": 1, "spring": 3 },
-      "effects": { "trust": 4, "c5": 3, "c6": 1, "recruitDiscount": 1 }
+      "effects": { "trust": 4, "c5": 3, "c6": 1, "nature": 1, "recruitDiscount": 1 }
     },
     {
       "id": "brics-tech-bank",
@@ -55,16 +55,16 @@
     {
       "id": "minerals-squeeze",
       "name": "Minerals boom",
-      "copy": "Mineral prices jump worldwide as AI hardware demand bites. If you set conditions on Brazil's minerals, that is bargaining power now. If not, it is just weather.",
+      "copy": "Mineral prices jump worldwide as AI hardware demand bites. If you set conditions on your minerals, that is bargaining power now. If not, it is just weather.",
       "weights": { "bipolar": 2, "acceleration": 2, "spring": 1 },
-      "effects": { "demand": 0.08, "ifConvertedMinerals": { "c1Flat": 3 } }
+      "effects": { "demand": 0.08, "nature": -3, "ifConvertedMinerals": { "c1Flat": 3 } }
     },
     {
       "id": "ilo-169-halt",
       "name": "The consultation halt",
-      "copy": "A court pauses a big data centre because Indigenous communities were never consulted — a real legal duty in Brazil (ILO-169). Handled badly, this costs public trust.",
+      "copy": "A court pauses a big data centre because Indigenous and local communities were never consulted — in much of the world (Brazil included, via ILO-169) that is a real legal duty. Handled badly, this costs public trust.",
       "weights": { "bipolar": 2, "acceleration": 2, "spring": 2 },
-      "effects": { "c6": -3, "c5": -1 },
+      "effects": { "c6": -3, "c5": -1, "nature": -2 },
       "ifFacilityFunded": { "c6": -1, "c5": 0 }
     },
     {
@@ -72,7 +72,7 @@
       "name": "The water crisis",
       "copy": "A data centre's cooling system drains a town's reservoir in the middle of a drought. It is on the news every night, and people are asking who this AI boom is actually for.",
       "weights": { "bipolar": 1, "acceleration": 2, "spring": 1 },
-      "effects": { "c6": -3, "demand": 0.03 }
+      "effects": { "c6": -3, "demand": 0.03, "nature": -6 }
     },
     {
       "id": "benefit-audit",
@@ -87,7 +87,7 @@
       "name": "AI takes a leap",
       "copy": "AI capability jumps overnight, and nobody outside the superpowers saw it coming. They need everyone else a little less than they did yesterday.",
       "weights": { "bipolar": 1, "acceleration": 3, "spring": 1 },
-      "effects": { "pace": 0.08, "c7": -2 }
+      "effects": { "pace": 0.08, "c7": -2, "nature": -1 }
     }
   ]
 }

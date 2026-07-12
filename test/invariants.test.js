@@ -108,7 +108,7 @@ test('invariant 3: C6 breach is never a winning line', () => {
 
   const g = start('breach', 'bipolar');
   // A strong position by construction: full conversion, healthy pool…
-  for (const axis of params.conversion.axes) g.player.converted[axis] = 1;
+  for (const axis of g.player.convertAxes) g.player.converted[axis] = 1;
   applyAction(g, { type: 'm2', code: 'ID' });
   // …and a breached integrity criterion.
   g.crit.c6 = 5;
@@ -177,7 +177,7 @@ test('invariant 4b: at a fixed state, more conversion means better terms', () =>
   const { params } = loadData();
   const g = start('terms', 'bipolar');
   const before = computeTerms(g);
-  for (const axis of params.conversion.axes) g.player.converted[axis] = 1;
+  for (const axis of g.player.convertAxes) g.player.converted[axis] = 1;
   g.crit.c4 = 70;
   const after = computeTerms(g);
   assert.ok(after > before, `terms must rise with conversion (${before} → ${after})`);

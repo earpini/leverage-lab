@@ -7,7 +7,7 @@ import { clamp, round1, axesSum, countryByCode } from './state.js';
 export function convertedPoints(state) {
   const player = countryByCode(state, state.player.code);
   let pts = 0;
-  for (const axis of state.params.conversion.axes) {
+  for (const axis of state.player.convertAxes) {
     pts += player.axes[axis] * state.player.converted[axis];
   }
   return pts;
@@ -16,7 +16,7 @@ export function convertedPoints(state) {
 /** Maximum convertible axis points for the player. */
 export function convertiblePoints(state) {
   const player = countryByCode(state, state.player.code);
-  return state.params.conversion.axes.reduce((a, axis) => a + player.axes[axis], 0);
+  return state.player.convertAxes.reduce((a, axis) => a + player.axes[axis], 0);
 }
 
 /** A coalition member's contribution to the pool, in axis points. */
@@ -63,6 +63,37 @@ export function c2(state) {
   return clamp(Math.round(state.trust * k.c2TrustWeight + n * k.c2PerMember - avgRisk * k.c2DefRiskWeight));
 }
 
+/* ---------- outcomes: what the strategy means for the people who live there ----------
+   Derived from the criteria (no separate stocks except nature, which events and
+   conditioning move). PESTLE areas map onto the inputs; these three are the point. */
+
+export function peopleScore(state) {
+  const w = state.params.outcomes.people;
+  return clamp(Math.round(state.crit.c6 * w.c6 + state.crit.c5 * w.c5 + state.crit.c4 * w.c4));
+}
+
+export function economyScore(state) {
+  const w = state.params.outcomes.economy;
+  const ratio = Math.min(1, pooledLeverage(state) / chokepointThreshold(state));
+  return clamp(Math.round(c1(state) * w.c1 + ratio * 100 * w.ratio + state.crit.c7 * w.c7));
+}
+
+export function natureScore(state) {
+  return clamp(Math.round(state.nature));
+}
+
+/** Plain-words answer to "do we get access to frontier AI?" */
+export function frontierAccess(state) {
+  if (state.flags.acceptedPole) {
+    const pole = state.flags.acceptedPole.pole === 'us' ? 'the US' : 'China';
+    return { level: 'granted', label: `on ${pole}'s terms` };
+  }
+  const ratio = pooledLeverage(state) / chokepointThreshold(state);
+  if (ratio >= 1) return { level: 'secured', label: 'secured — if you hold the line' };
+  if (ratio >= state.params.outcomes.frontier.partialRatio) return { level: 'partial', label: 'partial — you have real cards' };
+  return { level: 'precarious', label: 'precarious — whatever they offer' };
+}
+
 /** Full dashboard snapshot for the UI and the debrief history. */
 export function snapshot(state) {
   return {
@@ -78,6 +109,10 @@ export function snapshot(state) {
     convertedPts: round1(convertedPoints(state)),
     convertiblePts: convertiblePoints(state),
     members: state.coalition.length,
-    trust: Math.round(state.trust)
+    trust: Math.round(state.trust),
+    people: peopleScore(state),
+    economy: economyScore(state),
+    nature: natureScore(state),
+    frontier: frontierAccess(state)
   };
 }

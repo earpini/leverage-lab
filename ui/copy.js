@@ -64,16 +64,66 @@ export const OFFER_COPY = {
 };
 
 export const ENDINGS = {
-  seat: { kicker: 'The best ending', sub: 'The superpowers now have to negotiate with your alliance. You got the seat.' },
-  broker: { kicker: 'A good ending', sub: 'No seat, but real cards in hand. Brazil ends 2033 as a player, not a prize.' },
+  seat: { kicker: 'The best ending', sub: 'The superpowers now have to negotiate with your alliance — frontier AI on your terms, an economy that rides the wave instead of watching it.' },
+  broker: { kicker: 'A good ending', sub: 'No seat, but real cards in hand. You end 2033 as a player, not a prize.' },
   'junior-partner': { kicker: 'You took the deal', sub: 'The score is the terms — and the terms are whatever you built before signing.' },
   menu: { kicker: 'The ending the game is named after', sub: '“If you’re not at the table, you’re on the menu.” The superpowers set your terms.' },
   'integrity-spiral': { kicker: 'Game over — trust collapsed', sub: 'You lost the public, and with them, everything.' },
   'retaliation-spiral': { kicker: 'Game over — crushed', sub: 'The superpowers turned the full pressure on, and Brazil stood alone.' }
 };
 
-export const PLAYER_NOTE =
-  'What Brazil holds: clean energy that data centres crave, critical minerals, and 215 million people online. None of it counts until you set terms on it.';
+/** One-line hooks: why you'd play each country. Plain, concrete, twelve words max. */
+export const COUNTRY_HOOKS = {
+  BR: 'Clean energy, minerals, a huge market — all still unclaimed.',
+  IN: 'A billion-person market and the world’s deepest AI talent pool.',
+  ID: 'The nickel the hardware needs, and 285 million people.',
+  ZA: 'The platinum in tomorrow’s chips, and Africa’s AI voice.',
+  TW: 'You make the chips everyone needs. Everyone knows it.',
+  NL: 'One company, one machine, and the whole industry waits on you.',
+  KR: 'The memory chips AI runs on are yours.',
+  JP: 'Tools, materials, diplomacy — quiet power in every corner.',
+  DE: 'The lasers and lenses inside every chip machine.',
+  FR: 'Europe’s AI lab, running on nuclear power.',
+  GB: 'The chip designs in every phone, and world-class AI talent.',
+  CA: 'Elite AI research right next door to Washington.',
+  AU: 'The rare minerals China doesn’t control.',
+  NO: 'A two-trillion-dollar fund and cheap hydropower.',
+  SG: 'The trusted middleman, with a trillion-dollar wallet.',
+  IL: 'Chip design and AI talent, packed dense.',
+  AE: 'Money, energy, and both superpowers on speed dial.',
+  SA: 'Oil money buying a place in the AI age.'
+};
+
+export function playerNote(country, positional) {
+  const holds = countryGloss(country);
+  return positional
+    ? `What ${country.name} holds: ${holds}. Your strongest card already counts — the game is staying your own while everyone pulls at you.`
+    : `What ${country.name} holds: ${holds}. None of it counts until you set terms on it.`;
+}
+
+export const PICKER = {
+  kicker: 'Pick your country',
+  title: 'Who do you want to be?',
+  note: 'Every one of these countries holds something the AI world needs. The question the game asks: can they turn it into a say over their own future? New here? Brazil is the classic first game.',
+  positionalBadge: 'counts from day one',
+  firstGame: 'good first game',
+  potential: 'potential'
+};
+
+export const OUTCOME_TILES = [
+  { key: 'people', label: 'People', hint: 'Quality of life and having a say: public trust, steady policy, independence.' },
+  { key: 'economy', label: 'Economy', hint: 'Thriving as AI advances: bargaining power, alliance strength, allies’ capability.' },
+  { key: 'nature', label: 'Nature & climate', hint: 'What the AI build-out does to water, land and grids. Conditions on Big Tech protect it; unchecked booms drain it.' }
+];
+
+export function outcomeWord(v) {
+  if (v >= 70) return 'thriving';
+  if (v >= 45) return 'holding';
+  if (v >= 30) return 'strained';
+  return 'failing';
+}
+
+export const FRONTIER_LABEL = 'Frontier AI access';
 
 /** Plain names for the eight value-chain axes. */
 export const AXIS_NAMES = {
@@ -99,6 +149,13 @@ export function countryGloss(country) {
   if (entries.length === 0) return 'a bit of everything';
   return entries.map(([k]) => AXIS_NAMES[k]).join(', ');
 }
+
+export const REGIME_NAMES = {
+  Full: 'full democracy',
+  Flawed: 'flawed democracy',
+  Hybrid: 'hybrid regime',
+  Authoritarian: 'authoritarian'
+};
 
 export function leanGloss(affinity) {
   if (affinity.us > affinity.cn) return 'leans US';
@@ -130,17 +187,17 @@ export const INTRO = {
     },
     {
       h: 'Your job',
-      p: 'You run Brazil’s AI strategy for 8 years. Each year you get 2 moves: set conditions on Big Tech, invite allies, fund the alliance, go to court, cut solo deals, or share technology.'
+      p: 'You pick a country and run its AI strategy for 8 years. Each year you get 2 moves: set conditions on Big Tech, invite allies, fund the alliance, go to court, cut solo deals, or share technology.'
     },
     {
       h: 'How you win',
-      p: 'Push the gold bar past the line: make your alliance so valuable the superpowers must negotiate with it. Meanwhile they will try to buy your allies out, one by one — and sometimes they will offer YOU a deal. You can take it and end the game. The terms depend entirely on what you built first.'
+      p: 'Push the gold bar past the line: make your alliance so valuable the superpowers must negotiate with it. That is what buys your people access to frontier AI — and a thriving economy as AI advances. Meanwhile the superpowers will try to buy your allies out, one by one, and sometimes they will offer YOU a deal. You can take it and end the game. The terms depend entirely on what you built first.'
     },
     {
       h: 'Two ways to lose instantly',
       p: 'Let public trust collapse (broken promises to your own people), or draw so much superpower heat they crush you.'
     }
   ],
-  start: 'Start playing',
+  start: 'Choose your country',
   reopen: 'How to play'
 };

@@ -84,6 +84,15 @@ export function endTurn(state) {
   state.tempSpike *= p.instruments.m4.spikeDecay;
   if (state.tempSpike < 0.1) state.tempSpike = 0;
 
+  // 4b. Nature: the AI build-out presses on land, water and grids every year,
+  // harder when demand runs hot. Degraded nature erodes public trust.
+  state.nature = clamp(
+    state.nature - (p.outcomes.natureDriftBase + state.dials.demand * p.outcomes.natureDriftDemand)
+  );
+  if (state.nature < p.outcomes.natureTrustLine) {
+    state.crit.c6 = clamp(state.crit.c6 - p.outcomes.natureTrustCost);
+  }
+
   // 5. Defection checks (seeded rolls, join order — deterministic per seed+actions).
   const d = p.defection;
   const survivors = [];

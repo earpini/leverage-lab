@@ -36,4 +36,6 @@ number, with rationales in `docs/model-notes.md` · `test/` invariants and unit 
 
 Design: `CONCEPT.md` · Conventions: `CLAUDE.md` · Brand: `BRAND.md` · Data: `data/countries.json`
 
-Status: v1 playable — Brazil, 8 turns, 3 scenarios, scripted poles, 12 events, endings 1–5.
+Status: v2 playable — pick any of 18 middle powers, 8 turns, 3 scenarios, scripted poles,
+12 events, endings 1–5, and a live outcomes layer (people, economy, nature & climate,
+frontier-AI access).

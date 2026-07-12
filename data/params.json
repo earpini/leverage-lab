@@ -41,7 +41,20 @@
     "recruitGain": 2
   },
   "conversion": {
-    "axes": ["minerals", "compute", "market"]
+    "topAxes": 3,
+    "positionalPreconverted": 1,
+    "positionalStartHeat": 8
+  },
+  "outcomes": {
+    "natureStart": 65,
+    "natureDriftBase": 0.5,
+    "natureDriftDemand": 1.5,
+    "m1NatureGain": 2,
+    "natureTrustLine": 25,
+    "natureTrustCost": 2,
+    "people": { "c6": 0.55, "c5": 0.25, "c4": 0.2 },
+    "economy": { "c1": 0.4, "ratio": 0.3, "c7": 0.3 },
+    "frontier": { "partialRatio": 0.6 }
   },
   "pool": {
     "memberFactor": 0.45,
