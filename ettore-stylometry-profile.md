@@ -1,13 +1,13 @@
 # Ettore Arpini — stylometry profile
 
-*What makes your writing recognisably yours, across registers and languages.*
+*What makes your writing recognizably yours, across registers and languages.*
 
 This is a working reference, not a verdict. It rests on three sources: (1) a quantitative pass over
 your MSc thesis (*Urban Commons as a Driver of Inclusion*, TU Delft, 2022 — ~37,000 words of running
 prose, cleaned of figures and tables); (2) the four voice profiles already distilled from a broader
-corpus (academic, blog, essay, application); and (3) the creative Portuguese docs (etymology, fiction,
-travel, 2010–2015) — **pending your export**; that register is currently the lightest here and marked
-where it belongs.
+corpus (academic, blog, essay, application); and (3) the three creative Portuguese docs — an
+etymology-essay collection (2015), a work of fiction (2011), and a travel memoir (2010) — measured in
+§8, which also gives a diachronic read from 2010 to 2022.
 
 The numbers below are from the thesis corpus unless stated otherwise. They agree closely with the
 counts recorded independently in the earlier academic profile (*however* 49 vs. 44, *therefore* 35 vs.
@@ -23,9 +23,13 @@ Strip away the register and eight things stay. These are the signature; everythi
 detail underneath them.
 
 1. **Excavation, not assertion.** The engine is curiosity, not thesis. You start from a small concrete
-   itch — a word, a number, a scene — and *trace it to its root*, often literally (etymology, origin,
-   the actual mechanism). You dig; you don't announce a conclusion and defend it. This is the single
-   most load-bearing trait, and it's why thesis-led contrarian openers read as not-you.
+   itch — a word, a number, a scene — and *trace it to its root*: the origin, the actual mechanism, how
+   the thing came to be. You dig; you don't announce a conclusion and defend it. This is the single most
+   load-bearing trait, and it's why thesis-led contrarian openers read as not-you. (A note on etymology:
+   it shows up heavily in *Engenharia das Letras* because that book is literally *about* word origins —
+   it's the subject, not a personal stylistic tic. The invariant is the excavation *move*; etymology was
+   just what you happened to be excavating that time. In the thesis and the essays you excavate policy
+   mechanisms and definitions with the same move and no etymology in sight.)
 
 2. **Named specifics as the unit of credibility.** The through-line of *every* register. Authors with
    years, laws in the original language with a translation, hard numbers with a source, real proper
@@ -119,8 +123,10 @@ gaúcho only in casual posts).
 ## 4. Positive markers — the tells that it's *you*
 
 - **Trace-to-root openings.** "I went looking for what 'sovereignty' actually means last week, and it
-  threw me…" — the itch, then the excavation. Etymology is a favourite tool but the *move* is
-  excavation, not the ornament of a word-origin.
+  threw me…" — the itch, then the excavation. The *move* is digging to the origin/mechanism; the object
+  can be a word, a policy, a number, or a definition. (When the subject happens to be language itself —
+  as in the etymology essays — the digging *is* etymology, but that's the topic doing the work, not a
+  stylistic ornament.)
 - **Rhetorical question → one-word / fragment answer.** "Não." "Arrá!" "Well, leverage." "This one is
   simple." Transitions happen through a question; the strongest answer is a fragment.
 - **Ventriloquised actors.** You give a party invented direct speech rather than describing its
@@ -190,29 +196,66 @@ Consistent across all four profiles. If a draft does these, it isn't yours:
   application registers stay standard in both.
 - **Gaúcho only in casual PT.** *Bá, Capaz, tu, tô, arrá* — the regional lexicon is exclusive to
   personal/blog Portuguese. Never in English, never in formal writing.
-- **Etymology / excavation is language-agnostic.** The "Engenharia das Letras" move — chase a word to
-  PIE, stage a little scene, run the cross-lingual chain (schijten → scheissen → excremento), land on a
-  kinship reveal — is the blog engine in Portuguese, and the "sovereignty from *super*" move is the same
-  engine in English.
-- **Byline:** Ettore Arpini. Never "de Lacerda". British spellings in prose (organise, programme);
-  US spellings fine in code.
+- **The excavation move is language-agnostic.** In *Engenharia das Letras* (the etymology essays) the
+  object being excavated is words, so the digging takes the form of chasing a root to PIE, staging a
+  little scene, running the cross-lingual chain (schijten → scheissen → excremento), and landing on a
+  kinship reveal. Swap the object and the *move* is identical: "sovereignty from *super*" in English, a
+  policy mechanism in the thesis. Etymology is one thing you've excavated, not the excavating itself.
+- **Byline:** Ettore Arpini. Never "de Lacerda". **American spelling throughout** (analyze, color,
+  behavior, -ize) — this holds in prose and code alike; do not "Britishize" his writing.
 
 ---
 
-## 8. Creative register — *pending your export*
+## 8. Creative register (Portuguese, 2010–2015)
 
-The three docs (*Engenharia das Letras* 2015, *Esboço História Completa – Projeto Solitária* 2011,
-*Histórias de Viagem – 3* 2010) are the one register not yet measured here — narrative, fiction, and
-travel writing, and your earliest samples (age ~19–23). Drive's AI-access policy blocked the connector,
-so they aren't in the numbers above. What's already visible from the fragment of *Engenharia das Letras*
-quoted in your blog profile: staged mini-scenes ("someone with a long braided beard… needed to go
-number two"), direct address to the reader ("Stop complaining, you old grump"), terse landings
-("Marchia austriaca. 'Nuff said."), and the etymology-as-excavation engine in full.
+Three docs, three modes, and — usefully — three points in time before the 2022 thesis. Numbers below
+are from the PDF extracts.
 
-**To fold this in:** drop the three docs as `.docx`, `.txt`, or `.pdf` into this folder (Google Docs →
-File → Download → Word/plain text), or paste the text. I'll add: a fiction/narrative fingerprint
-(dialogue rate, scene vs. summary balance, sentence rhythm in storytelling mode), a diachronic note
-(what's stable from 2010 to 2022 vs. what matured), and a fifth column to the register map.
+| Doc | Year | Mode | Words | Sent. mean / std | ≤8w | Tell |
+|---|---|---|---|---|---|---|
+| Histórias de Viagem 3 | 2010 (~age 19) | travel memoir | 650 | 12.4 / 7.8 | 35% | earnest, no play |
+| Projeto Solitária | 2011 | fiction | 3,150 | 13.7 / 11.1 | 40% | cinematic fragments |
+| Engenharia das Letras | 2015 | etymology essays | 3,150 | 19.0 / 14.8 | 25% | **the voice, formed** |
+
+**Fiction mode (Projeto Solitária).** Short, cinematic sentences — median 10 words, 40% of them ≤8 —
+built for pace. Scene-first openings ("The last rays of sun came through the fogged classroom
+windows…"), then dramatic one-line fragments as beats: *"Todos exceto ele." "Ele, Razo." "Não, não,
+hoje cumpriria seu compromisso."* Notably, fiction is where you *do* use **anaphora** ("Todos
+pensavam… Todos ansiavam… Todos exceto ele. Ele, que… Ele, que…") — the very device the essay profile
+lists as an anti-signature for *analytical* writing. So anaphora isn't off-limits for you; it's a
+storytelling tool you keep out of argument. Same person, different toolbox.
+
+**Essay mode (Engenharia das Letras, 2015).** This is where the recognizable voice is fully assembled,
+in Portuguese, at ~24: high sentence-length variance (std 14.8), the rhetorical-question→one-word-answer
+tic in its native habitat (*"Lendo isso a primeira coisa que tu pode pensar é 'bá, call veio daí
+também!'." / "Não."*), direct reader address by name of the second person (*tu* 33×, *"Viu as relações
+acontecendo?"*, *"não te preocupa"*), and the **high/low register collision** that's a core signature —
+Proto-Indo-European roots and Roman law sitting a comma away from *"largar um barro,"* *"o pica das
+galáxias,"* and *merda*. Full gaúcho throughout (*bá, tri, tu*). The pieces even *land* the way your
+English essays do — open and companionable, not sealed: *"na verdade, shit e science são primos e
+vieram do mesmo lugar."*
+
+**Travel mode (Histórias de Viagem, 2010).** The earliest and least "you" — earnest, literary, formal,
+first-person-plural, no jokes, no reader address, no gaúcho, and the lowest sentence variance in the
+whole corpus (std 7.8). Purple young-writer flourishes (*"As longas e doloridas horas de vôo não
+aplacaram nossa ansiedade,"* *"Vitória!!!"*, *"a viagem da minha vida"*). This is exactly the *youthful
+inflation* the application profile says to trim — captured here at the source.
+
+### The diachronic arc (2010 → 2022)
+
+- **2010 (travel, 19):** earnest and inflated, uniform sentences, no play, no reader in the room.
+- **2011 (fiction, 20):** rhythm arrives — high variance, cinematic fragments, scene-led, anaphora as a
+  storytelling beat.
+- **2015 (essays, 24):** the voice crystallizes — register collision, reader address (*tu*), the
+  question→fragment tic, excavation, open landings. Recognizably the writer of the 2020s essays.
+- **2022 (thesis, 27):** same DNA — variance, named specifics, a governing image, warmth in the frame —
+  in a formal register with the play deliberately stripped and the discipline gained.
+
+**Stable the whole way:** a human visibly in the frame (first person everywhere), concrete
+scene-staging, and — from 2011 on — wide sentence-length variance. **What matured:** the register
+collision and reader address (present by 2015, absent in 2010), and the trade of youthful inflation for
+control. The engine was always there; you learned to modulate it and to know which register gets which
+tools.
 
 ---
 
@@ -227,5 +270,7 @@ File → Download → Word/plain text), or paste the text. I'll add: a fiction/n
 - **Feeding the voice skills:** this is consistent with the four `ettore-*-voice` skills and can be used
   to tune them; §2's numbers are the empirical anchor they were missing.
 
-*Corpus note: quantitative metrics computed 2026-07-13 over the cleaned thesis prose. Qualitative claims
-synthesised from the academic, blog, essay, and application voice profiles. Creative register pending.*
+*Corpus note: quantitative metrics computed 2026-07-13 over the cleaned thesis prose and the three
+creative PDFs (Engenharia das Letras 2015, Projeto Solitária 2011, Histórias de Viagem 2010).
+Qualitative cross-register claims synthesized from the academic, blog, essay, and application voice
+profiles.*
