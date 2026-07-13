@@ -94,8 +94,12 @@ html, body { margin: 0; padding: 0; }
   grid-template-areas:
     "left stage right"
     "hand hand hand";
-  min-height: calc(100vh - 72px);
+  /* Fill exactly the viewport below the header: the hand is ALWAYS on screen. */
+  height: calc(100dvh - var(--chrome-h, 120px));
   border-top: var(--ea-border-hair) solid var(--ea-border);
+}
+@media (max-width: 1360px) {
+  .shell { grid-template-columns: 240px minmax(0, 1fr) 240px; }
 }
 .side {
   background: var(--ea-bg-inverse);
@@ -199,9 +203,10 @@ html, body { margin: 0; padding: 0; }
 }
 .moves-tools { display: flex; align-items: center; gap: var(--ea-space-3); flex-wrap: wrap; }
 
-@media (max-width: 980px) {
+@media (max-width: 1100px) {
   .shell {
     display: block;
+    height: auto;
     min-height: 0;
   }
   .side { overflow-y: visible; }
@@ -364,16 +369,30 @@ html, body { margin: 0; padding: 0; }
 }
 
 /* ---------- the stage: react, then act ---------- */
-.stage { padding-top: var(--ea-space-6); }
+.stage { padding-top: var(--ea-space-4); }
+/* Wraps by AVAILABLE width, not viewport width — the news is never squished. */
 .stage-grid {
   display: grid;
-  grid-template-columns: 3fr 2fr;
-  gap: var(--ea-space-7);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
+  gap: var(--ea-space-6);
   align-items: start;
 }
-@media (max-width: 860px) {
-  .stage-grid { grid-template-columns: 1fr; gap: var(--ea-space-5); }
+.stage-head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--ea-space-4); flex-wrap: wrap; }
+.now-chip {
+  font-size: var(--ea-size-small);
+  font-weight: var(--ea-weight-semibold);
+  color: var(--ea-accent-ink);
+  background: var(--ea-accent-soft);
+  border-radius: var(--ea-radius-full);
+  padding: 3px 12px;
+  white-space: nowrap;
 }
+@keyframes readyPulse {
+  0%, 100% { box-shadow: none; }
+  50% { box-shadow: 0 0 0 4px var(--ea-accent-soft); }
+}
+.btn-primary.ready { animation: readyPulse 1.6s var(--ea-ease-in-out) infinite; }
+@media (prefers-reduced-motion: reduce) { .btn-primary.ready { animation: none; } }
 .event-card.big { margin-top: 0; }
 .event-card.big h3 { font-size: var(--ea-size-h3); }
 .event-card.big p { font-size: var(--ea-size-body); }
@@ -860,7 +879,7 @@ footer.site {
 .toast {
   position: fixed;
   right: var(--ea-space-5);
-  bottom: var(--ea-space-5);
+  bottom: 170px; /* above the docked hand */
   z-index: 9;
   max-width: 320px;
   background: var(--ea-bg);

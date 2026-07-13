@@ -210,9 +210,17 @@ function stage(g, ui) {
   if (g.ended) return '';
   const event = g.data.events.events.find((e) => e.id === g.currentEvent);
   const dispatches = g.log.filter((l) => l.turn === g.turn && l.phase === 'poles');
+  const now = g.pendingEvent
+    ? 'Now: react to the news'
+    : g.ap > 0
+      ? `Now: spend your ${g.ap} move${g.ap > 1 ? 's' : ''} below`
+      : 'Now: end the year';
   return `
     <div class="stage">
-      <p class="zone-label">This year — ${yearOf(g)}</p>
+      <div class="stage-head">
+        <p class="zone-label" style="flex:1">1 · This year — ${yearOf(g)}</p>
+        <span class="now-chip">${esc(now)}</span>
+      </div>
       <div class="stage-grid">
         <div>
           ${event ? `
@@ -435,11 +443,11 @@ function movesBar(g, acts, ui = {}) {
   return `
     <div class="moves-strip control-zone">
       <div class="moves-head">
-        <p class="zone-label">Act — your moves ${pips}</p>
+        <p class="zone-label">2 · Act — your moves ${pips}</p>
         <div class="moves-tools">
           ${lockedCount > 0 ? `<span class="keyline muted" style="margin:0">${lockedCount} unlock next year · <button class="btn-ghost dark" data-show-all>${esc(GUIDED.showAll)}</button></span>` : ''}
           <button class="btn-ghost dark" data-help>${esc(INTRO.reopen)}</button>
-          <button class="btn-primary slim" data-end-turn>End the year${g.ap > 0 ? ` (${g.ap} unused)` : ''}</button>
+          <button class="btn-primary slim${g.ap === 0 && !g.pendingEvent ? ' ready' : ''}" data-end-turn>3 · End the year${g.ap > 0 ? ` (${g.ap} unused)` : ''}</button>
         </div>
       </div>
       <div class="moves-row">${join}${signature}${cards}</div>

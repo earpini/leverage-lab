@@ -185,6 +185,8 @@ const handlers = {
 
 function draw() {
   render(root, game, handlers, ui);
+  // The cockpit fills exactly the space under the real header — measured, not guessed.
+  document.documentElement.style.setProperty('--chrome-h', `${root.offsetTop}px`);
 }
 
 // Populate the scenario control.
