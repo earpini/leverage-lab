@@ -113,10 +113,14 @@ removal.
 | Landing | finding, pinned to a number | short verdict, hands off the baton | wry / a turn, **open** | forward vision, plain |
 | Portuguese | standard academic (ABNT) | n/a (fluent EN only) | **full gaúcho** (*Bá, Capaz, tu, tô*) | standard formal |
 
-**The constants across all four columns:** named specifics as credibility; a governing framework or
+A fifth register — **creative** (fiction, travel, and the etymology essays) — sits earlier in time and
+is mapped separately in §8; its tools differ enough (cinematic fragments, anaphora, scene-first
+narration) that it earns its own treatment rather than a column here.
+
+**The constants across all these columns:** named specifics as credibility; a governing framework or
 image; high sentence-length variance; hedge-then-commit; a human in the frame. The *dial* that moves
-most is play and register-mixing (max in blog, zero in application) and Portuguese register (full
-gaúcho only in casual posts).
+most is play and register-mixing (max in blog and the 2015 essays, zero in application) and Portuguese
+register (full gaúcho only in casual posts and creative writing).
 
 ---
 
