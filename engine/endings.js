@@ -6,6 +6,22 @@ import {
   c1, c2, pooledLeverage, chokepointThreshold, convertedPoints,
   frontierAccess, peopleScore, economyScore, natureScore
 } from './criteria.js';
+import { chainCovered, chainTarget } from './chain.js';
+
+/** The seat's conditions, in one place: weight past the threshold, a chain the
+    poles can't route around, cohesion, integrity — and actually being inside. */
+export function seatGatesMet(state) {
+  const s = state.params.endings.seat;
+  const outside = state.club != null && !state.club.joined;
+  return (
+    !outside &&
+    pooledLeverage(state) >= chokepointThreshold(state) &&
+    chainCovered(state) >= chainTarget(state) &&
+    state.coalition.length >= s.minMembers &&
+    c2(state) >= s.minC2 &&
+    state.crit.c6 >= s.minC6
+  );
+}
 
 /** Junior-partner terms at signing time: convert first, sign second, get more.
     The more dominant the poles already are, the less they need you — terms shrink. */
@@ -59,13 +75,7 @@ export function evaluateEnding(state, crisis = null) {
   }
   const outside = state.club != null && !state.club.joined;
   const s = e.seat;
-  if (
-    !outside &&
-    pooled >= threshold &&
-    state.coalition.length >= s.minMembers &&
-    c2(state) >= s.minC2 &&
-    state.crit.c6 >= s.minC6
-  ) {
+  if (seatGatesMet(state)) {
     return finish(state, {
       id: 'seat',
       title: 'A seat at the table',
@@ -110,7 +120,8 @@ export function debriefLines(state, ending) {
 
   switch (ending.id) {
     case 'seat':
-      lines.push('Your alliance became too expensive to ignore: going around it now costs the superpowers more than negotiating with it. That is what a seat at the table is made of.');
+      lines.push(`Your alliance became too expensive to ignore: ${chainCovered(state)} of 8 links of the value chain covered, and going around it now costs the superpowers more than negotiating with it. That is what a seat at the table is made of.`);
+      if (state.flags.wentToTable) lines.push(`You didn't wait for 2033 to find out — you went to the table in ${state.params.game.startYear + state.flags.wentToTable - 1} and claimed it. Knowing when your leverage peaks is a skill in itself.`);
       if (state.facility.totalFunded >= 4) lines.push(`You financed the alliance fund ${state.facility.totalFunded} of ${state.params.game.turns} years. Boring, unglamorous, and the single biggest reason your allies stayed.`);
       break;
     case 'broker': {

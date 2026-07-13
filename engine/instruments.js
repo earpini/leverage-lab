@@ -3,8 +3,14 @@
 
 import { clamp, log, countryByCode } from './state.js';
 import { c1, c2, pooledLeverage } from './criteria.js';
-import { computeTerms } from './endings.js';
+import { computeTerms, seatGatesMet } from './endings.js';
+
+/** Can you go claim the seat right now? */
+export function tableOpen(state) {
+  return !state.ended && !state.pendingEvent && seatGatesMet(state);
+}
 import { resolveEvent, applyEffects } from './events.js';
+import { wantsFor, chainCovered, chainTarget } from './chain.js';
 
 export const INSTRUMENT_IDS = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6'];
 
@@ -29,6 +35,10 @@ export function recruitCost(state, code) {
   }
   cost = Math.min(m2.apCap, cost);
   cost = Math.max(1, cost - state.turnMods.recruitDiscount);
+  // Incentives cut the price: a coalition that already has what they need is easy to say yes to.
+  if (wantsFor(state, country).some((w) => w.met)) {
+    cost = Math.max(1, cost - state.params.wants.recruitDiscount);
+  }
   return cost;
 }
 
@@ -55,6 +65,8 @@ export function initialDefRisk(state, country) {
   let risk = m2.defRiskBase + maxAff * m2.defRiskPerAffinity;
   if (country.tier === 'A') risk -= m2.defRiskAnchorRelief;
   if (positional) risk += m2.defRiskPositionalPenalty;
+  // A member whose wants are already met joins committed.
+  risk -= wantsFor(state, country).filter((w) => w.met).length * state.params.wants.defRiskReliefPerMet;
   return risk;
 }
 
@@ -266,6 +278,11 @@ export function legalActions(state) {
     const event = state.data.events.events.find((e) => e.id === state.pendingEvent);
     list.push({ type: 'event', ap: 0, enabled: true, event: event.id, question: event.question, choices: event.choices });
   }
+  // The table: when the alliance is genuinely too expensive to bypass, you can
+  // claim the seat instead of waiting for 2033 to confirm it.
+  if (tableOpen(state)) {
+    list.push({ type: 'table', ap: 0, enabled: true });
+  }
   return list;
 }
 
@@ -284,6 +301,12 @@ export function applyAction(state, action) {
   }
   if (action.type === 'event') {
     return resolveEvent(state, action.choice);
+  }
+  if (action.type === 'table') {
+    if (!tableOpen(state)) throw new Error('The table is not open — the alliance is not yet impossible to bypass');
+    state.flags.wentToTable = state.turn;
+    log(state, 'player', 'You call the meeting. The superpowers come — because not coming now costs them more.');
+    return state;
   }
   const cost = apCost(state, action);
   if (state.ap < cost) throw new Error(`Not enough AP for ${action.type} (needs ${cost}, has ${state.ap})`);

@@ -79,7 +79,7 @@ export function createState({ params, countries, scenarios, events, seed, scenar
     m6Uses: 0,
     turnMods: { m1Boost: 0, recruitDiscount: 0 },
     offers: { player: null },
-    flags: { c6Breached: false, acceptedPole: null },
+    flags: { c6Breached: false, acceptedPole: null, wentToTable: null },
     lostMembers: [],
     eventDeck: events.events.map((e) => e.id),
     drawnEvents: [],

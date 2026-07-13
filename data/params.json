@@ -242,6 +242,20 @@
     "defRiskFloor": 5,
     "defRiskCap": 95
   },
+  "wants": {
+    "axisMax": 1,
+    "maxWants": 2,
+    "priority": ["compute", "models", "capital", "market", "gov_conv"],
+    "recruitDiscount": 1,
+    "defRiskReliefPerMet": 6,
+    "yearlyAllMet": -4,
+    "yearlySomeMet": -2,
+    "yearlyNoneMet": 2
+  },
+  "chain": {
+    "memberAxisMin": 2,
+    "playerConvertMin": 0.5
+  },
   "signature": {
     "ap": 1,
     "usesPerGame": 1,

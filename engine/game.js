@@ -7,8 +7,10 @@ import { polePhase } from './poles.js';
 import { snapshot, pooledLeverage, chokepointThreshold } from './criteria.js';
 import { checkCrisis, evaluateEnding } from './endings.js';
 
-export { legalActions, applyAction, recruitCandidates, recruitCost, offersOpen, isOutside } from './instruments.js';
+export { legalActions, applyAction, recruitCandidates, recruitCost, offersOpen, isOutside, tableOpen } from './instruments.js';
+export { chainLinks, chainCovered, chainTarget, wantsFor, countryWants, CHAIN_ORDER } from './chain.js';
 import { initialDefRisk, isOutside } from './instruments.js';
+import { wantsFor } from './chain.js';
 export { snapshot, pooledLeverage, chokepointThreshold, convertedPoints, c1, c2 } from './criteria.js';
 export { computeTerms, evaluateEnding } from './endings.js';
 
@@ -57,7 +59,8 @@ export function endTurn(state) {
   const p = state.params;
 
   // Accepted a pole this turn → the run ends on their terms.
-  if (state.flags.acceptedPole) {
+  // Went to the table → the run ends on YOURS.
+  if (state.flags.acceptedPole || state.flags.wentToTable) {
     state.history.push(snapshot(state));
     return evaluateEnding(state);
   }
@@ -91,6 +94,18 @@ export function endTurn(state) {
     state.facility.streak = 0;
     state.trust = clamp(state.trust - p.trust.unfundedDecay * state.scenario.trustDecayMod);
     for (const m of state.coalition) m.defRisk += m3.unfundedDefRiskDrift;
+  }
+
+  // 1b. Incentives hold alliances: members whose wants the coalition meets
+  // settle in; members who get nothing from it drift toward the exits.
+  {
+    const w = p.wants;
+    for (const m of state.coalition) {
+      const wants = wantsFor(state, state.data.byCode[m.code]);
+      if (wants.length === 0) continue;
+      const met = wants.filter((x) => x.met).length;
+      m.defRisk += met === wants.length ? w.yearlyAllMet : met > 0 ? w.yearlySomeMet : w.yearlyNoneMet;
+    }
   }
 
   // 2. Regime friction: Tier-D members corrode integrity and coherence.
