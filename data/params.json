@@ -222,7 +222,14 @@
       ]
     },
     "declineC3Cost": 2,
-    "autoDeclineC3Cost": 2
+    "autoDeclineC3Cost": 2,
+    "coercion": {
+      "gripLine": 55,
+      "c4Base": 2,
+      "gripScale": 3,
+      "c1FlatLine": 70,
+      "c1FlatHit": 1
+    }
   },
   "defection": {
     "rollLine": 60,

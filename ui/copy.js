@@ -290,15 +290,36 @@ export function riskLabel(defRisk) {
 /** Plain names for toast deltas, in display order. */
 export const DELTA_LABELS = [
   ['pooled', 'Goal bar'],
+  ['economy', 'Economy'],
+  ['people', 'People'],
+  ['nature', 'Nature'],
   ['c1', 'Bargaining power'],
   ['c2', 'Alliance strength'],
   ['c3', 'Heat'],
   ['c4', 'Independence'],
   ['c5', 'Consistency'],
   ['c6', 'Public trust'],
-  ['c7', 'Allies’ capability'],
-  ['nature', 'Nature']
+  ['c7', 'Allies’ capability']
 ];
+
+/** What each move touches, in the dashboard's own language. dir: up | down | warn. */
+export const AFFECTS = {
+  m1: [['economy', 'up'], ['independence', 'up'], ['nature', 'up'], ['heat', 'warn']],
+  m2: [['alliance', 'up'], ['economy', 'up']],
+  m3: [['alliance', 'up'], ['people', 'up']],
+  m4: [['economy', 'up'], ['heat', 'warn']],
+  m5: [['economy', 'up'], ['alliance', 'down'], ['superpowers', 'warn']],
+  m6: [['economy', 'up'], ['alliance', 'up']],
+  m7: [['people', 'up'], ['economy', 'up']],
+  join: [['alliance', 'up'], ['economy', 'up']]
+};
+
+export const POWERS_COPY = {
+  title: 'Their power to hurt you — and yours to answer',
+  hint: 'Same units as the goal bar. The stronger the superpowers grow, the harder they squeeze you — demands, discounts, conditions — and the faster your independence erodes. Your alliance is the only counterweight.',
+  withAllies: 'Every ally adds to your side of the scale.',
+  alone: 'Alone, nobody gets close. Allies are the only way up.'
+};
 
 export const FIRST_WIN =
   'That is leverage: the gold bar just moved because you set terms. Everything in this game is a way to move that bar — or to stop others pulling it back.';

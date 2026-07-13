@@ -223,3 +223,12 @@ to them (stealth assessment, surfaced), sets one concrete next-run goal, closes 
 the PESTLE areas — and links the real analysis at the moment of peak curiosity (transfer).
 Deliberately not done: adaptive difficulty (the fixed model is the argument) and badge economies
 (the reward here is understanding).
+
+## coercion (the poles spend their grip on you)
+
+Once concentration passes `gripLine` (55), the pole not courting you that year squeezes you
+instead — demands for cheaper exports, standards adoption, data-flow concessions. One strike a
+year (they alternate): independence −(2 + 30·gripBite/100), plus −1 flat bargaining power once
+concentration passes 70. This is the user-visible answer to "why does their power matter to me
+personally": the stronger they get, the less your no is worth. Countered the same way as
+everything else — conditions rebuild independence, the alliance brakes the grip.

@@ -129,6 +129,30 @@ function newGameLate(seed) {
   return newGame({ ...data, seed, scenarioId: 'bipolar', playerCode: 'BR', variant: 'latecomer' });
 }
 
+test('the poles spend their grip on you: coercion erodes independence', () => {
+  const g = start('coerce', 'bipolar');
+  const c4Track = [];
+  let sawStrike = false;
+  while (!g.ended) {
+    c4Track.push(g.crit.c4);
+    if (g.log.some((l) => l.turn === g.turn && l.phase === 'poles' &&
+      /(leans on|squeezes|ties|floods|links|makes cloud)/.test(l.text))) sawStrike = true;
+    declineOffer(g);
+    endTurn(g);
+  }
+  assert.ok(sawStrike, 'a passive run under a tightening grip must get squeezed directly');
+  assert.ok(g.crit.c4 < c4Track[0], `independence must erode under coercion (${c4Track[0]} → ${g.crit.c4})`);
+
+  // No coercion while the grip is loose.
+  const h = start('coerce-2', 'spring');
+  h.concentration = 30;
+  const before = h.crit.c4;
+  declineOffer(h);
+  endTurn(h); // pole phase for turn 2 runs with low concentration
+  assert.ok(h.crit.c4 >= before - h.params.criteria.c4DecayPerTurn - 0.01,
+    'below the grip line, only natural decay touches independence');
+});
+
 test('decisions are deterministic: same seed, same choices, same game', () => {
   const play = () => {
     const g = start('det-choice', 'acceleration');

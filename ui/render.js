@@ -8,7 +8,7 @@ import {
   INSTRUMENTS, CRITERIA, DIALS, POLE_NAMES, OFFER_COPY, ENDINGS,
   AXIS_NAMES, countryGloss, leanGloss, riskLabel, COACH_TIPS, INTRO,
   COUNTRY_HOOKS, playerNote, PICKER, OUTCOME_TILES, outcomeWord, FRONTIER_LABEL, REGIME_NAMES, GRIP, LATECOMER,
-  instrumentCopy, M6_TIERS, GOV_NAMES, GUIDED, nextGoal, TRANSFER_NOTE
+  instrumentCopy, M6_TIERS, GOV_NAMES, GUIDED, nextGoal, TRANSFER_NOTE, AFFECTS, POWERS_COPY
 } from './copy.js';
 import { isOutside } from '../engine/game.js';
 import { epilogue } from './story.js';
@@ -26,18 +26,20 @@ export function render(root, g, handlers, ui = {}) {
     ${hero(g, snap, ui)}
     <div class="container">
       ${coachTip(g, ui)}
-      <div class="board">
-        <section class="zone-news">
-          <p class="zone-label">What's happening</p>
-          ${thisYearPanel(g)}${storyPanel(g)}
+      ${stage(g, ui)}
+      ${movesBar(g, acts, ui)}
+      <div class="board refs">
+        <section>
+          <p class="zone-label">Your country</p>
+          ${playerPanel(g, snap)}
         </section>
-        <section class="zone-status">
-          <p class="zone-label">Where you stand</p>
-          ${playerPanel(g, snap)}${alliesPanel(g)}${standingPanel(g, snap, ui)}
+        <section>
+          <p class="zone-label">Your alliance</p>
+          ${alliesPanel(g)}${invitePanel(g, acts)}
         </section>
-        <section class="zone-control control-zone">
-          <p class="zone-label">What you can do</p>
-          ${joinPanel(g, acts)}${movesPanel(g, acts, ui)}${invitePanel(g, acts)}
+        <section>
+          <p class="zone-label">The fine print</p>
+          ${standingPanel(g, snap, ui)}${storyPanel(g)}
         </section>
       </div>
     </div>
@@ -91,13 +93,14 @@ function hero(g, snap, ui) {
               : 'Below the line, the superpowers can ignore your alliance. Grow the bar: set conditions at home, add allies, share technology.'}</p>
             ${gripBar(g, snap)}
           </div>
-          ${powersPanel(g, snap)}
+          ${powersPanel(g, snap, ui)}
         </div>
         <div class="outcomes">
           ${OUTCOME_TILES.map((t) => {
             const v = snap[t.key];
+            const hot = (ui.flash ?? new Set()).has(t.key);
             return `
-            <div class="outcome" title="${esc(t.hint)}">
+            <div class="outcome${hot ? ' flash' : ''}" title="${esc(t.hint)}">
               <span class="o-label">${esc(t.label)}</span>
               <span class="o-val">${v}</span>
               <div class="o-meter"><i style="width:${v}%"></i></div>
@@ -113,27 +116,26 @@ function hero(g, snap, ui) {
     </div>`;
 }
 
-function powersPanel(g, snap) {
+function powersPanel(g, snap, ui = {}) {
   const player = g.data.byCode[g.player.code];
+  const flash = ui.flash ?? new Set();
   const rows = [
     { label: 'United States', value: snap.powers.us, cls: 'pole' },
     { label: 'China', value: snap.powers.cn, cls: 'pole' },
-    { label: `Your alliance (${snap.members + 1} countr${snap.members === 0 ? 'y' : 'ies'})`, value: snap.powers.alliance, cls: 'alliance' },
+    { label: `Your alliance (${snap.members + 1} countr${snap.members === 0 ? 'y' : 'ies'})`, value: snap.powers.alliance, cls: 'alliance', key: 'pooled' },
     { label: `${player.name} alone`, value: snap.powers.me, cls: 'me' }
   ];
   const max = Math.max(...rows.map((r) => r.value), 1);
   return `
-    <div class="powers" title="Same units as the goal bar. Every ally you add moves your alliance's bar up — alone, nobody gets close.">
-      <p class="hero-kicker">The balance of power</p>
+    <div class="powers" title="${esc(POWERS_COPY.hint)}">
+      <p class="hero-kicker">${esc(POWERS_COPY.title)}</p>
       ${rows.map((r) => `
-        <div class="power-row">
+        <div class="power-row${r.key && flash.has(r.key) ? ' flash' : ''}">
           <span class="p-label">${esc(r.label)}</span>
           <div class="p-bar"><i class="${r.cls}" style="width:${(r.value / max) * 100}%"></i></div>
           <span class="p-val">${r.value}</span>
         </div>`).join('')}
-      <p class="hero-note" style="margin-top: var(--ea-space-2)">${snap.members > 0
-        ? 'Every ally adds to your side of the scale.'
-        : 'Alone, nobody gets close. Allies are the only way up.'}</p>
+      <p class="hero-note" style="margin-top: var(--ea-space-2)">${snap.members > 0 ? esc(POWERS_COPY.withAllies) : esc(POWERS_COPY.alone)}</p>
     </div>`;
 }
 
@@ -197,43 +199,50 @@ function coachTip(g, ui) {
     </div>`;
 }
 
-/* ---------- column 1: what happened ---------- */
+/* ---------- the stage: the year's news, front and centre — then you react ---------- */
 
-function thisYearPanel(g) {
+function stage(g, ui) {
+  if (g.ended) return '';
   const event = g.data.events.events.find((e) => e.id === g.currentEvent);
   const dispatches = g.log.filter((l) => l.turn === g.turn && l.phase === 'poles');
   return `
-    <div class="panel">
-      <h2>This year — ${yearOf(g)}</h2>
-      ${DIALS.map((d) => `
-        <div class="dial" title="${esc(d.hint)}">
-          <span class="name"><span>${esc(d.label)}</span><span>${Math.round(g.dials[d.key] * 100)}</span></span>
-          <div class="meter${d.warm ? ' warm' : ''}"><i style="width:${g.dials[d.key] * 100}%"></i></div>
-        </div>`).join('')}
-      ${event ? `
-        <div class="event-card">
-          <p class="kicker">In the news</p>
-          <h3>${esc(event.name)}</h3>
-          <p>${esc(event.copy)}</p>
-          ${g.pendingEvent ? `
-            <p class="event-question">${esc(event.question ?? 'Your call.')}</p>
-            <div class="event-choices">
-              <button class="choice-card" data-choice="a">${esc(event.choices.a.label)}</button>
-              <button class="choice-card" data-choice="b">${esc(event.choices.b.label)}</button>
-            </div>
-            <p class="keyline muted">Deciding costs no moves — but not deciding is a decision: the year ends on the second option.</p>`
-          : g.lastChoice && g.lastChoice.eventId === event.id
-            ? `<p class="event-question">You chose: ${esc(g.lastChoice.label.toLowerCase())}.</p>`
-            : ''}
-        </div>` : ''}
-      ${dispatches.map((l) => {
-        const who = l.text.startsWith('Washington') ? 'Washington' : l.text.startsWith('Beijing') ? 'Beijing' : 'The superpowers';
-        return `
-        <div class="dispatch">
-          <p class="kicker">${who} moves</p>
-          <p>${esc(l.text)}</p>
-        </div>`;
-      }).join('')}
+    <div class="stage">
+      <p class="zone-label">This year — ${yearOf(g)}</p>
+      <div class="stage-grid">
+        <div>
+          ${event ? `
+          <div class="event-card big">
+            <p class="kicker">In the news</p>
+            <h3>${esc(event.name)}</h3>
+            <p>${esc(event.copy)}</p>
+            ${g.pendingEvent ? `
+              <p class="event-question">${esc(event.question ?? 'Your call.')}</p>
+              <div class="event-choices">
+                <button class="choice-card" data-choice="a">${esc(event.choices.a.label)}</button>
+                <button class="choice-card" data-choice="b">${esc(event.choices.b.label)}</button>
+              </div>
+              <p class="keyline muted">Reacting costs no moves — but not deciding is a decision: the year ends on the second option.</p>`
+            : g.lastChoice && g.lastChoice.eventId === event.id
+              ? `<p class="event-question">You chose: ${esc(g.lastChoice.label.toLowerCase())}.</p>`
+              : ''}
+          </div>` : ''}
+        </div>
+        <div>
+          ${dispatches.length ? dispatches.map((l) => {
+            const who = l.text.startsWith('Washington') ? 'Washington' : l.text.startsWith('Beijing') ? 'Beijing' : 'The superpowers';
+            return `
+            <div class="dispatch">
+              <p class="kicker">${who} moves</p>
+              <p>${esc(l.text)}</p>
+            </div>`;
+          }).join('') : '<p class="keyline muted">The superpowers are quiet this year. It never lasts.</p>'}
+          ${DIALS.map((d) => `
+            <div class="dial" title="${esc(d.hint)}">
+              <span class="name"><span>${esc(d.label)}</span><span>${Math.round(g.dials[d.key] * 100)}</span></span>
+              <div class="meter${d.warm ? ' warm' : ''}"><i style="width:${g.dials[d.key] * 100}%"></i></div>
+            </div>`).join('')}
+        </div>
+      </div>
     </div>`;
 }
 
@@ -310,29 +319,12 @@ function alliesPanel(g) {
     </div>`;
 }
 
-function joinPanel(g, acts) {
-  if (g.ended || !acts.join) return '';
-  const a = acts.join;
-  const pct = Math.min(100, (a.progress.converted / a.progress.bar) * 100);
-  return `
-    <div class="panel">
-      <h2>${esc(LATECOMER.joinTitle)}</h2>
-      <p class="hintline">${esc(LATECOMER.joinBlurb)}</p>
-      <div class="conv" title="Set conditions to raise this.">
-        <span>${esc(LATECOMER.joinProgress(a.progress.converted, a.progress.bar))}</span>
-        <div class="meter warm"><i style="width:${pct}%"></i></div>
-        <span class="pct">${Math.round(pct)}%</span>
-      </div>
-      <button class="btn-primary" data-action="join" ${a.enabled ? '' : 'disabled'} ${a.reason ? `title="${esc(a.reason)}"` : ''}>${esc(LATECOMER.joinButton)} (${a.ap} move)</button>
-    </div>`;
-}
-
 function invitePanel(g, acts) {
   if (g.ended || isOutside(g)) return '';
   const candidates = (acts.m2?.candidates ?? []).slice().sort((a, b) => a.cost - b.cost || a.name.localeCompare(b.name));
   const discount = g.turnMods.recruitDiscount > 0 ? '<p class="keyline">The summit made this cheaper this year.</p>' : '';
   return `
-    <div class="panel">
+    <div class="panel" id="invite">
       <h2>Invite an ally</h2>
       <p class="hintline">${esc(INSTRUMENTS.m2.blurb)}</p>
       ${discount}
@@ -353,16 +345,23 @@ function invitePanel(g, acts) {
 
 /* ---------- column 3: your moves ---------- */
 
-function movesPanel(g, acts, ui = {}) {
+/** Chips: what a move touches, in the dashboard's own words. */
+function fxChips(id) {
+  return (AFFECTS[id] ?? []).map(([label, dir]) =>
+    `<span class="fx ${dir}">${esc(label)} ${dir === 'down' ? '↓' : '↑'}</span>`).join('');
+}
+
+/* ---------- the moves bar: horizontal, always visible, says what it touches ---------- */
+
+function movesBar(g, acts, ui = {}) {
   if (g.ended) return '';
-  const order = ['m1', 'm3', 'm6', 'm7', 'm4', 'm5'];
+  const order = ['m1', 'm2', 'm3', 'm6', 'm7', 'm4', 'm5'];
   const boosted = g.turnMods.m1Boost > 0;
   const copy = instrumentCopy(g.data.byCode[g.player.code], g.player.convertAxes, g.player.positional);
   let lockedCount = 0;
   const cards = order.map((id) => {
     const a = acts[id];
     if (!a) return '';
-    // Guided first run: one thing at a time — later moves arrive with later years.
     if (ui.guided && GUIDED_UNLOCK_TURN[id] && g.turn < GUIDED_UNLOCK_TURN[id]) {
       lockedCount++;
       return '';
@@ -373,24 +372,44 @@ function movesPanel(g, acts, ui = {}) {
       meta = { ...meta, name: tier.name, blurb: tier.blurb };
     }
     let badge = id === 'm1' && boosted ? '<span class="badge">extra strong this year</span>' : '';
-    if (id === 'm4' && a.enabled && g.legalOpening > 0) badge = `<span class="badge">live case: ${g.legalOpening} year${g.legalOpening > 1 ? 's' : ''}</span>`;
+    if (id === 'm4' && a.enabled && g.legalOpening > 0) badge = `<span class="badge">live case: ${g.legalOpening}y</span>`;
     if (id === 'm6' && g.m6Uses > 0) badge = `<span class="badge cool">tier ${Math.min(g.m6Uses + 1, M6_TIERS.length)}</span>`;
     if (id === 'm7') badge = `<span class="badge cool">${esc(GOV_NAMES[g.govLevel] ?? '')}${g.govLevel < 3 && g.fieldbuilding % 2 === 1 ? ' · halfway to next' : ''}</span>`;
-    // Disabled reasons must be visible, not hover-only — touch and keyboard users included.
+    // m2 is a pointer to the invite list below.
+    if (id === 'm2') {
+      const enabled = a.enabled;
+      return `
+      <a class="btn action-card${enabled ? '' : ' idle'}" href="#invite" ${a.reason ? `title="${esc(a.reason)}"` : ''}>
+        <span class="action-head">${esc(meta.name)}<span class="cost">1–2 moves</span></span>
+        <span class="blurb">${esc(meta.blurb)}</span>
+        <span class="fx-row">${fxChips(id)}</span>
+        <span class="effect">${enabled ? 'Pick a country from the list below ↓' : `Locked: ${esc(a.reason ?? '')}`}</span>
+      </a>`;
+    }
     const effectLine = !a.enabled && a.reason ? `Locked: ${a.reason}` : meta.effect;
     return `
     <button class="btn action-card" data-action="${id}" ${a.enabled ? '' : 'disabled'} ${a.reason ? `title="${esc(a.reason)}"` : ''}>
       <span class="action-head">${esc(meta.name)} ${badge}<span class="cost">${a.ap} move${a.ap > 1 ? 's' : ''}</span></span>
       <span class="blurb">${esc(meta.blurb)}</span>
+      <span class="fx-row">${fxChips(id)}</span>
       <span class="effect${!a.enabled && a.reason ? ' locked' : ''}">${esc(effectLine)}</span>
     </button>`;
   }).join('');
+  const join = acts.join ? `
+    <button class="btn action-card" data-action="join" ${acts.join.enabled ? '' : 'disabled'} ${acts.join.reason ? `title="${esc(acts.join.reason)}"` : ''}>
+      <span class="action-head">${esc(LATECOMER.joinTitle)}<span class="cost">${acts.join.ap} move</span></span>
+      <span class="blurb">${esc(LATECOMER.joinProgress(acts.join.progress.converted, acts.join.progress.bar))}</span>
+      <span class="fx-row">${fxChips('join')}</span>
+      <span class="effect${acts.join.enabled ? '' : ' locked'}">${acts.join.enabled ? 'They will say yes.' : `Locked: ${esc(acts.join.reason ?? '')}`}</span>
+    </button>` : '';
   return `
-    <div class="panel">
-      <h2>Your moves — ${g.ap} left</h2>
-      <div class="actions">${cards}</div>
+    <div class="moves-strip control-zone">
+      <div class="moves-head">
+        <p class="zone-label">Act — your moves (${g.ap} left this year)</p>
+        <button class="btn-primary slim" data-end-turn>End the year${g.ap > 0 ? ` (${g.ap} unused)` : ''}</button>
+      </div>
+      <div class="moves-row">${join}${cards}</div>
       ${lockedCount > 0 ? `<p class="keyline muted">${lockedCount} more move${lockedCount > 1 ? 's' : ''} unlock next year — one thing at a time. <button class="btn-ghost dark" data-show-all>${esc(GUIDED.showAll)}</button></p>` : ''}
-      <button class="btn-primary" data-end-turn>End the year${g.ap > 0 ? ` (${g.ap} move${g.ap > 1 ? 's' : ''} unused)` : ''}</button>
     </div>`;
 }
 

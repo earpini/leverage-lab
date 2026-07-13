@@ -20,7 +20,7 @@ let game = null;
 const ui = {
   showIntro: true, introMode: 'first', showPicker: false, summary: null,
   tipsDismissed: false, variant: 'founder',
-  guided: true, toast: null, milestonesSeen: new Set(), unlockNote: null
+  guided: true, toast: null, milestonesSeen: new Set(), unlockNote: null, flash: new Set()
 };
 
 /** What just changed, in plain words — the formative-feedback layer. */
@@ -107,7 +107,12 @@ const handlers = {
       if (game.flags.acceptedPole) {
         endTurn(game); // signing ends the game — the epilogue tells the rest
       } else {
-        const deltas = deltasBetween(before, snapshot(game));
+        const after = snapshot(game);
+        const deltas = deltasBetween(before, after);
+        // Light up the dashboard pieces this move just touched.
+        ui.flash = new Set(
+          DELTA_LABELS.filter(([k]) => Math.abs((after[k] ?? 0) - (before[k] ?? 0)) >= 1).map(([k]) => k)
+        );
         if (deltas.length > 0 && action.type !== 'decline') {
           ui.toast = { kind: 'move', title: actionTitle(action), lines: deltas };
         }
@@ -124,6 +129,7 @@ const handlers = {
     // Everything logged while the year turned becomes the recap sheet.
     ui.summary = game.log.slice(before).filter((l) => l.phase === 'resolution');
     ui.toast = null;
+    ui.flash = new Set();
     if (!game.ended) {
       checkMilestones();
       ui.unlockNote = ui.guided ? UNLOCKS[game.turn] ?? null : null;
