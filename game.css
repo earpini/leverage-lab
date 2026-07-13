@@ -90,11 +90,9 @@ html, body { margin: 0; padding: 0; }
 .shell {
   display: grid;
   grid-template-columns: 280px minmax(0, 1fr) 280px;
-  grid-template-rows: minmax(0, 1fr) auto;
-  grid-template-areas:
-    "left stage right"
-    "hand hand hand";
-  /* Fill exactly the viewport below the header: the hand is ALWAYS on screen. */
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-areas: "left stage right";
+  /* Fill exactly the viewport below the header; the centre column is the turn. */
   height: calc(100dvh - var(--chrome-h, 120px));
   border-top: var(--ea-border-hair) solid var(--ea-border);
 }
@@ -195,12 +193,6 @@ html, body { margin: 0; padding: 0; }
 .tab-pane { padding-top: var(--ea-space-5); }
 .tab-pane .panel + .panel { margin-top: var(--ea-space-6); }
 
-.hand {
-  grid-area: hand;
-  background: var(--ea-bg-sunken);
-  border-top: var(--ea-border-rule) solid var(--ea-border-strong);
-  padding: var(--ea-space-3) var(--ea-space-5) var(--ea-space-4);
-}
 .moves-tools { display: flex; align-items: center; gap: var(--ea-space-3); flex-wrap: wrap; }
 
 @media (max-width: 1100px) {
@@ -211,9 +203,6 @@ html, body { margin: 0; padding: 0; }
   }
   .side { overflow-y: visible; }
   .stage-col { overflow-y: visible; padding: var(--ea-space-5) var(--ea-gutter-mobile); }
-  .hand { position: sticky; bottom: 0; z-index: 6; box-shadow: var(--ea-shadow-lg); }
-  .hand .moves-row { display: flex; overflow-x: auto; gap: var(--ea-space-2); padding-bottom: var(--ea-space-2); }
-  .hand .moves-row .action-card { flex: 0 0 200px; }
 }
 
 /* the balance of power */
@@ -399,8 +388,15 @@ html, body { margin: 0; padding: 0; }
 .stage .dispatch { margin-top: 0; margin-bottom: var(--ea-space-3); }
 .stage .dial { margin-top: var(--ea-space-4); }
 
-/* ---------- the moves bar ---------- */
-.moves-strip { margin-top: var(--ea-space-7); }
+/* ---------- the moves: part of the turn, right under the news ---------- */
+.moves-strip {
+  margin-top: var(--ea-space-6);
+  background: var(--ea-bg-sunken);
+  border-radius: var(--ea-radius-md);
+  border-left: var(--ea-border-accent) solid var(--ea-accent);
+  padding: var(--ea-space-4) var(--ea-space-5) var(--ea-space-5);
+}
+.moves-strip .zone-label { border-bottom: none; margin-bottom: var(--ea-space-2); }
 .moves-head {
   display: flex;
   justify-content: space-between;
@@ -412,7 +408,7 @@ html, body { margin: 0; padding: 0; }
 .btn-primary.slim { width: auto; margin: 0 0 var(--ea-space-3); padding: var(--ea-space-2) var(--ea-space-5); }
 .moves-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(168px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr));
   gap: var(--ea-space-2);
   align-items: stretch;
 }
@@ -879,7 +875,7 @@ footer.site {
 .toast {
   position: fixed;
   right: var(--ea-space-5);
-  bottom: 170px; /* above the docked hand */
+  bottom: var(--ea-space-5);
   z-index: 9;
   max-width: 320px;
   background: var(--ea-bg);

@@ -30,10 +30,10 @@ export function render(root, g, handlers, ui = {}) {
         ${yearStrip(g)}
         ${coachTip(g, ui)}
         ${stage(g, ui)}
+        ${movesBar(g, acts, ui)}
         ${tabsSection(g, snap, acts, ui)}
       </main>
       <aside class="side right">${rightRail(g, snap, ui)}</aside>
-      <div class="hand">${movesBar(g, acts, ui)}</div>
     </div>
     ${toast(ui)}
     ${overlay(g, snap, ui)}
