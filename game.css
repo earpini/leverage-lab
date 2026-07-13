@@ -76,6 +76,16 @@ html, body { margin: 0; padding: 0; }
 }
 .run-controls input { width: 110px; }
 
+/* draft banner: this is a prototype, and feedback is the point */
+.draft-strip {
+  background: var(--ea-accent-soft);
+  border-top: var(--ea-border-hair) solid var(--ea-border);
+  padding: var(--ea-space-2) 0;
+  font-size: var(--ea-size-small);
+  color: var(--ea-text-secondary);
+}
+.draft-strip strong { color: var(--ea-accent-ink); }
+
 /* ---------- the cockpit shell: one screen, one dashboard ---------- */
 .shell {
   display: grid;
