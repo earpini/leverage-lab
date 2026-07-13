@@ -20,7 +20,7 @@ let game = null;
 const ui = {
   showIntro: true, introMode: 'first', showPicker: false, summary: null,
   tipsDismissed: false, variant: 'founder',
-  guided: true, toast: null, milestonesSeen: new Set(), unlockNote: null, flash: new Set()
+  guided: true, toast: null, milestonesSeen: new Set(), unlockNote: null, flash: new Set(), tab: 'alliance'
 };
 
 /** What just changed, in plain words — the formative-feedback layer. */
@@ -175,6 +175,10 @@ const handlers = {
   },
   onShowAll() {
     ui.guided = false;
+    draw();
+  },
+  onTab(tab) {
+    ui.tab = tab;
     draw();
   }
 };

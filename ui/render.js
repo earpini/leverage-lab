@@ -24,30 +24,90 @@ export function render(root, g, handlers, ui = {}) {
   const snap = snapshot(g);
   const acts = Object.fromEntries(legalActions(g).map((a) => [a.type, a]));
   root.innerHTML = `
-    ${hero(g, snap, ui)}
-    <div class="container">
-      ${coachTip(g, ui)}
-      ${stage(g, ui)}
-      ${movesBar(g, acts, ui)}
-      <div class="board refs">
-        <section>
-          <p class="zone-label">Your country</p>
-          ${playerPanel(g, snap)}
-        </section>
-        <section>
-          <p class="zone-label">Your alliance</p>
-          ${alliesPanel(g)}${invitePanel(g, acts)}
-        </section>
-        <section>
-          <p class="zone-label">The fine print</p>
-          ${standingPanel(g, snap, ui)}${storyPanel(g)}
-        </section>
-      </div>
+    <div class="shell${g.ended ? ' over' : ''}">
+      <aside class="side left">${leftRail(g, snap, ui)}</aside>
+      <main class="stage-col">
+        ${yearStrip(g)}
+        ${coachTip(g, ui)}
+        ${stage(g, ui)}
+        ${tabsSection(g, snap, acts, ui)}
+      </main>
+      <aside class="side right">${rightRail(g, snap, ui)}</aside>
+      <div class="hand">${movesBar(g, acts, ui)}</div>
     </div>
     ${toast(ui)}
     ${overlay(g, snap, ui)}
   `;
   wire(root, handlers);
+}
+
+/* ---------- left rail: your goal and what it's all for ---------- */
+
+function leftRail(g, snap, ui) {
+  const ratio = Math.min(1, snap.pooled / snap.threshold);
+  const flash = ui.flash ?? new Set();
+  return `
+    <p class="side-kicker">Your goal — push the gold number past the line</p>
+    <div class="nums">
+      <span class="pooled">${snap.pooled}</span>
+      <span class="of">of <strong>${snap.threshold}</strong> for a seat at the table</span>
+    </div>
+    <div class="bar${flash.has('pooled') ? ' flash' : ''}"><i style="width:${ratio * 100}%"></i></div>
+    <p class="side-note">${ratio >= 1
+      ? 'Past the line. Hold it to 2033: keep allies in, keep trust up.'
+      : 'Grow it: set conditions, add allies, share technology.'}</p>
+    <div class="side-sep"></div>
+    <p class="side-kicker">Your country, at home</p>
+    <div class="outcomes rail">
+      ${OUTCOME_TILES.map((t) => {
+        const v = snap[t.key];
+        return `
+        <div class="outcome${flash.has(t.key) ? ' flash' : ''}" title="${esc(t.hint)}">
+          <span class="o-label">${esc(t.label)}</span>
+          <span class="o-val">${v}</span>
+          <div class="o-meter"><i style="width:${v}%"></i></div>
+          <span class="o-word">${esc(outcomeWord(v))}</span>
+        </div>`;
+      }).join('')}
+      <div class="outcome frontier" title="The point of all of this: does your country get to use the most advanced AI, on liveable terms?">
+        <span class="o-label">${esc(FRONTIER_LABEL)}</span>
+        <span class="o-frontier">${esc(snap.frontier.label)}</span>
+      </div>
+    </div>
+    <div class="side-sep"></div>
+    ${gripBar(g, snap)}`;
+}
+
+/* ---------- right rail: the world pressing in ---------- */
+
+function rightRail(g, snap, ui) {
+  const members = g.coalition.map((m) => {
+    const c = g.data.byCode[m.code];
+    return `<div class="mini-ally"><span>${esc(c.name)}</span><span class="risk-word">${esc(riskLabel(m.defRisk))}</span></div>`;
+  }).join('');
+  return `
+    ${powersPanel(g, snap, ui)}
+    <div class="side-sep"></div>
+    <p class="side-kicker">The world's mood</p>
+    ${DIALS.map((d) => `
+      <div class="dial" title="${esc(d.hint)}">
+        <span class="name"><span>${esc(d.label)}</span><span>${Math.round(g.dials[d.key] * 100)}</span></span>
+        <div class="meter${d.warm ? ' warm' : ''}"><i style="width:${g.dials[d.key] * 100}%"></i></div>
+      </div>`).join('')}
+    <div class="side-sep"></div>
+    <p class="side-kicker">${isOutside(g) ? `The alliance (${g.coalition.length}) — not yours yet` : `Your allies (${g.coalition.length})`}</p>
+    ${members || '<p class="side-note">Nobody yet. No country crosses the line alone.</p>'}
+    ${g.coalition.length || !g.ended ? `<button class="btn-ghost" data-tab="alliance" style="margin-top: var(--ea-space-3)">${isOutside(g) ? 'See the alliance' : 'Manage the alliance'}</button>` : ''}`;
+}
+
+function yearStrip(g) {
+  const total = g.params.game.turns;
+  const startYear = g.params.game.startYear;
+  const years = Array.from({ length: total }, (_, i) => {
+    const cls = i + 1 === g.turn ? 'now' : i + 1 < g.turn ? 'past' : '';
+    return `<span class="year-chip ${cls}">${startYear + i}</span>`;
+  }).join('');
+  return `<div class="year-strip">${years}</div>`;
 }
 
 /** One overlay at a time, in narrative order: intro → picker → recap → offer → debrief. */
@@ -61,62 +121,6 @@ function overlay(g, snap, ui) {
 
 /* ---------- hero: the goal, always visible ---------- */
 
-function hero(g, snap, ui) {
-  const total = g.params.game.turns;
-  const startYear = g.params.game.startYear;
-  const ratio = Math.min(1, snap.pooled / snap.threshold);
-  const years = Array.from({ length: total }, (_, i) => {
-    const cls = i + 1 === g.turn ? 'now' : i + 1 < g.turn ? 'past' : '';
-    return `<span class="year-chip ${cls}">${startYear + i}</span>`;
-  }).join('');
-  const pips = Array.from({ length: g.params.game.apPerTurn }, (_, i) =>
-    `<span class="ap-dot${i < g.ap ? '' : ' spent'}"></span>`).join('');
-  return `
-    <div class="hero">
-      <div class="container">
-        <div class="hero-top">
-          <div class="years">${years}</div>
-          <div class="hero-meta">
-            <span>Moves left this year ${pips}</span>
-            <button class="btn-ghost" data-help>${esc(INTRO.reopen)}</button>
-          </div>
-        </div>
-        <div class="hero-grid">
-          <div>
-            <p class="hero-kicker">Your goal — push the gold bar past the line</p>
-            <div class="nums">
-              <span class="pooled">${snap.pooled}</span>
-              <span class="of">your alliance's bargaining power · <strong>${snap.threshold} needed</strong> for a seat at the table</span>
-            </div>
-            <div class="bar"><i style="width:${ratio * 100}%"></i></div>
-            <p class="hero-note">${ratio >= 1
-              ? 'You are past the line. Now hold it until 2033: keep your allies in and public trust up.'
-              : 'Below the line, the superpowers can ignore your alliance. Grow the bar: set conditions at home, add allies, share technology.'}</p>
-            ${gripBar(g, snap)}
-          </div>
-          ${powersPanel(g, snap, ui)}
-        </div>
-        <div class="outcomes">
-          ${OUTCOME_TILES.map((t) => {
-            const v = snap[t.key];
-            const hot = (ui.flash ?? new Set()).has(t.key);
-            return `
-            <div class="outcome${hot ? ' flash' : ''}" title="${esc(t.hint)}">
-              <span class="o-label">${esc(t.label)}</span>
-              <span class="o-val">${v}</span>
-              <div class="o-meter"><i style="width:${v}%"></i></div>
-              <span class="o-word">${esc(outcomeWord(v))}</span>
-            </div>`;
-          }).join('')}
-          <div class="outcome frontier" title="The point of all of this: does your country get to use the most advanced AI, on liveable terms?">
-            <span class="o-label">${esc(FRONTIER_LABEL)}</span>
-            <span class="o-frontier">${esc(snap.frontier.label)}</span>
-          </div>
-        </div>
-      </div>
-    </div>`;
-}
-
 function powersPanel(g, snap, ui = {}) {
   const player = g.data.byCode[g.player.code];
   const flash = ui.flash ?? new Set();
@@ -129,14 +133,14 @@ function powersPanel(g, snap, ui = {}) {
   const max = Math.max(...rows.map((r) => r.value), 1);
   return `
     <div class="powers" title="${esc(POWERS_COPY.hint)}">
-      <p class="hero-kicker">${esc(POWERS_COPY.title)}</p>
+      <p class="side-kicker">${esc(POWERS_COPY.title)}</p>
       ${rows.map((r) => `
         <div class="power-row${r.key && flash.has(r.key) ? ' flash' : ''}">
           <span class="p-label">${esc(r.label)}</span>
           <div class="p-bar"><i class="${r.cls}" style="width:${(r.value / max) * 100}%"></i></div>
           <span class="p-val">${r.value}</span>
         </div>`).join('')}
-      <p class="hero-note" style="margin-top: var(--ea-space-2)">${snap.members > 0 ? esc(POWERS_COPY.withAllies) : esc(POWERS_COPY.alone)}</p>
+      <p class="side-note">${snap.members > 0 ? esc(POWERS_COPY.withAllies) : esc(POWERS_COPY.alone)}</p>
     </div>`;
 }
 
@@ -150,7 +154,7 @@ function gripBar(g, snap) {
   if (!snap.cutoff && pct < 60) {
     return `
     <div class="grip compact" title="${esc(GRIP.hint)}">
-      <span class="hero-kicker" style="margin:0">${esc(GRIP.label)}</span>
+      <span class="side-kicker" style="margin:0">${esc(GRIP.label)}</span>
       <span class="grip-val">${pct} — tightens every year</span>
     </div>`;
   }
@@ -160,14 +164,14 @@ function gripBar(g, snap) {
   return `
     <div class="grip" title="${esc(GRIP.hint)}">
       <div class="grip-head">
-        <span class="hero-kicker" style="margin:0">${esc(GRIP.label)}</span>
+        <span class="side-kicker" style="margin:0">${esc(GRIP.label)}</span>
         <span class="grip-val${snap.cutoff || near ? ' hot' : ''}">${snap.cutoff ? 'the cutoff has happened' : pct}</span>
       </div>
       <div class="grip-bar">
         <i style="width:${pct}%"></i>
         <span class="grip-line" style="left:${linePct}%"></span>
       </div>
-      ${note ? `<p class="hero-note">${esc(note)}</p>` : ''}
+      ${note ? `<p class="side-note">${esc(note)}</p>` : ''}
     </div>`;
 }
 
@@ -237,37 +241,48 @@ function stage(g, ui) {
               <p>${esc(l.text)}</p>
             </div>`;
           }).join('') : '<p class="keyline muted">The superpowers are quiet this year. It never lasts.</p>'}
-          ${DIALS.map((d) => `
-            <div class="dial" title="${esc(d.hint)}">
-              <span class="name"><span>${esc(d.label)}</span><span>${Math.round(g.dials[d.key] * 100)}</span></span>
-              <div class="meter${d.warm ? ' warm' : ''}"><i style="width:${g.dials[d.key] * 100}%"></i></div>
-            </div>`).join('')}
         </div>
       </div>
     </div>`;
 }
 
-function standingPanel(g, snap, ui = {}) {
-  const meters = `
-      <p class="hintline">Hover any bar for what it means.</p>
+/* ---------- tabs: the reference deck under the stage ---------- */
+
+const TABS = [
+  ['alliance', 'Alliance'],
+  ['country', 'Your country'],
+  ['stats', 'Fine stats'],
+  ['story', 'The story']
+];
+
+function tabsSection(g, snap, acts, ui) {
+  if (g.ended) return '';
+  const active = ui.tab ?? 'alliance';
+  return `
+    <div class="tabs-block">
+      <div class="tabs" role="tablist">
+        ${TABS.map(([id, label]) =>
+          `<button class="tab-btn${id === active ? ' active' : ''}" data-tab="${id}" role="tab" aria-selected="${id === active}">${esc(label)}${id === 'alliance' ? ` (${g.coalition.length})` : ''}</button>`).join('')}
+      </div>
+      <div class="tab-pane">
+        ${active === 'alliance' ? alliesPanel(g) + invitePanel(g, acts) : ''}
+        ${active === 'country' ? playerPanel(g, snap) : ''}
+        ${active === 'stats' ? standingPanel(g, snap) : ''}
+        ${active === 'story' ? storyPanel(g) : ''}
+      </div>
+    </div>`;
+}
+
+function standingPanel(g, snap) {
+  return `
+    <div class="panel">
+      <p class="hintline">The seven fine-grained meters under the tiles. Hover any bar for what it means.</p>
       ${CRITERIA.map((c) => `
         <div class="crit${c.bad ? ' bad' : ''}" title="${esc(c.hint)}">
           <span>${esc(c.label)}${c.bad ? ' <small>(keep low)</small>' : ''}</span>
           <div class="meter"><i style="width:${snap[c.key]}%"></i></div>
           <span class="val">${snap[c.key]}</span>
-        </div>`).join('')}`;
-  // Guided first run: the tiles and goal bar carry the story; the seven meters fold away.
-  if (ui.guided) {
-    return `
-    <details class="panel story">
-      <summary>${esc(GUIDED.statsSummary)}</summary>
-      <div style="margin-top: var(--ea-space-4)">${meters}</div>
-    </details>`;
-  }
-  return `
-    <div class="panel">
-      <h2>How you're doing</h2>
-      ${meters}
+        </div>`).join('')}
     </div>`;
 }
 
@@ -415,14 +430,19 @@ function movesBar(g, acts, ui = {}) {
       <span class="fx-row">${fxChips('join')}</span>
       <span class="effect${acts.join.enabled ? '' : ' locked'}">${acts.join.enabled ? 'They will say yes.' : `Locked: ${esc(acts.join.reason ?? '')}`}</span>
     </button>` : '';
+  const pips = Array.from({ length: g.params.game.apPerTurn }, (_, i) =>
+    `<span class="ap-dot${i < g.ap ? '' : ' spent'}"></span>`).join('');
   return `
     <div class="moves-strip control-zone">
       <div class="moves-head">
-        <p class="zone-label">Act — your moves (${g.ap} left this year)</p>
-        <button class="btn-primary slim" data-end-turn>End the year${g.ap > 0 ? ` (${g.ap} unused)` : ''}</button>
+        <p class="zone-label">Act — your moves ${pips}</p>
+        <div class="moves-tools">
+          ${lockedCount > 0 ? `<span class="keyline muted" style="margin:0">${lockedCount} unlock next year · <button class="btn-ghost dark" data-show-all>${esc(GUIDED.showAll)}</button></span>` : ''}
+          <button class="btn-ghost dark" data-help>${esc(INTRO.reopen)}</button>
+          <button class="btn-primary slim" data-end-turn>End the year${g.ap > 0 ? ` (${g.ap} unused)` : ''}</button>
+        </div>
       </div>
       <div class="moves-row">${join}${signature}${cards}</div>
-      ${lockedCount > 0 ? `<p class="keyline muted">${lockedCount} more move${lockedCount > 1 ? 's' : ''} unlock next year — one thing at a time. <button class="btn-ghost dark" data-show-all>${esc(GUIDED.showAll)}</button></p>` : ''}
     </div>`;
 }
 
@@ -601,4 +621,7 @@ function wire(root, handlers) {
   root.querySelector('[data-continue]')?.addEventListener('click', handlers.onContinue);
   root.querySelector('[data-dismiss-tips]')?.addEventListener('click', handlers.onDismissTips);
   root.querySelector('[data-show-all]')?.addEventListener('click', handlers.onShowAll);
+  for (const btn of root.querySelectorAll('[data-tab]')) {
+    btn.addEventListener('click', () => handlers.onTab(btn.dataset.tab));
+  }
 }
