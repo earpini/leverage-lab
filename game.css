@@ -718,6 +718,53 @@ footer.site {
   flex-wrap: wrap;
 }
 
+/* toast: your move landed */
+.toast {
+  position: fixed;
+  right: var(--ea-space-5);
+  bottom: var(--ea-space-5);
+  z-index: 9;
+  max-width: 320px;
+  background: var(--ea-bg);
+  border-left: var(--ea-border-accent) solid var(--ea-accent);
+  border-radius: var(--ea-radius-sm);
+  box-shadow: var(--ea-shadow-md);
+  padding: var(--ea-space-3) var(--ea-space-4);
+  animation: rise var(--ea-dur-slow) var(--ea-ease);
+}
+.toast .kicker {
+  font-size: var(--ea-size-micro);
+  letter-spacing: var(--ea-tracking-label);
+  text-transform: uppercase;
+  color: var(--ea-accent-ink);
+  font-weight: var(--ea-weight-semibold);
+  margin: 0 0 2px;
+}
+.toast strong { display: block; font-size: var(--ea-size-small); margin-bottom: 2px; }
+.toast span {
+  display: inline-block;
+  font-size: var(--ea-size-micro);
+  color: var(--ea-text-secondary);
+  margin-right: var(--ea-space-3);
+}
+.toast.milestone { border-left-color: var(--ea-gold); }
+.toast.milestone .kicker { color: var(--ea-gold-ink); }
+.toast.milestone span { display: block; margin-right: 0; font-size: var(--ea-size-small); }
+
+/* debrief epilogue + folded analysis */
+.epilogue { border-top: var(--ea-border-hair) solid var(--ea-border); padding-top: var(--ea-space-4); margin-bottom: var(--ea-space-5); }
+.epilogue .kicker { margin-bottom: var(--ea-space-3); }
+.epilogue p.read.small { margin-bottom: var(--ea-space-3); }
+details.analysis { margin-bottom: var(--ea-space-5); }
+details.analysis summary {
+  cursor: pointer;
+  font-weight: var(--ea-weight-semibold);
+  font-size: var(--ea-size-small);
+  color: var(--ea-text-secondary);
+  padding-bottom: var(--ea-space-2);
+}
+details.analysis .debrief-lines { margin-top: var(--ea-space-2); margin-bottom: 0; }
+
 .noscript, .module-error {
   max-width: var(--ea-measure);
   margin: var(--ea-space-10) auto;

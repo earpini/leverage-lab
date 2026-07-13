@@ -41,6 +41,7 @@ export function resolveEvent(state, choiceKey, auto = false) {
   applyEffects(state, effects);
 
   state.pendingEvent = null;
+  state.choiceCount[choiceKey] += 1;
   state.lastChoice = { eventId: event.id, key: choiceKey, label: choice.label };
   log(state, auto ? 'resolution' : 'player',
     auto

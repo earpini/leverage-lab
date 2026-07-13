@@ -77,6 +77,7 @@ export function createState({ params, countries, scenarios, events, seed, scenar
     currentEvent: null,
     pendingEvent: null,
     lastChoice: null,
+    choiceCount: { a: 0, b: 0 },
     legalOpening: 0,
     m6FactorBonus: 0,
     log: [],

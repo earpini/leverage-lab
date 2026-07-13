@@ -5,8 +5,9 @@ import params from '../data/params.json' with { type: 'json' };
 import countries from '../data/countries.json' with { type: 'json' };
 import scenarios from '../data/scenarios.json' with { type: 'json' };
 import events from '../data/events.json' with { type: 'json' };
-import { newGame, applyAction, endTurn } from '../engine/game.js';
+import { newGame, applyAction, endTurn, snapshot, convertedPoints } from '../engine/game.js';
 import { render } from './render.js';
+import { INSTRUMENTS, DELTA_LABELS, MILESTONES, UNLOCKS, instrumentCopy } from './copy.js';
 
 const root = document.getElementById('app');
 const scenarioSelect = document.getElementById('scenario-select');
@@ -16,7 +17,47 @@ const newRunBtn = document.getElementById('new-run');
 let game = null;
 // introMode 'first': the opening intro, which always leads to the country picker.
 // introMode 'help': reopened mid-game via "How to play" — closing returns to the game.
-const ui = { showIntro: true, introMode: 'first', showPicker: false, summary: null, tipsDismissed: false, variant: 'founder' };
+const ui = {
+  showIntro: true, introMode: 'first', showPicker: false, summary: null,
+  tipsDismissed: false, variant: 'founder',
+  guided: true, toast: null, milestonesSeen: new Set(), unlockNote: null
+};
+
+/** What just changed, in plain words — the formative-feedback layer. */
+function deltasBetween(before, after) {
+  const out = [];
+  for (const [key, label] of DELTA_LABELS) {
+    const d = Math.round((after[key] - before[key]) * 10) / 10;
+    if (Math.abs(d) >= 1) out.push(`${label} ${d > 0 ? '+' : ''}${d}`);
+  }
+  return out.slice(0, 4);
+}
+
+function actionTitle(action) {
+  if (action.type === 'm2') return 'Invite an ally';
+  if (action.type === 'event') return 'Your call';
+  if (action.type === 'join') return 'You joined the alliance';
+  const copy = instrumentCopy(
+    game.data.byCode[game.player.code], game.player.convertAxes, game.player.positional
+  )[action.type];
+  return copy?.name ?? INSTRUMENTS[action.type]?.name ?? 'Move';
+}
+
+/** Milestones: name the moment when something real is achieved. */
+function checkMilestones() {
+  const snap = snapshot(game);
+  const fire = (id) => {
+    if (ui.milestonesSeen.has(id)) return;
+    ui.milestonesSeen.add(id);
+    ui.toast = { kind: 'milestone', title: MILESTONES[id].title, lines: [MILESTONES[id].text] };
+  };
+  if (convertedPoints(game) > 0) fire('firstTerms');
+  if (snap.members >= 3) fire('threeAllies');
+  if (snap.pooled >= snap.threshold) fire('pastLine');
+  if (snap.convertedPts >= snap.convertiblePts - 0.05) fire('fullyConverted');
+  if (game.govLevel >= 3 && game.fieldbuilding > 0) fire('govMax');
+  if (game.club?.joined) fire('joined');
+}
 
 function readUrl() {
   const q = new URLSearchParams(location.search);
@@ -49,6 +90,9 @@ function startRun(seed, scenarioId, countryCode, variant = ui.variant) {
   ui.summary = null;
   ui.showPicker = false;
   ui.variant = variant;
+  ui.toast = null;
+  ui.unlockNote = null;
+  ui.milestonesSeen = new Set();
   writeUrl(seed, scenarioId, game.player.code, variant);
   scenarioSelect.value = scenarioId;
   seedInput.value = seed;
@@ -58,8 +102,17 @@ function startRun(seed, scenarioId, countryCode, variant = ui.variant) {
 const handlers = {
   onAction(action) {
     try {
+      const before = snapshot(game);
       applyAction(game, action);
-      if (game.flags.acceptedPole) endTurn(game); // signing ends the game
+      if (game.flags.acceptedPole) {
+        endTurn(game); // signing ends the game — the epilogue tells the rest
+      } else {
+        const deltas = deltasBetween(before, snapshot(game));
+        if (deltas.length > 0 && action.type !== 'decline') {
+          ui.toast = { kind: 'move', title: actionTitle(action), lines: deltas };
+        }
+        checkMilestones();
+      }
     } catch (err) {
       console.warn(err.message);
     }
@@ -70,6 +123,11 @@ const handlers = {
     endTurn(game);
     // Everything logged while the year turned becomes the recap sheet.
     ui.summary = game.log.slice(before).filter((l) => l.phase === 'resolution');
+    ui.toast = null;
+    if (!game.ended) {
+      checkMilestones();
+      ui.unlockNote = ui.guided ? UNLOCKS[game.turn] ?? null : null;
+    }
     draw();
   },
   onContinue() {
@@ -106,6 +164,10 @@ const handlers = {
   },
   onDismissTips() {
     ui.tipsDismissed = true;
+    draw();
+  },
+  onShowAll() {
+    ui.guided = false;
     draw();
   }
 };

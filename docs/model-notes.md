@@ -209,3 +209,17 @@ points (about three focused years for Brazil; joining costs 1 move). Once inside
 conversion pools, all instruments unlock, and the funding burden becomes shared — i.e. yours.
 If every founder defects before you join, the club dissolves and you are a founder again.
 The lesson runs the other way here: leverage is the ticket in, not the prize.
+
+## Pedagogy (why the interface behaves the way it does)
+
+The presentation layer follows serious-game design findings (Moon & Khan 2024's ten principles;
+Bellotti et al.'s Genoa tutorial on ARCS, cognitive load, graduality and stealth assessment; the
+Ritterfeld/Cody/Vorderer volume on transfer): every move produces immediate plain-words feedback
+(a delta toast); the first run is guided — later moves unlock in year 2 and the seven fine
+meters fold behind the outcome tiles, cutting extraneous load; milestones name achievement the
+moment it happens (confidence/satisfaction); the debrief reads the player's actual pattern back
+to them (stealth assessment, surfaced), sets one concrete next-run goal, closes with an epilogue
+— the country's decade after, woven from the final people/economy/nature/frontier numbers across
+the PESTLE areas — and links the real analysis at the moment of peak curiosity (transfer).
+Deliberately not done: adaptive difficulty (the fixed model is the argument) and badge economies
+(the reward here is understanding).

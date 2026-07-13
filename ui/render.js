@@ -8,9 +8,13 @@ import {
   INSTRUMENTS, CRITERIA, DIALS, POLE_NAMES, OFFER_COPY, ENDINGS,
   AXIS_NAMES, countryGloss, leanGloss, riskLabel, COACH_TIPS, INTRO,
   COUNTRY_HOOKS, playerNote, PICKER, OUTCOME_TILES, outcomeWord, FRONTIER_LABEL, REGIME_NAMES, GRIP, LATECOMER,
-  instrumentCopy, M6_TIERS, GOV_NAMES
+  instrumentCopy, M6_TIERS, GOV_NAMES, GUIDED, nextGoal, TRANSFER_NOTE
 } from './copy.js';
 import { isOutside } from '../engine/game.js';
+import { epilogue } from './story.js';
+
+/** Guided first run: these moves stay closed until their year. */
+const GUIDED_UNLOCK_TURN = { m6: 2, m7: 2 };
 
 const esc = (s) =>
   String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -29,14 +33,15 @@ export function render(root, g, handlers, ui = {}) {
         </section>
         <section>
           <p class="zone-label">Where you stand</p>
-          ${playerPanel(g, snap)}${alliesPanel(g)}${standingPanel(g, snap)}
+          ${playerPanel(g, snap)}${alliesPanel(g)}${standingPanel(g, snap, ui)}
         </section>
         <section class="control-zone">
           <p class="zone-label">What you can do</p>
-          ${joinPanel(g, acts)}${movesPanel(g, acts)}${invitePanel(g, acts)}
+          ${joinPanel(g, acts)}${movesPanel(g, acts, ui)}${invitePanel(g, acts)}
         </section>
       </div>
     </div>
+    ${toast(ui)}
     ${ui.summary && !g.ended ? summarySheet(g, ui.summary) : ''}
     ${offerSheet(g)}
     ${debriefSheet(g, snap)}
@@ -149,8 +154,26 @@ function gripBar(g, snap) {
     </div>`;
 }
 
+function toast(ui) {
+  if (!ui.toast) return '';
+  const t = ui.toast;
+  return `
+    <div class="toast${t.kind === 'milestone' ? ' milestone' : ''}" role="status">
+      <p class="kicker">${t.kind === 'milestone' ? 'Milestone' : 'Your move landed'}</p>
+      <strong>${esc(t.title)}</strong>
+      ${t.lines.map((l) => `<span>${esc(l)}</span>`).join('')}
+    </div>`;
+}
+
 function coachTip(g, ui) {
   if (g.ended || ui.tipsDismissed) return '';
+  if (ui.unlockNote) {
+    return `
+    <div class="tip">
+      <span>${esc(ui.unlockNote)}</span>
+      <button class="btn-ghost dark" data-dismiss-tips>Hide tips</button>
+    </div>`;
+  }
   const tip = isOutside(g) && g.turn <= 2 ? LATECOMER.coachTip : COACH_TIPS[g.turn];
   if (!tip) return '';
   return `
@@ -200,17 +223,27 @@ function thisYearPanel(g) {
     </div>`;
 }
 
-function standingPanel(g, snap) {
-  return `
-    <div class="panel">
-      <h2>How you're doing</h2>
+function standingPanel(g, snap, ui = {}) {
+  const meters = `
       <p class="hintline">Hover any bar for what it means.</p>
       ${CRITERIA.map((c) => `
         <div class="crit${c.bad ? ' bad' : ''}" title="${esc(c.hint)}">
           <span>${esc(c.label)}${c.bad ? ' <small>(keep low)</small>' : ''}</span>
           <div class="meter"><i style="width:${snap[c.key]}%"></i></div>
           <span class="val">${snap[c.key]}</span>
-        </div>`).join('')}
+        </div>`).join('')}`;
+  // Guided first run: the tiles and goal bar carry the story; the seven meters fold away.
+  if (ui.guided) {
+    return `
+    <details class="panel story">
+      <summary>${esc(GUIDED.statsSummary)}</summary>
+      <div style="margin-top: var(--ea-space-4)">${meters}</div>
+    </details>`;
+  }
+  return `
+    <div class="panel">
+      <h2>How you're doing</h2>
+      ${meters}
     </div>`;
 }
 
@@ -306,35 +339,41 @@ function invitePanel(g, acts) {
 
 /* ---------- column 3: your moves ---------- */
 
-function movesPanel(g, acts) {
+function movesPanel(g, acts, ui = {}) {
   if (g.ended) return '';
   const order = ['m1', 'm3', 'm6', 'm7', 'm4', 'm5'];
   const boosted = g.turnMods.m1Boost > 0;
   const copy = instrumentCopy(g.data.byCode[g.player.code], g.player.convertAxes, g.player.positional);
+  let lockedCount = 0;
+  const cards = order.map((id) => {
+    const a = acts[id];
+    if (!a) return '';
+    // Guided first run: one thing at a time — later moves arrive with later years.
+    if (ui.guided && GUIDED_UNLOCK_TURN[id] && g.turn < GUIDED_UNLOCK_TURN[id]) {
+      lockedCount++;
+      return '';
+    }
+    let meta = copy[id];
+    if (id === 'm6') {
+      const tier = M6_TIERS[Math.min(g.m6Uses, M6_TIERS.length - 1)];
+      meta = { ...meta, name: tier.name, blurb: tier.blurb };
+    }
+    let badge = id === 'm1' && boosted ? '<span class="badge">extra strong this year</span>' : '';
+    if (id === 'm4' && a.enabled && g.legalOpening > 0) badge = `<span class="badge">live case: ${g.legalOpening} year${g.legalOpening > 1 ? 's' : ''}</span>`;
+    if (id === 'm6' && g.m6Uses > 0) badge = `<span class="badge cool">tier ${Math.min(g.m6Uses + 1, M6_TIERS.length)}</span>`;
+    if (id === 'm7') badge = `<span class="badge cool">${esc(GOV_NAMES[g.govLevel] ?? '')}${g.govLevel < 3 && g.fieldbuilding % 2 === 1 ? ' · halfway to next' : ''}</span>`;
+    return `
+    <button class="btn action-card" data-action="${id}" ${a.enabled ? '' : 'disabled'} ${a.reason ? `title="${esc(a.reason)}"` : ''}>
+      <span class="action-head">${esc(meta.name)} ${badge}<span class="cost">${a.ap} move${a.ap > 1 ? 's' : ''}</span></span>
+      <span class="blurb">${esc(meta.blurb)}</span>
+      <span class="effect">${esc(meta.effect)}</span>
+    </button>`;
+  }).join('');
   return `
     <div class="panel">
       <h2>Your moves — ${g.ap} left</h2>
-      <div class="actions">
-        ${order.map((id) => {
-          const a = acts[id];
-          if (!a) return '';
-          let meta = copy[id];
-          if (id === 'm6') {
-            const tier = M6_TIERS[Math.min(g.m6Uses, M6_TIERS.length - 1)];
-            meta = { ...meta, name: tier.name, blurb: tier.blurb };
-          }
-          let badge = id === 'm1' && boosted ? '<span class="badge">extra strong this year</span>' : '';
-          if (id === 'm4' && a.enabled && g.legalOpening > 0) badge = `<span class="badge">live case: ${g.legalOpening} year${g.legalOpening > 1 ? 's' : ''}</span>`;
-          if (id === 'm6' && g.m6Uses > 0) badge = `<span class="badge cool">tier ${Math.min(g.m6Uses + 1, M6_TIERS.length)}</span>`;
-          if (id === 'm7') badge = `<span class="badge cool">${esc(GOV_NAMES[g.govLevel] ?? '')}${g.govLevel < 3 && g.fieldbuilding % 2 === 1 ? ' · halfway to next' : ''}</span>`;
-          return `
-          <button class="btn action-card" data-action="${id}" ${a.enabled ? '' : 'disabled'} ${a.reason ? `title="${esc(a.reason)}"` : ''}>
-            <span class="action-head">${esc(meta.name)} ${badge}<span class="cost">${a.ap} move${a.ap > 1 ? 's' : ''}</span></span>
-            <span class="blurb">${esc(meta.blurb)}</span>
-            <span class="effect">${esc(meta.effect)}</span>
-          </button>`;
-        }).join('')}
-      </div>
+      <div class="actions">${cards}</div>
+      ${lockedCount > 0 ? `<p class="keyline muted">${lockedCount} more move${lockedCount > 1 ? 's' : ''} unlock next year — one thing at a time. <button class="btn-ghost dark" data-show-all>${esc(GUIDED.showAll)}</button></p>` : ''}
       <button class="btn-primary" data-end-turn>End the year${g.ap > 0 ? ` (${g.ap} move${g.ap > 1 ? 's' : ''} unused)` : ''}</button>
     </div>`;
 }
@@ -393,6 +432,7 @@ function debriefSheet(g, snap) {
   const e = g.ended;
   const meta = ENDINGS[e.id] ?? { kicker: 'The end', sub: '' };
   const url = shareUrl(g);
+  const story = epilogue(g);
   return `
     <div class="overlay">
       <div class="sheet">
@@ -400,10 +440,19 @@ function debriefSheet(g, snap) {
         <h3>${esc(e.title)}</h3>
         <p class="score">${e.score}/100</p>
         <p class="read">${esc(meta.sub)}</p>
-        <ul class="debrief-lines">
-          ${e.lines.map((l) => `<li>${esc(l)}</li>`).join('')}
-          <li>Where you ended: bar at ${snap.pooled} of ${snap.threshold} needed · ${snap.members} all${snap.members === 1 ? 'y' : 'ies'} · public trust ${snap.c6}.</li>
-        </ul>
+        <div class="epilogue">
+          <p class="kicker">What happens next</p>
+          ${story.map((p) => `<p class="read small">${esc(p)}</p>`).join('')}
+        </div>
+        <details class="analysis">
+          <summary>The analysis — what decided this ending</summary>
+          <ul class="debrief-lines">
+            ${e.lines.map((l) => `<li>${esc(l)}</li>`).join('')}
+            <li>Where you ended: bar at ${snap.pooled} of ${snap.threshold} needed · ${snap.members} all${snap.members === 1 ? 'y' : 'ies'} · public trust ${snap.c6}.</li>
+          </ul>
+        </details>
+        <div class="terms">${esc(nextGoal(g))}</div>
+        <p class="seedlink">${esc(TRANSFER_NOTE)} Read <a href="docs/the-map-of-leverage.pdf" target="_blank" rel="noopener">the analysis</a> · <a href="https://earpini.github.io/brazil-ai-analysis" target="_blank" rel="noopener">the working paper</a>.</p>
         <p class="seedlink">Challenge a friend — same game, same events: <a href="${esc(url)}">${esc(url)}</a></p>
         <p class="seedlink">Something felt wrong, unclear, or great? <a href="https://www.admonymous.co/arpini" target="_blank" rel="noopener">Tell me anonymously</a>.</p>
         <div class="row" style="margin-top: var(--ea-space-4)">
@@ -503,4 +552,5 @@ function wire(root, handlers) {
   root.querySelector('[data-start]')?.addEventListener('click', handlers.onCloseIntro);
   root.querySelector('[data-continue]')?.addEventListener('click', handlers.onContinue);
   root.querySelector('[data-dismiss-tips]')?.addEventListener('click', handlers.onDismissTips);
+  root.querySelector('[data-show-all]')?.addEventListener('click', handlers.onShowAll);
 }

@@ -287,6 +287,57 @@ export function riskLabel(defRisk) {
   return 'one foot out the door';
 }
 
+/** Plain names for toast deltas, in display order. */
+export const DELTA_LABELS = [
+  ['pooled', 'Goal bar'],
+  ['c1', 'Bargaining power'],
+  ['c2', 'Alliance strength'],
+  ['c3', 'Heat'],
+  ['c4', 'Independence'],
+  ['c5', 'Consistency'],
+  ['c6', 'Public trust'],
+  ['c7', 'Allies’ capability'],
+  ['nature', 'Nature']
+];
+
+export const FIRST_WIN =
+  'That is leverage: the gold bar just moved because you set terms. Everything in this game is a way to move that bar — or to stop others pulling it back.';
+
+export const MILESTONES = {
+  firstTerms: { title: 'First terms set', text: FIRST_WIN },
+  threeAllies: { title: 'An alliance that counts', text: 'Three allies. The superpowers now plan around you, not past you — watch their offers get sweeter.' },
+  pastLine: { title: 'Past the line', text: 'Ignoring your alliance now costs the superpowers more than negotiating with it. Hold this to 2033 and the seat is yours.' },
+  fullyConverted: { title: 'Everything converted', text: 'Every asset you hold now has terms attached. Nothing of yours is anyone else’s opportunity.' },
+  govMax: { title: 'A strong ecosystem', text: 'Your governance field is at full strength: terms bind faster, and your courts always have a case ready.' },
+  joined: { title: 'You’re in', text: 'Converted leverage was the ticket. Their pool is your pool now — and its bills are partly yours too.' }
+};
+
+export const UNLOCKS = {
+  2: 'New this year: Share technology and Build the field. Your alliance can pool what it builds — and you can grow the people who write the rules.'
+};
+
+export const GUIDED = {
+  lockedReason: 'Unlocks next year — one thing at a time',
+  showAll: 'Show all moves',
+  statsSummary: 'Fine-grained stats — the seven meters under the tiles'
+};
+
+/** A concrete, achievable goal for the next run, read from this one. */
+export function nextGoal(g) {
+  const e = g.ended;
+  if (!e) return '';
+  if (g.club && !g.club.joined) return 'Next run: set conditions until you qualify, and get inside the alliance before 2030.';
+  if (g.facility.totalFunded === 0) return 'Next run: put money in the alliance fund before 2029 and watch who stays.';
+  if (g.coalition.length + g.lostMembers.length < 3) return 'Next run: get to three allies — the superpowers only negotiate with alliances that count.';
+  if (g.m6Uses === 0) return 'Next run: share technology at least once. Allies stay when staying makes them stronger.';
+  if (e.id === 'broker') return 'Next run: cross the line — recruit a bottleneck country (the Netherlands, Korea, Taiwan) and share technology twice.';
+  if (e.id === 'seat') return 'Next run: try starting outside the alliance (Earn your way in), or a faster world (Frontier acceleration).';
+  return 'Next run: convert earlier — the first terms are the cheapest ones.';
+}
+
+export const TRANSFER_NOTE =
+  'Everything you just played is drawn from real analysis: the country scores, the accommodation trap, REDATA.';
+
 export const COACH_TIPS = {
   1: 'First year: the alliance fund costs both moves to start, and it is what stops allies being bought off later. Or start converting — Set conditions pays most early. Your call.',
   2: 'Watch each ally’s “risk of leaving”. Superpower offers push it up every year; the alliance fund pushes it down.',

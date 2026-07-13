@@ -154,6 +154,25 @@ export function debriefLines(state, ending) {
     }
   }
 
+  // Stealth assessment, surfaced: read the player's actual pattern back to them.
+  {
+    const funded = state.facility.totalFunded;
+    const turns = state.params.game.turns;
+    const convertible = state.player.convertAxes.reduce(
+      (a, axis) => a + state.data.byCode[state.player.code].axes[axis] * 1, 0);
+    const pct = convertible > 0 ? Math.round((convertedPoints(state) / convertible) * 100) : 0;
+    const assertive = state.choiceCount.a;
+    const answered = state.choiceCount.a + state.choiceCount.b;
+    lines.push(`Your pattern: financed the fund ${funded} of ${turns} years, set terms on ${pct}% of your assets, and met ${assertive} of ${answered} world events head-on.`);
+    if (funded >= 6 && pct >= 70) {
+      lines.push('That is the textbook play from the research: convert what you hold, and pay — every year — to keep the alliance real.');
+    } else if (funded >= 5 && pct < 40) {
+      lines.push('You held the alliance together but left your own assets on the table. The fund keeps allies in; only terms make you worth allying with.');
+    } else if (funded <= 1 && pct >= 60) {
+      lines.push('You converted hard and organised nothing. National leverage without an alliance is a nicer chair on the menu.');
+    }
+  }
+
   // The cutoff: the fable at the centre of the game.
   if (state.cutoff) {
     const sev = state.cutoff.severity;
