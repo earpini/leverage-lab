@@ -27,28 +27,33 @@ export function render(root, g, handlers, ui = {}) {
     <div class="container">
       ${coachTip(g, ui)}
       <div class="board">
-        <section>
+        <section class="zone-news">
           <p class="zone-label">What's happening</p>
           ${thisYearPanel(g)}${storyPanel(g)}
         </section>
-        <section>
+        <section class="zone-status">
           <p class="zone-label">Where you stand</p>
           ${playerPanel(g, snap)}${alliesPanel(g)}${standingPanel(g, snap, ui)}
         </section>
-        <section class="control-zone">
+        <section class="zone-control control-zone">
           <p class="zone-label">What you can do</p>
           ${joinPanel(g, acts)}${movesPanel(g, acts, ui)}${invitePanel(g, acts)}
         </section>
       </div>
     </div>
     ${toast(ui)}
-    ${ui.summary && !g.ended ? summarySheet(g, ui.summary) : ''}
-    ${offerSheet(g)}
-    ${debriefSheet(g, snap)}
-    ${ui.showPicker && !ui.showIntro ? pickerSheet(g, ui) : ''}
-    ${ui.showIntro ? introSheet(ui) : ''}
+    ${overlay(g, snap, ui)}
   `;
   wire(root, handlers);
+}
+
+/** One overlay at a time, in narrative order: intro → picker → recap → offer → debrief. */
+function overlay(g, snap, ui) {
+  if (ui.showIntro) return introSheet(ui);
+  if (ui.showPicker) return pickerSheet(g, ui);
+  if (g.ended) return debriefSheet(g, snap);
+  if (ui.summary && ui.summary.length > 0) return summarySheet(g, ui.summary);
+  return offerSheet(g);
 }
 
 /* ---------- hero: the goal, always visible ---------- */
@@ -137,6 +142,15 @@ function gripBar(g, snap) {
   const pct = snap.concentration;
   const linePct = k.cutoffLine;
   const near = !snap.cutoff && pct >= linePct - 10;
+  // Stage the antagonist's clock: a quiet one-liner while distant, the full
+  // bar and warning only once it starts to matter. The hero reads goal-first.
+  if (!snap.cutoff && pct < 60) {
+    return `
+    <div class="grip compact" title="${esc(GRIP.hint)}">
+      <span class="hero-kicker" style="margin:0">${esc(GRIP.label)}</span>
+      <span class="grip-val">${pct} — tightens every year</span>
+    </div>`;
+  }
   const note = snap.cutoff
     ? GRIP.cutoffNote(snap.cutoff.year)
     : near ? GRIP.nearNote : null;
@@ -204,8 +218,8 @@ function thisYearPanel(g) {
           ${g.pendingEvent ? `
             <p class="event-question">${esc(event.question ?? 'Your call.')}</p>
             <div class="event-choices">
-              <button class="btn-quiet" data-choice="a">${esc(event.choices.a.label)}</button>
-              <button class="btn-quiet" data-choice="b">${esc(event.choices.b.label)}</button>
+              <button class="choice-card" data-choice="a">${esc(event.choices.a.label)}</button>
+              <button class="choice-card" data-choice="b">${esc(event.choices.b.label)}</button>
             </div>
             <p class="keyline muted">Deciding costs no moves — but not deciding is a decision: the year ends on the second option.</p>`
           : g.lastChoice && g.lastChoice.eventId === event.id
@@ -362,11 +376,13 @@ function movesPanel(g, acts, ui = {}) {
     if (id === 'm4' && a.enabled && g.legalOpening > 0) badge = `<span class="badge">live case: ${g.legalOpening} year${g.legalOpening > 1 ? 's' : ''}</span>`;
     if (id === 'm6' && g.m6Uses > 0) badge = `<span class="badge cool">tier ${Math.min(g.m6Uses + 1, M6_TIERS.length)}</span>`;
     if (id === 'm7') badge = `<span class="badge cool">${esc(GOV_NAMES[g.govLevel] ?? '')}${g.govLevel < 3 && g.fieldbuilding % 2 === 1 ? ' · halfway to next' : ''}</span>`;
+    // Disabled reasons must be visible, not hover-only — touch and keyboard users included.
+    const effectLine = !a.enabled && a.reason ? `Locked: ${a.reason}` : meta.effect;
     return `
     <button class="btn action-card" data-action="${id}" ${a.enabled ? '' : 'disabled'} ${a.reason ? `title="${esc(a.reason)}"` : ''}>
       <span class="action-head">${esc(meta.name)} ${badge}<span class="cost">${a.ap} move${a.ap > 1 ? 's' : ''}</span></span>
       <span class="blurb">${esc(meta.blurb)}</span>
-      <span class="effect">${esc(meta.effect)}</span>
+      <span class="effect${!a.enabled && a.reason ? ' locked' : ''}">${esc(effectLine)}</span>
     </button>`;
   }).join('');
   return `
@@ -394,7 +410,7 @@ function storyPanel(g) {
 function summarySheet(g, summary) {
   if (summary.length === 0) return '';
   return `
-    <div class="overlay">
+    <div class="overlay" role="dialog" aria-modal="true">
       <div class="sheet">
         <p class="kicker">While the year turned</p>
         <h3>What just happened</h3>
@@ -413,7 +429,7 @@ function offerSheet(g) {
   const cap = g.params.endings.junior.termsCap;
   const score = g.params.endings.junior.base + terms;
   return `
-    <div class="overlay">
+    <div class="overlay" role="dialog" aria-modal="true">
       <div class="sheet">
         <p class="kicker">A message from ${esc(POLE_NAMES[offer.pole])}</p>
         <h3>They want a deal — with you</h3>
@@ -434,7 +450,7 @@ function debriefSheet(g, snap) {
   const url = shareUrl(g);
   const story = epilogue(g);
   return `
-    <div class="overlay">
+    <div class="overlay" role="dialog" aria-modal="true">
       <div class="sheet">
         <p class="kicker">${esc(meta.kicker)}</p>
         <h3>${esc(e.title)}</h3>
@@ -474,7 +490,7 @@ function pickerSheet(g, ui) {
     }))
     .sort((a, b) => (a.c.code === 'BR' ? -1 : b.c.code === 'BR' ? 1 : b.potential - a.potential));
   return `
-    <div class="overlay">
+    <div class="overlay" role="dialog" aria-modal="true">
       <div class="sheet wide">
         <p class="kicker">${esc(PICKER.kicker)}</p>
         <h3>${esc(PICKER.title)}</h3>
@@ -505,7 +521,7 @@ function pickerSheet(g, ui) {
 function introSheet(ui) {
   const label = ui.introMode === 'help' ? 'Back to the game' : INTRO.start;
   return `
-    <div class="overlay">
+    <div class="overlay" role="dialog" aria-modal="true">
       <div class="sheet">
         <p class="kicker">${esc(INTRO.kicker)}</p>
         <h3>${esc(INTRO.title)}</h3>

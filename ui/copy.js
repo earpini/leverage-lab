@@ -284,7 +284,7 @@ export function riskLabel(defRisk) {
   if (defRisk < 35) return 'settled';
   if (defRisk < 55) return 'restless';
   if (defRisk < 75) return 'tempted';
-  return 'one foot out the door';
+  return 'about to leave';
 }
 
 /** Plain names for toast deltas, in display order. */
