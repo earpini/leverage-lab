@@ -372,6 +372,16 @@ html, body { margin: 0; padding: 0; }
 .moves-row .action-card .action-head { font-size: var(--ea-size-small); }
 .moves-row .action-card .blurb { font-size: var(--ea-size-micro); flex: 1; }
 .action-card.idle { opacity: 0.95; }
+.action-card.signature {
+  background: var(--ea-bg-inverse);
+  color: var(--ea-text-inverse);
+  border-color: var(--ea-bg-inverse);
+}
+.action-card.signature .blurb { color: var(--ea-gray-on-dark); }
+.action-card.signature .effect { color: var(--ea-gray-on-dark); }
+.action-card.signature .cost { color: var(--ea-text-inverse); }
+.action-card.signature .badge { color: var(--ea-text-inverse); background: rgba(255, 255, 255, 0.16); }
+.action-card.signature:hover:not(:disabled) { background: var(--ea-ink-2); border-color: var(--ea-accent); }
 .fx-row { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 2px; }
 .fx {
   font-size: var(--ea-size-micro);

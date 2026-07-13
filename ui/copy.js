@@ -314,6 +314,40 @@ export const AFFECTS = {
   join: [['alliance', 'up'], ['economy', 'up']]
 };
 
+/** The signature move: the lever only this country holds. One use per game. */
+export const SIGNATURES = {
+  TW: { name: 'Reroute the fabs', blurb: 'TSMC’s order book is diplomacy. Move a queue, move a government.' },
+  KR: { name: 'Meter the memory', blurb: 'No HBM, no AI accelerators. Remind everyone at once.' },
+  NL: { name: 'Pause the licences', blurb: 'Every chip machine ships with your signature. Withhold it once and the whole roadmap slips.' },
+  JP: { name: 'Choke the wafers', blurb: 'No Japanese wafers and photoresist, no chips — anywhere on earth.' },
+  DE: { name: 'Convene the continent', blurb: 'Berlin calls, Europe answers: one summit with real signatures at the end.' },
+  FR: { name: 'Open the lab’s doors', blurb: 'Mistral’s models and nuclear-powered compute, shared on your terms.' },
+  GB: { name: 'Rally the labs', blurb: 'Arm’s designs and London’s talent, pointed at one goal for one year.' },
+  CA: { name: 'Open the institutes', blurb: 'Mila and Vector train the alliance’s people, a cohort at a time.' },
+  NO: { name: 'Vote the fund', blurb: 'The fund owns a slice of every AI giant. One proxy season, aimed.' },
+  SG: { name: 'Point the capital', blurb: 'Temasek’s cheque book moves markets — and standards.' },
+  IL: { name: 'Lend the design desks', blurb: 'The engineers who lay out the chips, on loan to friends.' },
+  AE: { name: 'Flip the Stargate switch', blurb: 'Five gigawatts, suddenly looking for a loyalty.' },
+  SA: { name: 'Reprice the megawatts', blurb: 'HUMAIN’s power, abruptly negotiable.' },
+  IN: { name: 'Gate the market', blurb: '1.4 billion users behind one door — and you hold the handle.' },
+  ID: { name: 'Hold the nickel', blurb: 'The world’s batteries wait on your export permits.' },
+  ZA: { name: 'Meter the platinum', blurb: 'Tomorrow’s chips need metals only you separate at scale.' },
+  AU: { name: 'Lock the rare earths', blurb: 'The only heavy-rare-earth line outside China answers to you.' },
+  BR: { name: 'Auction the grid', blurb: 'REDATA in one move: clean megawatts to the best terms, not the best price.' }
+};
+
+/** Chips for each signature archetype, keyed by dominant axis. */
+export const SIGNATURE_FX = {
+  fab: [['economy', 'up'], ['superpowers', 'down'], ['heat', 'warn']],
+  equip: [['superpowers', 'down'], ['economy', 'up'], ['heat', 'warn']],
+  minerals: [['economy', 'up'], ['nature', 'up'], ['heat', 'warn']],
+  compute: [['economy', 'up'], ['independence', 'up'], ['nature', 'down']],
+  capital: [['superpowers', 'down'], ['people', 'up'], ['heat', 'warn']],
+  models: [['economy', 'up'], ['alliance', 'up']],
+  market: [['economy', 'up'], ['independence', 'up'], ['heat', 'warn']],
+  gov_conv: [['alliance', 'up'], ['people', 'up'], ['superpowers', 'down']]
+};
+
 export const POWERS_COPY = {
   title: 'Their power to hurt you — and yours to answer',
   hint: 'Same units as the goal bar. The stronger the superpowers grow, the harder they squeeze you — demands, discounts, conditions — and the faster your independence erodes. Your alliance is the only counterweight.',

@@ -4,7 +4,7 @@
 import { clamp, log, countryByCode } from './state.js';
 import { c1, c2, pooledLeverage } from './criteria.js';
 import { computeTerms } from './endings.js';
-import { resolveEvent } from './events.js';
+import { resolveEvent, applyEffects } from './events.js';
 
 export const INSTRUMENT_IDS = ['m1', 'm2', 'm3', 'm4', 'm5', 'm6'];
 
@@ -135,6 +135,15 @@ function applyM6(state) {
   log(state, 'player', M6_LOGS[Math.min(state.m6Uses - 1, M6_LOGS.length - 1)]);
 }
 
+/** M8 — the signature move: pull the lever only your country holds.
+    One use per game; effects come from the dominant-axis archetype. */
+function applyM8(state) {
+  const sig = state.params.signature;
+  applyEffects(state, sig.archetypes[state.player.signatureAxis]);
+  state.signatureUsed = true;
+  log(state, 'player', 'You pull the lever only your country holds. For one loud season, everyone remembers exactly why you matter.');
+}
+
 /** M4 needs an opening: a live case, institutions strong enough to make one,
     or a governance ecosystem mature enough to always have one ready. */
 export function m4Open(state) {
@@ -175,6 +184,7 @@ function apCost(state, action) {
     case 'm5': return ins.m5.ap;
     case 'm6': return ins.m6.ap;
     case 'm7': return ins.m7.ap;
+    case 'm8': return state.params.signature.ap;
     default: return 0;
   }
 }
@@ -215,6 +225,13 @@ export function legalActions(state) {
       opening: state.legalOpening
     },
     { type: 'm5', ap: apCost(state, { type: 'm5' }), enabled: state.ap >= apCost(state, { type: 'm5' }) },
+    {
+      type: 'm8',
+      ap: apCost(state, { type: 'm8' }),
+      enabled: !state.signatureUsed && state.ap >= apCost(state, { type: 'm8' }),
+      reason: state.signatureUsed ? 'Played — the world only falls for this once' : null,
+      axis: state.player.signatureAxis
+    },
     {
       type: 'm7',
       ap: apCost(state, { type: 'm7' }),
@@ -294,6 +311,10 @@ export function applyAction(state, action) {
     case 'm7':
       if (state.govLevel >= state.params.instruments.m7.maxGov) throw new Error('Governance ecosystem already at full strength');
       applyM7(state);
+      break;
+    case 'm8':
+      if (state.signatureUsed) throw new Error('Signature move already played');
+      applyM8(state);
       break;
     case 'm6':
       if (isOutside(state)) throw new Error('Not in the alliance yet');

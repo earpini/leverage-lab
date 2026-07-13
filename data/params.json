@@ -242,6 +242,21 @@
     "defRiskFloor": 5,
     "defRiskCap": 95
   },
+  "signature": {
+    "ap": 1,
+    "usesPerGame": 1,
+    "overrides": { "IN": "market", "BR": "compute" },
+    "archetypes": {
+      "fab": { "tempSpike": 3, "concentration": -4, "c3": 8 },
+      "equip": { "tempSpike": 2, "concentration": -6, "c3": 8 },
+      "minerals": { "c1Flat": 4, "demand": 0.08, "c3": 5, "nature": 2 },
+      "compute": { "c1Flat": 3, "c4": 8, "c3": 3, "nature": -2 },
+      "capital": { "concentration": -5, "c6": 4, "c3": 4 },
+      "models": { "c7": 8, "trust": 6 },
+      "market": { "c1Flat": 4, "c4": 6, "c3": 6 },
+      "gov_conv": { "trust": 8, "c5": 4, "concentration": -3, "recruitDiscount": 1 }
+    }
+  },
   "regimeDistance": {
     "Full": 0,
     "Flawed": 1,

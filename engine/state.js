@@ -50,7 +50,16 @@ export function createState({ params, countries, scenarios, events, seed, scenar
     turn: 1,
     ap: params.game.apPerTurn,
     dials: { ...scenario.dials },
-    player: { code: playerCode, converted, convertAxes, positional },
+    player: {
+      code: playerCode,
+      converted,
+      convertAxes,
+      positional,
+      // The signature lever: the country's dominant axis (hand-overridden where
+      // the iconic instrument differs from the raw top score).
+      signatureAxis: params.signature.overrides[playerCode] ?? convertAxes[0]
+    },
+    signatureUsed: false,
     govLevel: player.gov ?? 2,
     fieldbuilding: 0,
     crit: {

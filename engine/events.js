@@ -65,6 +65,9 @@ export function applyEffects(state, effects) {
       case 'nature':
         state.nature = clamp(state.nature + value);
         break;
+      case 'concentration':
+        state.concentration = Math.min(100, Math.max(0, state.concentration + value));
+        break;
       case 'ap':
         state.ap = Math.max(0, Math.min(state.params.game.apPerTurn, state.ap + value));
         break;

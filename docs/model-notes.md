@@ -232,3 +232,14 @@ year (they alternate): independence −(2 + 30·gripBite/100), plus −1 flat ba
 concentration passes 70. This is the user-visible answer to "why does their power matter to me
 personally": the stronger they get, the less your no is worth. Countered the same way as
 everything else — conditions rebuild independence, the alliance brakes the grip.
+
+## m8 — the signature move
+
+Each country holds one lever nobody else has, playable once per game (1 move). The mechanics
+come from its dominant axis — eight archetypes: fabs (spike + brake concentration + heat),
+equipment licences (the strongest brake), minerals permits, the grid auction, the sovereign
+fund's proxies, the labs, the market gate, the convening. Hand-named for all 18 countries
+(Reroute the fabs, Pause the licences, Auction the grid…), with overrides where the iconic
+instrument differs from the raw top score (Brazil → compute/REDATA, India → market). One use:
+the world only falls for a chokepoint surprise once; after that it routes around you — which
+is the paper's warning about spending positional leverage.

@@ -7,7 +7,7 @@ import scenarios from '../data/scenarios.json' with { type: 'json' };
 import events from '../data/events.json' with { type: 'json' };
 import { newGame, applyAction, endTurn, snapshot, convertedPoints } from '../engine/game.js';
 import { render } from './render.js';
-import { INSTRUMENTS, DELTA_LABELS, MILESTONES, UNLOCKS, instrumentCopy } from './copy.js';
+import { INSTRUMENTS, DELTA_LABELS, MILESTONES, UNLOCKS, instrumentCopy, SIGNATURES } from './copy.js';
 
 const root = document.getElementById('app');
 const scenarioSelect = document.getElementById('scenario-select');
@@ -37,6 +37,7 @@ function actionTitle(action) {
   if (action.type === 'm2') return 'Invite an ally';
   if (action.type === 'event') return 'Your call';
   if (action.type === 'join') return 'You joined the alliance';
+  if (action.type === 'm8') return SIGNATURES[game.player.code]?.name ?? 'Your signature move';
   const copy = instrumentCopy(
     game.data.byCode[game.player.code], game.player.convertAxes, game.player.positional
   )[action.type];

@@ -62,6 +62,38 @@ test('starting outcomes reflect the real world, then the game moves them', () =>
     'nature starts at the country baseline');
 });
 
+test('every country has a signature move, and it fires once', async () => {
+  const { SIGNATURES, SIGNATURE_FX } = await import('../ui/copy.js');
+  for (const c of playable) {
+    assert.ok(SIGNATURES[c.code]?.name, `${c.code}: needs a signature name`);
+    const g = newGame({ ...data, seed: 'sig-' + c.code, scenarioId: 'bipolar', playerCode: c.code });
+    assert.ok(data.params.signature.archetypes[g.player.signatureAxis], `${c.code}: signature axis maps to an archetype`);
+    assert.ok(SIGNATURE_FX[g.player.signatureAxis], `${c.code}: signature has chips`);
+  }
+  // Brazil's iconic lever is the grid (REDATA), India's is the market — the overrides hold.
+  const br = newGame({ ...data, seed: 'sig', scenarioId: 'bipolar', playerCode: 'BR' });
+  assert.equal(br.player.signatureAxis, 'compute');
+  const inn = newGame({ ...data, seed: 'sig', scenarioId: 'bipolar', playerCode: 'IN' });
+  assert.equal(inn.player.signatureAxis, 'market');
+
+  // One shot: it works, then it's gone.
+  if (br.pendingEvent) applyAction(br, { type: 'event', choice: 'b' });
+  const c4Before = br.crit.c4;
+  applyAction(br, { type: 'm8' });
+  assert.ok(br.crit.c4 > c4Before, 'Brazil’s grid auction buys independence');
+  assert.ok(br.signatureUsed);
+  const m8 = legalActions(br).find((a) => a.type === 'm8');
+  assert.ok(!m8.enabled && /once/.test(m8.reason), 'played means played');
+  assert.throws(() => applyAction(br, { type: 'm8' }), /already played/);
+
+  // The Netherlands' licence pause slows the whole race.
+  const nl = newGame({ ...data, seed: 'sig', scenarioId: 'bipolar', playerCode: 'NL' });
+  if (nl.pendingEvent) applyAction(nl, { type: 'event', choice: 'b' });
+  const conc = nl.concentration;
+  applyAction(nl, { type: 'm8' });
+  assert.ok(nl.concentration < conc, 'pausing the licences brakes concentration');
+});
+
 test('move cards speak each country’s own language', async () => {
   const { instrumentCopy, M1_HOOKS } = await import('../ui/copy.js');
   const { playerConvertAxes } = await import('../engine/state.js');

@@ -8,7 +8,8 @@ import {
   INSTRUMENTS, CRITERIA, DIALS, POLE_NAMES, OFFER_COPY, ENDINGS,
   AXIS_NAMES, countryGloss, leanGloss, riskLabel, COACH_TIPS, INTRO,
   COUNTRY_HOOKS, playerNote, PICKER, OUTCOME_TILES, outcomeWord, FRONTIER_LABEL, REGIME_NAMES, GRIP, LATECOMER,
-  instrumentCopy, M6_TIERS, GOV_NAMES, GUIDED, nextGoal, TRANSFER_NOTE, AFFECTS, POWERS_COPY
+  instrumentCopy, M6_TIERS, GOV_NAMES, GUIDED, nextGoal, TRANSFER_NOTE, AFFECTS, POWERS_COPY,
+  SIGNATURES, SIGNATURE_FX
 } from './copy.js';
 import { isOutside } from '../engine/game.js';
 import { epilogue } from './story.js';
@@ -395,6 +396,18 @@ function movesBar(g, acts, ui = {}) {
       <span class="effect${!a.enabled && a.reason ? ' locked' : ''}">${esc(effectLine)}</span>
     </button>`;
   }).join('');
+  // The signature card: the lever only this country holds. One shot, front of the bar.
+  const sigMeta = SIGNATURES[g.player.code];
+  const sigChips = (SIGNATURE_FX[g.player.signatureAxis] ?? []).map(([label, dir]) =>
+    `<span class="fx ${dir}">${esc(label)} ${dir === 'down' ? '↓' : '↑'}</span>`).join('');
+  const signature = acts.m8 && sigMeta && !g.signatureUsed ? `
+    <button class="btn action-card signature" data-action="m8" ${acts.m8.enabled ? '' : 'disabled'} ${acts.m8.reason ? `title="${esc(acts.m8.reason)}"` : ''}>
+      <span class="action-head">${esc(sigMeta.name)} <span class="badge">once per game</span><span class="cost">${acts.m8.ap} move</span></span>
+      <span class="blurb">${esc(sigMeta.blurb)}</span>
+      <span class="fx-row">${sigChips}</span>
+      <span class="effect">Only ${esc(g.data.byCode[g.player.code].name)} can play this.</span>
+    </button>` : '';
+
   const join = acts.join ? `
     <button class="btn action-card" data-action="join" ${acts.join.enabled ? '' : 'disabled'} ${acts.join.reason ? `title="${esc(acts.join.reason)}"` : ''}>
       <span class="action-head">${esc(LATECOMER.joinTitle)}<span class="cost">${acts.join.ap} move</span></span>
@@ -408,7 +421,7 @@ function movesBar(g, acts, ui = {}) {
         <p class="zone-label">Act — your moves (${g.ap} left this year)</p>
         <button class="btn-primary slim" data-end-turn>End the year${g.ap > 0 ? ` (${g.ap} unused)` : ''}</button>
       </div>
-      <div class="moves-row">${join}${cards}</div>
+      <div class="moves-row">${join}${signature}${cards}</div>
       ${lockedCount > 0 ? `<p class="keyline muted">${lockedCount} more move${lockedCount > 1 ? 's' : ''} unlock next year — one thing at a time. <button class="btn-ghost dark" data-show-all>${esc(GUIDED.showAll)}</button></p>` : ''}
     </div>`;
 }
