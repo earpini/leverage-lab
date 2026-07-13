@@ -1,7 +1,10 @@
 // Rendering: state → DOM. No game logic here. Reads the engine's snapshot and
 // legal actions; dispatches player intents back through the handlers it is given.
 
-import { snapshot, legalActions, computeTerms, offersOpen, yearOf } from '../engine/game.js';
+import {
+  snapshot, legalActions, computeTerms, offersOpen, yearOf,
+  chainLinks, chainCovered, chainTarget, wantsFor, tableOpen
+} from '../engine/game.js';
 import { memberContribution } from '../engine/criteria.js';
 import { playerConvertAxes } from '../engine/state.js';
 import {
@@ -9,7 +12,7 @@ import {
   AXIS_NAMES, countryGloss, leanGloss, riskLabel, COACH_TIPS, INTRO,
   COUNTRY_HOOKS, playerNote, PICKER, OUTCOME_TILES, outcomeWord, FRONTIER_LABEL, REGIME_NAMES, GRIP, LATECOMER,
   instrumentCopy, M6_TIERS, GOV_NAMES, GUIDED, nextGoal, TRANSFER_NOTE, AFFECTS, POWERS_COPY,
-  SIGNATURES, SIGNATURE_FX
+  SIGNATURES, SIGNATURE_FX, CHAIN_COPY, CHAIN_HINT, WANT_NAMES, TABLE_CARD
 } from './copy.js';
 import { isOutside } from '../engine/game.js';
 import { epilogue } from './story.js';
@@ -46,16 +49,24 @@ export function render(root, g, handlers, ui = {}) {
 function leftRail(g, snap, ui) {
   const ratio = Math.min(1, snap.pooled / snap.threshold);
   const flash = ui.flash ?? new Set();
+  const links = chainLinks(g);
+  const covered = chainCovered(g);
+  const target = chainTarget(g);
   return `
-    <p class="side-kicker">Your goal — push the gold number past the line</p>
-    <div class="nums">
-      <span class="pooled">${snap.pooled}</span>
-      <span class="of">of <strong>${snap.threshold}</strong> for a seat at the table</span>
+    <p class="side-kicker">Your goal — light the chain</p>
+    <div class="chain" title="${esc(CHAIN_HINT)}">
+      ${links.map((l) => `
+        <span class="link${l.covered ? ' lit' : ''}" title="${esc(CHAIN_COPY[l.axis])}${l.covered ? ' — held by ' + l.by.map((c) => esc(g.data.byCode[c].name)).join(', ') : ' — nobody in your coalition holds this yet'}">${esc(CHAIN_COPY[l.axis])}</span>`).join('')}
     </div>
+    <div class="nums" style="margin-top: var(--ea-space-3)">
+      <span class="pooled">${covered}</span>
+      <span class="of">of <strong>${target}</strong> links opens the table${covered >= target ? ' — it is open' : ''}</span>
+    </div>
+    <p class="side-note">Bargaining weight: ${snap.pooled} of ${snap.threshold} needed.</p>
     <div class="bar${flash.has('pooled') ? ' flash' : ''}"><i style="width:${ratio * 100}%"></i></div>
-    <p class="side-note">${ratio >= 1
-      ? 'Past the line. Hold it to 2033: keep allies in, keep trust up.'
-      : 'Grow it: set conditions, add allies, share technology.'}</p>
+    <p class="side-note">${covered >= target && ratio >= 1
+      ? 'Ready. Go to the table — or hold and risk it.'
+      : 'Grow it: set terms at home, and recruit whoever holds the dark links.'}</p>
     <div class="side-sep"></div>
     <p class="side-kicker">Your country, at home</p>
     <div class="outcomes rail">
@@ -83,21 +94,20 @@ function leftRail(g, snap, ui) {
 function rightRail(g, snap, ui) {
   const members = g.coalition.map((m) => {
     const c = g.data.byCode[m.code];
-    return `<div class="mini-ally"><span>${esc(c.name)}</span><span class="risk-word">${esc(riskLabel(m.defRisk))}</span></div>`;
+    const wants = wantsFor(g, c);
+    const chips = wants.map((w) => `<span class="want${w.met ? ' met' : ''}">${esc(WANT_NAMES[w.axis])}${w.met ? ' ✓' : ''}</span>`).join('');
+    return `
+    <div class="mini-ally">
+      <div class="mini-head"><span>${esc(c.name)}</span><span class="risk-word">${esc(riskLabel(m.defRisk))}</span></div>
+      <div class="want-row">${chips}</div>
+    </div>`;
   }).join('');
   return `
     ${powersPanel(g, snap, ui)}
     <div class="side-sep"></div>
-    <p class="side-kicker">The world's mood</p>
-    ${DIALS.map((d) => `
-      <div class="dial" title="${esc(d.hint)}">
-        <span class="name"><span>${esc(d.label)}</span><span>${Math.round(g.dials[d.key] * 100)}</span></span>
-        <div class="meter${d.warm ? ' warm' : ''}"><i style="width:${g.dials[d.key] * 100}%"></i></div>
-      </div>`).join('')}
-    <div class="side-sep"></div>
-    <p class="side-kicker">${isOutside(g) ? `The alliance (${g.coalition.length}) — not yours yet` : `Your allies (${g.coalition.length})`}</p>
+    <p class="side-kicker">${isOutside(g) ? `The alliance (${g.coalition.length}) — not yours yet` : `Your allies (${g.coalition.length}) — and why they stay`}</p>
     ${members || '<p class="side-note">Nobody yet. No country crosses the line alone.</p>'}
-    ${g.coalition.length || !g.ended ? `<button class="btn-ghost" data-tab="alliance" style="margin-top: var(--ea-space-3)">${isOutside(g) ? 'See the alliance' : 'Manage the alliance'}</button>` : ''}`;
+    ${!g.ended ? `<button class="btn-ghost" data-tab="alliance" style="margin-top: var(--ea-space-3)">${isOutside(g) ? 'See the alliance' : 'Manage the alliance'}</button>` : ''}`;
 }
 
 function yearStrip(g) {
@@ -357,9 +367,14 @@ function invitePanel(g, acts) {
           const country = g.data.byCode[c.code];
           const affordable = c.cost <= g.ap;
           const dWarn = country.tier === 'D' ? ' · costs public trust yearly' : '';
+          const wants = wantsFor(g, country);
+          const wantChips = wants.map((w) => `<span class="want${w.met ? ' met' : ''}" title="${w.met ? 'Your coalition already offers this — joining is easy' : 'Meet this (fund the alliance, share technology, cover the link) and they join cheaper and stay longer'}">${esc(WANT_NAMES[w.axis])}${w.met ? ' ✓' : ''}</span>`).join('');
           return `
           <div class="recruit-row">
-            <span><strong>${esc(c.name)}</strong><span class="meta"> — ${esc(countryGloss(country))} · ${esc(leanGloss(country.affinity))}${dWarn}</span></span>
+            <span>
+              <strong>${esc(c.name)}</strong><span class="meta"> — ${esc(countryGloss(country))} · ${esc(leanGloss(country.affinity))}${dWarn}</span>
+              <span class="want-row">wants: ${wantChips || '<span class="meta">little you can offer</span>'}</span>
+            </span>
             <button class="btn-quiet" data-recruit="${esc(c.code)}" ${affordable ? '' : 'disabled'}>invite · ${c.cost} move${c.cost > 1 ? 's' : ''}</button>
           </div>`;
         }).join('')}
@@ -390,6 +405,10 @@ function movesBar(g, acts, ui = {}) {
       lockedCount++;
       return '';
     }
+    // Ruthless cuts: the court appears only when it has an opening; fieldbuilding
+    // lives behind "show all moves". Five cards is a hand; eight is homework.
+    if (id === 'm4' && !a.enabled && a.reason?.includes('opening')) return '';
+    if (id === 'm7' && ui.guided) return '';
     let meta = copy[id];
     if (id === 'm6') {
       const tier = M6_TIERS[Math.min(g.m6Uses, M6_TIERS.length - 1)];
@@ -431,6 +450,14 @@ function movesBar(g, acts, ui = {}) {
       <span class="effect">Only ${esc(g.data.byCode[g.player.code].name)} can play this.</span>
     </button>` : '';
 
+  // The table: the negotiation you built eight years for. Front of the hand.
+  const table = acts.table ? `
+    <button class="btn action-card table-card" data-action="table">
+      <span class="action-head">${esc(TABLE_CARD.name)} <span class="badge">the seat is yours to claim</span></span>
+      <span class="blurb">${esc(TABLE_CARD.blurb)}</span>
+      <span class="effect">${esc(TABLE_CARD.effect)}</span>
+    </button>` : '';
+
   const join = acts.join ? `
     <button class="btn action-card" data-action="join" ${acts.join.enabled ? '' : 'disabled'} ${acts.join.reason ? `title="${esc(acts.join.reason)}"` : ''}>
       <span class="action-head">${esc(LATECOMER.joinTitle)}<span class="cost">${acts.join.ap} move</span></span>
@@ -450,7 +477,7 @@ function movesBar(g, acts, ui = {}) {
           <button class="btn-primary slim${g.ap === 0 && !g.pendingEvent ? ' ready' : ''}" data-end-turn>3 · End the year${g.ap > 0 ? ` (${g.ap} unused)` : ''}</button>
         </div>
       </div>
-      <div class="moves-row">${join}${signature}${cards}</div>
+      <div class="moves-row">${table}${join}${signature}${cards}</div>
     </div>`;
 }
 

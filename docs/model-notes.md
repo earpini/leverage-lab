@@ -243,3 +243,16 @@ fund's proxies, the labs, the market gate, the convening. Hand-named for all 18 
 instrument differs from the raw top score (Brazil → compute/REDATA, India → market). One use:
 the world only falls for a chokepoint surprise once; after that it routes around you — which
 is the paper's warning about spending positional leverage.
+
+## v3 — wants and the chain
+
+Wants (params.wants): a country's 1–2 weakest links among compute/models/capital/market/rules
+(axis ≤ 1), priority-ordered. Met = the coalition covers that link (capital = the facility has
+a funding streak). Effects: −1 move to recruit when any want is met, −6 initial risk per met
+want, and yearly drift (−4 all met / −2 some / +2 none) — incentives, not fear, hold alliances.
+Chain (params.chain): a link is covered by any member with the axis ≥ 2, or by the player at
+≥ 50% conversion of a convertible strength — unconverted assets never count, which is the
+paper's core claim rendered as a rule. The seat requires the scenario's chainTarget (5/6/7)
+alongside every earlier gate; acceleration's 7 forces machines/chips/money coverage, i.e.
+recruiting beyond the comfortable anchors. "Go to the table" ends the run with the seat when
+the gates are met — banking leverage at its peak instead of hoping it survives to 2033.

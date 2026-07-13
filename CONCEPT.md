@@ -120,3 +120,24 @@ cheerleading (see BRAND.md voice rules).
 Static single-page app, no build step: `index.html` + ES modules (`engine/` pure game logic,
 `ui/` DOM), `data/*.json`, BRAND.md tokens in `brand.css`. Deploy on GitHub Pages. Game logic
 must be importable and unit-testable in Node without a browser.
+
+## v3 (built): the chain, the wants, the table
+
+The learning objective sharpened to four things: why countries collaborate, how that shapes
+national strategy, when to spend leverage negotiating frontier access, and why broader (even
+unconventional) coalitions win. v3 reorganises the game around them:
+
+- **Wants.** Every middle power carries 1–2 wants derived from its weakest value-chain links
+  (Indonesia: technology access + credible funding; the Netherlands: shared compute). A
+  coalition that covers a country's wants is cheaper to join and holds it without fear —
+  incentives are the diplomacy, defection risk is just their absence.
+- **The chain is the board.** Eight links, mine → machines → chips → compute → money → models →
+  markets → rules. Members light links they hold at 2+; the player lights only converted
+  strengths. A seat requires covering the scenario's chain target (5/6/7) as well as pooled
+  weight — acceleration forces recruiting beyond the anchors, which is the breadth lesson.
+- **Go to the table.** When the gates are met, claiming the seat is an explicit move — go early
+  and bank it, or hold and risk a defection or the cutoff. Timing leverage is playable, not
+  narrated.
+- **Cuts.** Courts appear only with a live case; fieldbuilding sits behind "show all moves";
+  the dials folded away; the rails show only chain + home tiles + grip (left) and poles +
+  allies-with-wants (right).

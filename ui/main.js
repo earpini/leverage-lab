@@ -38,6 +38,7 @@ function actionTitle(action) {
   if (action.type === 'event') return 'Your call';
   if (action.type === 'join') return 'You joined the alliance';
   if (action.type === 'm8') return SIGNATURES[game.player.code]?.name ?? 'Your signature move';
+  if (action.type === 'table') return 'Go to the table';
   const copy = instrumentCopy(
     game.data.byCode[game.player.code], game.player.convertAxes, game.player.positional
   )[action.type];
@@ -105,8 +106,8 @@ const handlers = {
     try {
       const before = snapshot(game);
       applyAction(game, action);
-      if (game.flags.acceptedPole) {
-        endTurn(game); // signing ends the game — the epilogue tells the rest
+      if (game.flags.acceptedPole || game.flags.wentToTable) {
+        endTurn(game); // signing or claiming the seat ends the game — the epilogue tells the rest
       } else {
         const after = snapshot(game);
         const deltas = deltasBetween(before, after);

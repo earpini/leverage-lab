@@ -348,6 +348,36 @@ export const SIGNATURE_FX = {
   gov_conv: [['alliance', 'up'], ['people', 'up'], ['superpowers', 'down']]
 };
 
+/** The chain: plain names for the eight links, in order. */
+export const CHAIN_COPY = {
+  minerals: 'minerals',
+  equip: 'machines',
+  fab: 'chips',
+  compute: 'compute',
+  capital: 'money',
+  models: 'models',
+  market: 'markets',
+  gov_conv: 'rules'
+};
+
+export const CHAIN_HINT =
+  'The AI value chain, from mine to rulebook. Your coalition lights the links it genuinely holds — members with real strength, you only for assets you set terms on. Cover enough links and the superpowers cannot route around you.';
+
+/** Wants: why a country would collaborate, in plain words. */
+export const WANT_NAMES = {
+  compute: 'shared compute',
+  models: 'technology access',
+  capital: 'credible funding',
+  market: 'market scale',
+  gov_conv: 'a seat in rule-making'
+};
+
+export const TABLE_CARD = {
+  name: 'Go to the table',
+  blurb: 'The alliance is now too expensive to bypass. Call the meeting and claim the seat — before a defection or a shock takes it back.',
+  effect: 'Ends the game: a seat at the table, on your terms.'
+};
+
 export const POWERS_COPY = {
   title: 'Their power to hurt you — and yours to answer',
   hint: 'Same units as the goal bar. The stronger the superpowers grow, the harder they squeeze you — demands, discounts, conditions — and the faster your independence erodes. Your alliance is the only counterweight.',
