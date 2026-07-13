@@ -8,7 +8,7 @@ import {
 import { memberContribution } from '../engine/criteria.js';
 import { playerConvertAxes } from '../engine/state.js';
 import {
-  INSTRUMENTS, CRITERIA, DIALS, POLE_NAMES, OFFER_COPY, ENDINGS,
+  INSTRUMENTS, CRITERIA, DIALS, POLE_NAMES, offerCopy, ENDINGS,
   AXIS_NAMES, countryGloss, leanGloss, riskLabel, COACH_TIPS, INTRO,
   COUNTRY_HOOKS, playerNote, PICKER, OUTCOME_TILES, outcomeWord, FRONTIER_LABEL, REGIME_NAMES, GRIP, LATECOMER,
   instrumentCopy, M6_TIERS, GOV_NAMES, GUIDED, nextGoal, TRANSFER_NOTE, AFFECTS, POWERS_COPY,
@@ -520,7 +520,7 @@ function offerSheet(g) {
       <div class="sheet">
         <p class="kicker">A message from ${esc(POLE_NAMES[offer.pole])}</p>
         <h3>They want a deal — with you</h3>
-        <p class="read">${esc(OFFER_COPY[offer.pole])}</p>
+        <p class="read">${esc(offerCopy(offer.pole, g.data.byCode[g.player.code].name))}</p>
         <div class="terms">Sign now and your final score is <strong>${score}/100</strong> (terms ${terms}/${cap}). The terms grow with what you build <em>before</em> signing — nothing you promise after counts.</div>
         <div class="row">
           <button class="btn-quiet" data-action="decline">Say no (a little more heat)</button>

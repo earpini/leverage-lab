@@ -5,7 +5,7 @@ export const INSTRUMENTS = {
   m1: {
     name: 'Set conditions',
     verb: 'Set conditions on Big Tech',
-    blurb: 'Tech giants want Brazil’s clean energy, minerals and market. Say yes — with strings attached.',
+    blurb: 'Tech giants want what your country holds. Say yes — with strings attached.',
     effect: 'More bargaining power and independence. A little more heat.'
   },
   m2: {
@@ -29,7 +29,7 @@ export const INSTRUMENTS = {
   m5: {
     name: 'Cut a solo deal',
     verb: 'Cut a solo deal',
-    blurb: 'Grab a quick win for Brazil alone. Always available. Feels great this year.',
+    blurb: 'Grab a quick win for your country alone. Always available. Feels great this year.',
     effect: 'A little power now. Your allies trust you less.'
   },
   m6: {
@@ -54,7 +54,7 @@ export const M6_TIERS = [
 ];
 
 export const CRITERIA = [
-  { key: 'c1', label: 'Bargaining power', bad: false, hint: 'What Brazil’s assets are worth in a negotiation. Grow it by setting conditions on Big Tech.' },
+  { key: 'c1', label: 'Bargaining power', bad: false, hint: 'What your country’s assets are worth in a negotiation. Grow it by setting conditions on Big Tech.' },
   { key: 'c2', label: 'Alliance strength', bad: false, hint: 'Trust plus members. Falls when allies leave or you cut solo deals.' },
   { key: 'c3', label: 'Heat', bad: true, hint: 'How angry the superpowers are at you. At 90+ they crush you and the game ends. Cools a little each year.' },
   { key: 'c4', label: 'Independence', bad: false, hint: 'How freely you can say no. Fades every year unless you keep setting terms.' },
@@ -66,15 +66,16 @@ export const CRITERIA = [
 export const DIALS = [
   { key: 'rivalry', label: 'US–China tension', warm: true, hint: 'Higher tension means sweeter superpower offers to your allies.' },
   { key: 'pace', label: 'AI speed', warm: false, hint: 'The faster AI advances, the less the superpowers need everyone else — the bar for a seat rises.' },
-  { key: 'demand', label: 'Minerals & energy demand', warm: false, hint: 'When the world is hungry for what Brazil has, the bar for a seat drops.' }
+  { key: 'demand', label: 'Minerals & energy demand', warm: false, hint: 'When the world is hungry for what your country has, the bar for a seat drops.' }
 ];
 
 export const POLE_NAMES = { us: 'Washington', cn: 'Beijing' };
 
-export const OFFER_COPY = {
-  us: 'The United States puts a deal on the table: access to top-end computing power, tariff relief, real investment. Take it and the game ends — Brazil becomes a junior partner of the US.',
-  cn: 'China puts a deal on the table: cheap computing power, generous financing, market access. Take it and the game ends — Brazil becomes a junior partner of China.'
-};
+export function offerCopy(pole, countryName) {
+  return pole === 'us'
+    ? `The United States puts a deal on the table: access to top-end computing power, tariff relief, real investment. Take it and the game ends — ${countryName} becomes a junior partner of the US.`
+    : `China puts a deal on the table: cheap computing power, generous financing, market access. Take it and the game ends — ${countryName} becomes a junior partner of China.`;
+}
 
 export const ENDINGS = {
   seat: { kicker: 'The best ending', sub: 'The superpowers now have to negotiate with your alliance — frontier AI on your terms, an economy that rides the wave instead of watching it.' },
@@ -82,7 +83,7 @@ export const ENDINGS = {
   'junior-partner': { kicker: 'You took the deal', sub: 'The score is the terms — and the terms are whatever you built before signing.' },
   menu: { kicker: 'The ending the game is named after', sub: '“If you’re not at the table, you’re on the menu.” The superpowers set your terms.' },
   'integrity-spiral': { kicker: 'Game over — trust collapsed', sub: 'You lost the public, and with them, everything.' },
-  'retaliation-spiral': { kicker: 'Game over — crushed', sub: 'The superpowers turned the full pressure on, and Brazil stood alone.' }
+  'retaliation-spiral': { kicker: 'Game over — crushed', sub: 'The superpowers turned the full pressure on, and your country stood alone.' }
 };
 
 /** One-line hooks: why you'd play each country. Plain, concrete, twelve words max. */
