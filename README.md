@@ -1,6 +1,6 @@
-# leverage-lab
+# Leverage Lab
 
-A browser war-game about middle-power leverage in the AI order — companion to the working paper
+A browser strategy game about middle-power leverage in the AI order — companion to the working paper
 [*Leverage outside the chain*](https://earpini.github.io/brazil-ai-analysis/).
 
 You play a middle power converting what it holds — energy, minerals, markets, courts, diplomacy —

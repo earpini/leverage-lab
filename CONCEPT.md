@@ -1,7 +1,7 @@
-# On the Menu — a middle-power AI war-game
+# Leverage Lab — a middle-power AI strategy game
 
-*Working title, from Carney's Davos line the paper quotes: "if we're not at the table, we're on the menu."
-Alternatives: "Leverage" · "Outside the Frontier" · "The Accommodation Trap".*
+*Named Leverage Lab. The phrase "on the menu" — Carney's Davos line, "if we're not at the table,
+we're on the menu" — lives on as ending 4, below.*
 
 ## What this is
 

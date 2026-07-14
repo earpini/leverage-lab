@@ -1,6 +1,6 @@
-# CLAUDE.md — leverage-lab
+# CLAUDE.md — Leverage Lab
 
-A browser war-game about middle-power leverage in the AI order. Read `CONCEPT.md` first — it is
+A browser strategy game about middle-power leverage in the AI order. Read `CONCEPT.md` first — it is
 the design contract. Companion to the working paper *Leverage outside the chain*
 (github.com/earpini/brazil-ai-analysis); keep the game's vocabulary consistent with the paper's
 (positional vs. convertible leverage, accommodation trap, instruments M1–M6, criteria C1–C7).

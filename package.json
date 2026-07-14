@@ -1,7 +1,7 @@
 {
   "name": "leverage-lab",
   "version": "0.1.0",
-  "description": "A browser war-game about middle-power leverage in the AI order",
+  "description": "A browser strategy game about middle-power leverage in the AI order",
   "type": "module",
   "private": true,
   "scripts": {
