@@ -261,6 +261,63 @@ collision and reader address (present by 2015, absent in 2010), and the trade of
 control. The engine was always there; you learned to modulate it and to know which register gets which
 tools.
 
+### 8b. Narrative architecture — how you build stories
+
+Above the sentence, the construction is deliberate, and it repeats a single principle at every scale.
+
+- **The fractal variance.** The long-accumulation-then-short-verdict rhythm that governs your sentences
+  also governs your **paragraphs**. A scene opens with one long, dense establishing paragraph (up to
+  ~250 words — light, place, sound, the social world) and then breaks into a run of one-line paragraphs
+  to accelerate and to isolate the character: *[the classroom, the bell, Friday-night culture]* → "Todos
+  ansiavam a noite." → "Todos exceto ele." → "Ele, Razo." Establish long, then cut short — the size
+  *change* is the device.
+- **Scene before character, exterior before interior.** Openings are establishing shots with one
+  governing sense detail — "the last rays of sun through the fogged classroom windows" — then a pull to
+  the person. Characters are introduced through their space and objects (Daniela through the room she's
+  proud of; Marcela through the desk in the shadows). Third-person limited, one consciousness per scene.
+- **Whole-story design (*Projeto Solitária*).** A **rotating-POV** structure — three chapters, three
+  solitary characters (Razo, Daniela, Marcela), the title's *solitárias* — where the unit of the book is
+  the person, not the plot beat. A **theme is planted early and quietly** (a professor quoting Plato,
+  "love is desire for what one lacks") and the whole story of lonely people pays it off. **Every chapter
+  closes on a hook, never a resolution:** a name reveal ("meu nome é Catarina"), a suspended action (a
+  phone answered after six counted rings), a turn inward to pain ("A dor. Ah, a maldita dor… Íntima.").
+- **Devices you allow in fiction that you ban in argument.** Anaphora as a rhythmic beat ("Escrevia,
+  porque… Escrevia, porque…"), enumeration to slow time at a tense moment ("uma vez, duas vezes… seis
+  vezes"), and one-line fragments as emotional landings. Same writer, different toolbox — the anaphora
+  your analytical voice forbids is a legitimate storytelling instrument.
+- **Memoir spine (*Histórias de Viagem*).** A chronological arc built on a **motif that structures
+  repetition** — "a história se repetiu" (Boston loss → Hartford, same script, new ending) — escalating
+  to the climax in short sentences and closing on one reflective line. The motif is the spine; the
+  reflection is the landing.
+
+### 8c. How you take the reader along (the thesis as communication)
+
+The thesis's defining quality isn't its findings — it's that it *escorts* a non-specialist through a
+complex argument without losing them or talking down. The register is **structured warmth**, and it runs
+on six devices:
+
+1. **An explicit accessibility promise, then kept.** The foreword pledges the work is written "in such a
+   way that researchers, practitioners, and policy-makers of diverse backgrounds will find it accessible
+   and useful" — and the body honors it. Every technical passage is written as if a smart policymaker
+   with no glossary is reading.
+2. **Visible question-threading.** Sub-questions get IDs (SQ1–SQ3) and *every results section restates
+   the question it answers* ("This section aims to answer SQ1, 'how are the locations of Urban Commons
+   related to social and spatial factors…'"). The reader always knows which question they're inside.
+3. **A governing metaphor as a shared map, extended in the open.** The argument is navigated by one
+   image — the *material*, *immaterial*, and *privilege* walls of access (~18 uses) — and when a finding
+   exceeds the frame, you build the frame further *in front of the reader*: "in addition to the initially
+   proposed material and immaterial walls, an ecosystem barrier." The reader watches the scaffold grow.
+4. **Section-opening maps** that state the job before doing it ("this section describes the methods used
+   to estimate…").
+5. **Forward/back anchoring** ("as shown in Table…", "as seen in…") so no claim floats.
+6. **Warm structural titles as guide-posts** ("Looking Back: Limitations", "Looking Ahead") — a pulse in
+   the signage, formal prose underneath.
+
+The effect: a reader who is told where they're going, handed a map they can hold, shown each finding
+pinned to a number or a name, and checked on at every turn. It's the same *taking-along* instinct that
+the blog voice does with direct address and the essay voice does with "the point I'm making, though" —
+here it's done with scaffolding instead of chat.
+
 ---
 
 ## 9. Using this profile
